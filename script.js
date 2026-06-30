@@ -21,7 +21,7 @@ const state = {
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const doorwayVideo = document.querySelector("#doorwayVideo");
-const handleCanvas = document.querySelector("#handleCanvas");
+const handlePixelShell = document.querySelector("#handlePixelShell");
 const handleHotspot = document.querySelector("#handleHotspot");
 const siteHome = document.querySelector("#siteHome");
 const skipIntro = document.querySelector("#skipIntro");
@@ -34,8 +34,13 @@ const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 
 let homeTimer = 0;
 let shaderController = null;
-let doorHandleController = null;
-let doorHandleInitPromise = null;
+
+const HANDLE_FRAME = {
+  width: 1256,
+  height: 720,
+  pivotX: 566,
+  pivotY: 510,
+};
 
 function clamp(value, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
@@ -44,7 +49,6 @@ function clamp(value, min = 0, max = 1) {
 function setQteProgress(value) {
   state.qteProgress = clamp(value);
   root.style.setProperty("--qte-progress", state.qteProgress.toFixed(3));
-  doorHandleController?.setProgress(state.qteProgress);
 
   if (!state.completed && state.qteProgress >= 0.52) {
     completeDoorOpen();
@@ -90,7 +94,7 @@ function startIntro() {
 
 function armQte() {
   if (state.current === "home" || state.completed) return;
-  initDoorHandle3d();
+  updateHandleLayerMetrics();
   setQteProgress(0);
   setState("qteLocked");
   handleHotspot?.focus({ preventScroll: true });
@@ -302,237 +306,28 @@ window.addEventListener(
   { passive: true },
 );
 
-function initDoorHandle3d() {
-  if (doorHandleController || doorHandleInitPromise || !handleCanvas) {
-    return doorHandleInitPromise;
-  }
+window.addEventListener("resize", updateHandleLayerMetrics);
 
-  doorHandleInitPromise = import("./assets/vendor/three.module.js")
-    .then((THREE) => {
-      const shell = document.querySelector("#handleModelShell");
-      if (!shell) return null;
+function updateHandleLayerMetrics() {
+  if (!handlePixelShell) return;
 
-      const renderer = new THREE.WebGLRenderer({
-        canvas: handleCanvas,
-        alpha: true,
-        antialias: true,
-        preserveDrawingBuffer: true,
-        powerPreference: "high-performance",
-      });
-      renderer.setClearColor(0x000000, 0);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.08;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const scale = Math.max(
+    viewportWidth / HANDLE_FRAME.width,
+    viewportHeight / HANDLE_FRAME.height,
+  );
+  const renderedWidth = HANDLE_FRAME.width * scale;
+  const renderedHeight = HANDLE_FRAME.height * scale;
+  const left = (viewportWidth - renderedWidth) / 2;
+  const top = (viewportHeight - renderedHeight) / 2;
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-      camera.position.set(0.18, 0.08, 7.2);
-
-      const rootGroup = new THREE.Group();
-      rootGroup.position.set(0.04, -0.08, 0);
-      rootGroup.rotation.set(-0.03, -0.22, -0.01);
-      scene.add(rootGroup);
-
-      const brass = new THREE.MeshPhysicalMaterial({
-        color: 0x9f672c,
-        roughness: 0.42,
-        metalness: 0.78,
-        clearcoat: 0.45,
-        clearcoatRoughness: 0.32,
-      });
-      const darkBrass = new THREE.MeshPhysicalMaterial({
-        color: 0x6f421d,
-        roughness: 0.46,
-        metalness: 0.68,
-      });
-      const highlight = new THREE.MeshBasicMaterial({
-        color: 0xffe1a4,
-        transparent: true,
-        opacity: 0.34,
-      });
-      const shadow = new THREE.MeshBasicMaterial({
-        color: 0x1b120b,
-        transparent: true,
-        opacity: 0.2,
-      });
-
-      function roundedRectShape(width, height, radius) {
-        const x = -width / 2;
-        const y = -height / 2;
-        const shape = new THREE.Shape();
-        shape.moveTo(x + radius, y);
-        shape.lineTo(x + width - radius, y);
-        shape.quadraticCurveTo(x + width, y, x + width, y + radius);
-        shape.lineTo(x + width, y + height - radius);
-        shape.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        shape.lineTo(x + radius, y + height);
-        shape.quadraticCurveTo(x, y + height, x, y + height - radius);
-        shape.lineTo(x, y + radius);
-        shape.quadraticCurveTo(x, y, x + radius, y);
-        return shape;
-      }
-
-      const plateGeometry = new THREE.ExtrudeGeometry(roundedRectShape(1.26, 3.58, 0.3), {
-        depth: 0.14,
-        bevelEnabled: true,
-        bevelSize: 0.045,
-        bevelThickness: 0.045,
-        bevelSegments: 9,
-      });
-      plateGeometry.center();
-      const plate = new THREE.Mesh(plateGeometry, brass);
-      plate.position.set(-0.84, -0.38, -0.12);
-      rootGroup.add(plate);
-
-      const plateShadow = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.48, 3.76),
-        shadow,
-      );
-      plateShadow.position.set(-0.7, -0.42, -0.28);
-      plateShadow.rotation.z = -0.02;
-      rootGroup.add(plateShadow);
-
-      const screwGeometry = new THREE.CylinderGeometry(0.085, 0.085, 0.055, 32);
-      screwGeometry.rotateX(Math.PI / 2);
-      [
-        [-1.28, 1.1],
-        [-0.4, 1.1],
-        [-1.28, -1.92],
-        [-0.4, -1.92],
-      ].forEach(([x, y]) => {
-        const screw = new THREE.Mesh(screwGeometry, darkBrass);
-        screw.position.set(x, y, 0.03);
-        rootGroup.add(screw);
-
-        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.014, 0.012), shadow);
-        slot.position.set(x, y, 0.07);
-        slot.rotation.z = 0.35;
-        rootGroup.add(slot);
-      });
-
-      const keyholeTop = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.11, 0.11, 0.018, 32),
-        shadow,
-      );
-      keyholeTop.geometry.rotateX(Math.PI / 2);
-      keyholeTop.position.set(-0.84, -1.38, 0.08);
-      rootGroup.add(keyholeTop);
-
-      const keyholeStem = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.32, 0.018), shadow);
-      keyholeStem.position.set(-0.84, -1.55, 0.08);
-      rootGroup.add(keyholeStem);
-
-      const fixedSocket = new THREE.Group();
-      fixedSocket.position.set(-1.05, -0.68, 0.1);
-      rootGroup.add(fixedSocket);
-
-      const socketBack = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.2, 56), brass);
-      socketBack.geometry.rotateX(Math.PI / 2);
-      socketBack.position.set(0, 0, 0.05);
-      fixedSocket.add(socketBack);
-
-      const socketRing = new THREE.Mesh(new THREE.TorusGeometry(0.41, 0.045, 14, 64), darkBrass);
-      socketRing.position.set(0, 0, 0.18);
-      fixedSocket.add(socketRing);
-
-      const rotatingHandle = new THREE.Group();
-      rotatingHandle.position.copy(fixedSocket.position);
-      rotatingHandle.position.z += 0.19;
-      rootGroup.add(rotatingHandle);
-
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.34, 48), brass);
-      hub.geometry.rotateX(Math.PI / 2);
-      hub.position.set(0, 0, 0.06);
-      rotatingHandle.add(hub);
-
-      const leverGroup = new THREE.Group();
-      leverGroup.position.set(0.18, -0.02, 0.02);
-      rotatingHandle.add(leverGroup);
-
-      const leverLength = 3.08;
-      const leverRadius = 0.17;
-      const leverGeometry = new THREE.CapsuleGeometry(leverRadius, leverLength, 8, 36);
-      leverGeometry.rotateZ(Math.PI / 2);
-      const lever = new THREE.Mesh(leverGeometry, brass);
-      lever.position.set(leverLength / 2, 0, 0);
-      lever.scale.set(1, 0.72, 0.56);
-      leverGroup.add(lever);
-
-      const leverRidge = new THREE.Mesh(
-        new THREE.BoxGeometry(2.12, 0.035, 0.018),
-        highlight,
-      );
-      leverRidge.position.set(1.68, 0.12, 0.16);
-      leverRidge.rotation.z = -0.015;
-      leverGroup.add(leverRidge);
-
-      const endCap = new THREE.Mesh(new THREE.SphereGeometry(0.19, 32, 16), brass);
-      endCap.scale.set(1.35, 0.78, 0.55);
-      endCap.position.set(leverLength + 0.15, 0.02, 0.02);
-      leverGroup.add(endCap);
-
-      const glint = new THREE.Mesh(new THREE.PlaneGeometry(0.48, 0.035), highlight);
-      glint.position.set(1.76, 0.2, 0.32);
-      glint.rotation.z = -0.08;
-      leverGroup.add(glint);
-
-      const ambient = new THREE.HemisphereLight(0xffecd0, 0x2e1c10, 1.9);
-      scene.add(ambient);
-
-      const key = new THREE.DirectionalLight(0xffd68b, 3.2);
-      key.position.set(-2.4, 3.2, 4.6);
-      scene.add(key);
-
-      const rim = new THREE.PointLight(0xfff1bf, 9, 8);
-      rim.position.set(1.9, 1.8, 2.8);
-      scene.add(rim);
-
-      let targetProgress = state.qteProgress;
-      let visualProgress = targetProgress;
-      let width = 0;
-      let height = 0;
-
-      function resize() {
-        const rect = shell.getBoundingClientRect();
-        width = Math.max(1, Math.round(rect.width));
-        height = Math.max(1, Math.round(rect.height));
-        renderer.setSize(width, height, false);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      }
-
-      function render() {
-        visualProgress += (targetProgress - visualProgress) * 0.22;
-        const eased = 1 - Math.pow(1 - visualProgress, 2.4);
-        rotatingHandle.rotation.z = -0.72 * eased;
-        rotatingHandle.rotation.x = 0.08 * eased;
-        leverGroup.position.y = -0.03 - 0.1 * eased;
-        glint.material.opacity = 0.24 + 0.2 * (1 - eased);
-        rootGroup.position.y = -0.12 - 0.12 * eased;
-        rootGroup.position.x = 0.15 + 0.04 * eased;
-        renderer.render(scene, camera);
-        window.requestAnimationFrame(render);
-      }
-
-      resize();
-      window.addEventListener("resize", resize);
-      window.requestAnimationFrame(render);
-
-      doorHandleController = {
-        setProgress(value) {
-          targetProgress = clamp(value);
-        },
-      };
-      doorHandleController.setProgress(state.qteProgress);
-      return doorHandleController;
-    })
-    .catch((error) => {
-      console.warn("Door handle 3D layer failed to load.", error);
-      return null;
-    });
-
-  return doorHandleInitPromise;
+  handlePixelShell.style.left = `${left}px`;
+  handlePixelShell.style.top = `${top}px`;
+  handlePixelShell.style.width = `${renderedWidth}px`;
+  handlePixelShell.style.height = `${renderedHeight}px`;
+  handlePixelShell.style.setProperty("--handle-origin-x", `${HANDLE_FRAME.pivotX * scale}px`);
+  handlePixelShell.style.setProperty("--handle-origin-y", `${HANDLE_FRAME.pivotY * scale}px`);
 }
 
 function initShader() {

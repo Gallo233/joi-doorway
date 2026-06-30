@@ -2,16 +2,17 @@
 
 Joi Doorway is a static, embeddable entrance page for the All Joi personal-site ecosystem.
 
-The current version uses a generated first-person doorway video, freezes cleanly on the final door-handle frame, then overlays an independent Three.js brass door-handle model. Dragging downward rotates the 3D handle itself before opening the All Joi studio homepage.
+The current version uses a generated first-person doorway video, freezes cleanly on the final door-handle frame, then animates a pixel cutout taken from that same frame. Dragging downward rotates the original video handle pixels before opening the All Joi studio homepage.
 
 ## What Is Included
 
-- `index.html` - static entry page, 3D handle layer, and All Joi studio homepage.
-- `styles.css` - cinematic video/3D-handle styling, responsive grid, and high-interaction visual system.
-- `script.js` - video-to-handle state control, Three.js handle model, drag gesture handling, reveal effects, pointer HUD, and original WebGL shader background.
+- `index.html` - static entry page, pixel-handle layer, and All Joi studio homepage.
+- `styles.css` - cinematic video/pixel-handle styling, responsive grid, and high-interaction visual system.
+- `script.js` - video-to-handle state control, pixel layer alignment, drag gesture handling, reveal effects, pointer HUD, and original WebGL shader background.
 - `assets/doorway-qte-intro.mp4` - generated 10 second doorway video supplied for the current entrance.
-- `assets/door-handle-final-frame.png` - extracted final frame used as the seamless 3D-handle freeze frame.
-- `assets/vendor/three.module.js` - local Three.js module used by the movable door-handle model.
+- `assets/door-handle-final-frame.png` - extracted final frame used as the video reference.
+- `assets/door-handle-clean-frame.png` - final frame with the static lever softened/covered for the interactive moment.
+- `assets/door-handle-lever-sprite.png` - transparent pixel cutout of the original video handle lever.
 - `assets/joi-app-v3.png` - Joi App visual reference, amber eyes, no side braid.
 - `assets/joi-map-v3.png` - Joi Map visual reference, amber eyes, side braid.
 - `joi-doorway-video/` - older Remotion source project kept for future rendered asset experiments.
@@ -47,9 +48,9 @@ Key behavior:
 
 - `assets/doorway-qte-intro.mp4` autoplays muted for reliability.
 - When the video ends, `assets/door-handle-final-frame.png` appears immediately above it.
-- A local Three.js model covers the static handle in the frame.
+- A transparent sprite cut from the original video frame covers the static handle.
 - The visitor presses the handle and drags downward.
-- The 3D handle rotates around its axis, then transitions into the homepage once it is pulled far enough.
+- The original video handle pixels rotate around the source-frame pivot, then transition into the homepage once pulled far enough.
 - The homepage uses an original WebGL shader canvas, pointer coordinates, time HUD, scroll reveals, and project-card hover states.
 
 ## Design Direction
@@ -82,7 +83,7 @@ node --check script.js
 
 Browser-tested locally:
 
-- Desktop 3D handle: video ends on the handle frame, the Three.js handle renders nonblank, drag-down opens the homepage.
-- Mobile 3D handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
+- Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
+- Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.
 - Browser console: no warnings or errors observed during validation.
