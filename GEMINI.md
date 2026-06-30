@@ -4,13 +4,12 @@ You are helping refine the front end for **Joi Doorway**, an interactive persona
 
 ## Product Intent
 
-This is not a normal portfolio landing page. It is a ritualized entrance:
+This is not a normal portfolio landing page. It is a ritualized entrance with game-like timing:
 
-1. First-person phone view opens Joi Map.
-2. The viewer hears/feels a knock and approaches a warm apartment door.
-3. The viewer drags or scrolls upward to open the peephole.
-4. Joi Map appears close to the peephole.
-5. The viewer pushes the door open and enters the All Joi studio homepage.
+1. A generated first-person video shows Joi Map near the door and turns toward the handle.
+2. The last frame freezes seamlessly on the door handle.
+3. The visitor presses the handle and drags downward, like a small QTE.
+4. The door transition opens into the All Joi studio homepage.
 
 The emotional goal is: **Joi is not just a product page; she feels like a real partner arriving at the edge of the user's world.**
 
@@ -22,7 +21,7 @@ The emotional goal is: **Joi is not just a product page; she feels like a real p
 - Joi Map has the side braid with coral ribbon. This is a Map-only identity marker.
 - Keep the Japanese anime style, but avoid sci-fi, robot, cyberpunk, excessive gloss, and spaceship/dashboard aesthetics.
 - Avoid making Joi overly childish or sexualized.
-- Do not add subtitles/caption overlays inside the generated videos.
+- Do not add subtitles/caption overlays inside the generated video.
 - Do not add long in-app explanations of how the interface works.
 
 ## Current Files
@@ -32,53 +31,67 @@ Root static site:
 - `index.html`
 - `styles.css`
 - `script.js`
-- `assets/doorway-bg.png`
+- `assets/doorway-qte-intro.mp4`
+- `assets/door-handle-final-frame.png`
 - `assets/joi-app-v3.png`
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
+
+Legacy/experimental assets still present:
+
 - `assets/intro-phone.mp4`
 - `assets/peephole-joi.mp4`
-
-Remotion video source:
-
-- `joi-doorway-video/src/Composition.tsx`
-- `joi-doorway-video/src/Root.tsx`
-- `joi-doorway-video/public/*`
+- `joi-doorway-video/`
 
 ## Interaction Model
 
-The intro state machine is in `script.js`:
+The active intro state machine is in `script.js`:
 
 ```text
-phoneIntro -> doorApproach -> peepholeLocked -> peepholeOpen -> doorOpen -> home
+videoIntro -> qteLocked -> qteDragging -> doorOpen -> home
 ```
 
 Important behavior:
 
 - `?skipIntro=1` should enter the homepage directly.
-- Phone and peephole videos use `data-video-autoload="true"`.
-- If videos fail, the page should still show image fallbacks.
-- Mouse wheel and pointer drag both open the peephole.
-- The final homepage should remain usable as an embeddable personal-site section.
+- The video autoplays muted so browser autoplay does not block the flow.
+- When the video ends, `door-handle-final-frame.png` overlays it immediately.
+- The handle hotspot should align with the actual handle in the final frame.
+- A short downward drag should be enough to trigger entry, especially on mobile.
+- Avoid adding visible instruction copy; use visual affordances instead.
+
+## Homepage Direction
+
+The current homepage is an original Joi ecosystem studio inspired by the interaction grammar of `haoqi.design`:
+
+- fixed HUD navigation
+- pointer coordinate metadata
+- GMT+8 time display
+- full-screen WebGL shader background
+- large editorial typography
+- project cards that update Joi dialogue and shader accent state
+
+Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-one. The reference is for interaction density and visual confidence only.
 
 ## Front-End Improvement Priorities
 
 Good areas to improve:
 
-- Make the intro transitions more cinematic and less abrupt.
-- Improve responsive composition on desktop, tablet, and mobile.
-- Refine the door, peephole, and push-door visual timing.
-- Improve accessibility without adding visible explanatory clutter.
-- Optimize asset loading and perceived performance.
-- Improve visual polish of project cards and studio sections.
+- Refine the video-to-QTE seam if a better final-frame asset is generated.
+- Tune the handle hotspot position for more device sizes.
+- Make the push-door transition feel more physical.
+- Improve homepage scroll choreography and shader response.
+- Replace placeholder links with real GitHub/Demo/Essay URLs.
+- Optimize video loading and poster strategy.
 
 Avoid:
 
-- Replacing the core state machine with a heavy framework unless truly necessary.
-- Removing video fallbacks.
+- Replacing the static site with a heavy framework unless truly necessary.
+- Reintroducing the old phone/peephole intro as the primary flow.
 - Adding new product claims or fake links.
 - Turning the site into a generic SaaS landing page.
 - Putting the main experience inside decorative card containers.
+- Adding subtitles to the video.
 
 ## Validation Commands
 
@@ -88,17 +101,9 @@ Run from the repository root:
 node --check script.js
 ```
 
-Run from the Remotion folder:
+Optional if Remotion sources change:
 
 ```bash
 cd joi-doorway-video
 npm run lint
-```
-
-Render videos if Remotion sources change:
-
-```bash
-cd joi-doorway-video
-npm run render:intro
-npm run render:peephole
 ```

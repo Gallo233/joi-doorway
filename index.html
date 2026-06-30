@@ -5,259 +5,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Joi Doorway - an interactive entrance for the All Joi personal website."
+      content="All Joi Doorway - cinematic QTE entrance and interactive Joi ecosystem studio."
     />
     <title>All Joi Doorway</title>
-    <link rel="preload" href="assets/doorway-bg.png" as="image" />
+    <link rel="preload" href="assets/doorway-qte-intro.mp4" as="video" type="video/mp4" />
+    <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body data-state="phoneIntro">
-    <div class="intro-root" id="introRoot" aria-live="polite">
-      <button class="skip-intro" id="skipIntro" type="button">跳过</button>
-      <div class="intro-status" id="introStatus">Joi Map 已接通</div>
+  <body data-state="videoIntro">
+    <div class="intro-root" id="introRoot" aria-live="off">
+      <button class="skip-intro" id="skipIntro" type="button" aria-label="跳过开场">
+        SKIP
+      </button>
 
-      <section class="intro-stage phone-stage" aria-label="打开 Joi Map">
-        <div class="phone-table">
-          <div class="phone-shadow"></div>
-          <div class="phone-shell video-wrap" data-video-wrap="phone">
-            <video
-              class="optional-video phone-video"
-              data-video-key="phone"
-              data-video-src="assets/intro-phone.mp4"
-              data-video-autoload="true"
-              muted
-              playsinline
-              preload="metadata"
-            ></video>
-            <div class="phone-fallback" aria-hidden="true">
-              <div class="phone-camera"></div>
-              <div class="phone-map">
-                <div class="map-topbar">
-                  <span>Joi Map</span>
-                  <span>12:09</span>
-                </div>
-                <div class="map-canvas">
-                  <div class="route-line"></div>
-                  <span class="map-road road-a"></span>
-                  <span class="map-road road-b"></span>
-                  <span class="map-road road-c"></span>
-                  <span class="map-pin pin-home"></span>
-                  <span class="map-pin pin-joi"></span>
-                  <div class="map-card">
-                    <img src="assets/joi-map-v3.png" alt="" />
-                    <div>
-                      <strong>Joi</strong>
-                      <span>在门外等你</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="map-dock">
-                  <span>3 min</span>
-                  <span>门口路线</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <section class="qte-stage" aria-label="Joi Doorway cinematic quick-time entrance">
+        <video
+          class="doorway-video"
+          id="doorwayVideo"
+          src="assets/doorway-qte-intro.mp4"
+          poster="assets/door-handle-final-frame.png"
+          muted
+          autoplay
+          playsinline
+          preload="auto"
+        ></video>
+        <img
+          class="door-freeze"
+          id="doorFreeze"
+          src="assets/door-handle-final-frame.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="qte-vignette" aria-hidden="true"></div>
+        <div class="threshold-light" aria-hidden="true"></div>
+
+        <button
+          class="handle-hotspot"
+          id="handleHotspot"
+          type="button"
+          aria-label="按住门把手并向下拖动进入 All Joi"
+        >
+          <span class="handle-aura" aria-hidden="true"></span>
+          <span class="handle-pressure" aria-hidden="true"></span>
+          <span class="qte-vector" aria-hidden="true"></span>
+        </button>
+
+        <div class="qte-meter" id="qteMeter" aria-hidden="true">
+          <span></span>
         </div>
-      </section>
-
-      <section class="intro-stage door-stage" aria-label="门口">
-        <div class="door-backdrop" aria-hidden="true"></div>
-        <div class="door-vignette" aria-hidden="true"></div>
-        <div class="knock-burst" aria-hidden="true">
-          <span>咚</span>
-          <span>咚</span>
-        </div>
-      </section>
-
-      <section class="intro-stage peephole-stage" aria-label="猫眼交互">
-        <div class="door-backdrop" aria-hidden="true"></div>
-        <div class="peephole-focus">
-          <div class="peephole-ring" id="peepholeRing">
-            <div class="peephole-portal video-wrap" data-video-wrap="peephole">
-              <video
-                class="optional-video peephole-video"
-                data-video-key="peephole"
-                data-video-src="assets/peephole-joi.mp4"
-                data-video-autoload="true"
-                muted
-                playsinline
-                preload="metadata"
-              ></video>
-              <div class="peephole-fallback" aria-hidden="true">
-                <img src="assets/joi-map-v3.png" alt="" />
-                <span class="eye-glint glint-a"></span>
-                <span class="eye-glint glint-b"></span>
-              </div>
-              <div class="peephole-shutter"></div>
-            </div>
-          </div>
-          <div class="gesture-copy" id="gestureCopy">
-            <span>向上拖动猫眼</span>
-            <small>或滚轮上滑</small>
-          </div>
-          <button class="open-door-control" id="openDoor" type="button">
-            推开门
-          </button>
-        </div>
-      </section>
-
-      <section class="intro-stage door-open-stage" aria-label="推门进入">
-        <div class="door-open-layer" aria-hidden="true"></div>
-        <div class="warm-threshold" aria-hidden="true"></div>
       </section>
     </div>
 
-    <main class="site-home" id="siteHome" tabindex="-1">
-      <header class="site-nav">
+    <main class="site-home" id="siteHome" tabindex="-1" aria-hidden="true">
+      <canvas class="shader-canvas" id="shaderCanvas" aria-hidden="true"></canvas>
+      <div class="site-grain" aria-hidden="true"></div>
+
+      <header class="site-hud" aria-label="All Joi navigation">
         <a class="brand" href="#studio" aria-label="All Joi home">
           <span class="brand-mark">J</span>
-          <span>All Joi</span>
+          <span>ALL JOI</span>
         </a>
-        <nav aria-label="主导航">
-          <a href="#ecosystem">生态</a>
-          <a href="#roadmap">路线</a>
-          <a href="#links">链接</a>
+        <nav class="hud-nav" aria-label="主导航">
+          <a href="#studio">Studio</a>
+          <a href="#ecosystem">Systems</a>
+          <a href="#links">Links</a>
         </nav>
-        <button class="replay-button" id="replayIntro" type="button">
-          重播开场
-        </button>
+        <div class="hud-meta">
+          <button class="replay-button" id="replayIntro" type="button">QTE</button>
+          <span id="timeHud">GMT+8 00:00</span>
+        </div>
       </header>
 
-      <section class="studio-section" id="studio">
-        <div class="studio-copy" data-reveal>
-          <p class="section-kicker">Joi Doorway</p>
-          <h1>欢迎来到 Joi 的工作室。</h1>
-          <p>
-            这里不是普通作品集首页，而是 Joi 生态的入口：桌面里的伙伴、
-            现实世界的导览、自动建造的工坊，以及未来会继续长出来的角色宇宙。
-          </p>
-          <div class="joi-dialogue" id="joiDialogue">
-            “我在。今天从哪一扇门开始？”
-          </div>
+      <div class="pointer-hud" id="pointerHud" aria-hidden="true">0000 X / 0000 Y</div>
+
+      <section class="studio-grid" id="studio" aria-labelledby="studioTitle">
+        <div class="studio-index" data-reveal>
+          <span>001</span>
+          <span>Companion Systems</span>
+          <span>Personal Site Interface</span>
         </div>
 
-        <figure class="studio-figure" data-reveal>
-          <img
-            src="assets/joi-app-v3.png"
-            alt="Joi App 版角色形象，琥珀色眼睛，没有侧边麻花辫"
-          />
-          <figcaption>
-            Joi App · 桌面伙伴
-            <span>琥珀眼 / 无侧边麻花辫</span>
-          </figcaption>
-        </figure>
+        <div class="studio-title" data-reveal>
+          <p class="section-kicker">Joi Ecosystem Studio</p>
+          <h1 id="studioTitle">
+            <span>JOI</span>
+            <span>DOORWAY</span>
+          </h1>
+        </div>
+
+        <aside class="joi-console" aria-label="Joi live console" data-reveal>
+          <figure class="joi-portrait">
+            <img
+              src="assets/joi-app-v3.png"
+              alt="Joi App 版角色形象，琥珀色眼睛，没有侧边麻花辫"
+            />
+          </figure>
+          <div class="console-copy">
+            <span class="console-label">Current Joi</span>
+            <p id="joiDialogue">“我在。今天从哪一个入口开始？”</p>
+          </div>
+        </aside>
       </section>
 
-      <section class="ecosystem-section" id="ecosystem" aria-labelledby="ecoTitle">
+      <section class="ecosystem-section" id="ecosystem" aria-labelledby="ecosystemTitle">
         <div class="section-heading" data-reveal>
-          <p class="section-kicker">Ecosystem</p>
-          <h2 id="ecoTitle">同一个 Joi，不同的出现场景。</h2>
+          <p class="section-kicker">Selected Systems</p>
+          <h2 id="ecosystemTitle">同一个 Joi，在不同场景里切换身体。</h2>
         </div>
 
         <div class="ecosystem-grid">
           <article
-            class="ecosystem-card is-active"
+            class="system-card is-active"
             data-joi-card="app"
+            data-accent="0.18"
             data-reveal
             tabindex="0"
             aria-expanded="true"
           >
-            <img src="assets/joi-app-v3.png" alt="" />
-            <div class="card-body">
+            <div class="card-media">
+              <img src="assets/joi-app-v3.png" alt="Joi App 版，无侧边麻花辫" />
+            </div>
+            <div class="card-copy">
+              <span class="card-number">01</span>
               <span class="card-label">Desktop Companion</span>
               <h3>Joi App</h3>
-              <p>在屏幕、代码、任务和记忆之间陪你协作的桌面伙伴。</p>
+              <p>屏幕里的真实伙伴，接住任务、代码、记忆和每一次灵感抬头。</p>
               <a href="#" aria-label="Joi App GitHub 链接占位">GitHub soon</a>
             </div>
           </article>
 
           <article
-            class="ecosystem-card"
+            class="system-card"
             data-joi-card="map"
+            data-accent="0.46"
             data-reveal
             tabindex="0"
             aria-expanded="false"
           >
-            <img src="assets/joi-map-v3.png" alt="" />
-            <div class="card-body">
+            <div class="card-media">
+              <img src="assets/joi-map-v3.png" alt="Joi Map 版，有侧边麻花辫" />
+            </div>
+            <div class="card-copy">
+              <span class="card-number">02</span>
               <span class="card-label">Field Companion</span>
               <h3>Joi Map</h3>
-              <p>带着侧边麻花辫出门，陪你识别地点、路线和现场故事。</p>
+              <p>出门时的导览伙伴。琥珀色眼睛统一，侧边麻花辫是 Map 专属标记。</p>
               <a href="#" aria-label="Joi Map Demo 链接占位">Demo soon</a>
             </div>
           </article>
 
           <article
-            class="ecosystem-card text-card"
+            class="system-card text-system"
             data-joi-card="autopilot"
+            data-accent="0.72"
             data-reveal
             tabindex="0"
             aria-expanded="false"
           >
-            <div class="symbol-panel">Auto</div>
-            <div class="card-body">
-              <span class="card-label">Build Loop</span>
+            <div class="symbol-field" aria-hidden="true">
+              <span>BUILD</span>
+              <span>LOOP</span>
+            </div>
+            <div class="card-copy">
+              <span class="card-number">03</span>
+              <span class="card-label">Engineering Loop</span>
               <h3>Joi Autopilot</h3>
-              <p>把想法、代码、验证和发布串成一个会持续前进的生产中心。</p>
+              <p>把想法、实现、验证和发布串成可重复推进的自动建造系统。</p>
               <a href="#" aria-label="Joi Autopilot 链接占位">Console soon</a>
             </div>
           </article>
 
           <article
-            class="ecosystem-card text-card"
+            class="system-card text-system"
             data-joi-card="universe"
+            data-accent="0.9"
             data-reveal
             tabindex="0"
             aria-expanded="false"
           >
-            <div class="symbol-panel">Story</div>
-            <div class="card-body">
+            <div class="symbol-field universe-symbol" aria-hidden="true">
+              <img src="assets/joi-peephole-closeup.png" alt="" />
+            </div>
+            <div class="card-copy">
+              <span class="card-number">04</span>
               <span class="card-label">Character World</span>
               <h3>Joi Universe</h3>
-              <p>角色设定、宠物、故事、视觉小说和更多可被体验的分身。</p>
-              <a href="#" aria-label="Joi Universe 链接占位">Archive soon</a>
+              <p>角色、人设、宠物、故事和未来扩展，让 Joi 变成能被体验的世界。</p>
+              <a href="#" aria-label="Joi Universe 文章链接占位">Notes soon</a>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="roadmap-section" id="roadmap" aria-labelledby="roadmapTitle">
-        <div class="section-heading" data-reveal>
-          <p class="section-kicker">Roadmap</p>
-          <h2 id="roadmapTitle">从入口页到真正的个人宇宙。</h2>
+      <section class="process-section" id="process" aria-label="Joi build process">
+        <div class="process-line" data-reveal>
+          <span>QTE Entrance</span>
+          <span>Living Character</span>
+          <span>Personal Tooling</span>
+          <span>World Layer</span>
         </div>
-        <div class="timeline">
-          <article data-reveal>
-            <span>01</span>
-            <h3>Doorway HTML</h3>
-            <p>完成可嵌入的开场、猫眼、推门和生态主页。</p>
-          </article>
-          <article data-reveal>
-            <span>02</span>
-            <h3>Video Upgrade</h3>
-            <p>替换正式 MP4，让 Joi 整理头发、靠近猫眼、眨眼。</p>
-          </article>
-          <article data-reveal>
-            <span>03</span>
-            <h3>Living Site</h3>
-            <p>接入真实项目链接、文章、GitHub、Live2D 或更多动效。</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="links-section" id="links" data-reveal>
-        <p class="section-kicker">Integration</p>
-        <h2>作为个人网站首页、子页或 section 都可以。</h2>
-        <p>
-          使用 <code>?skipIntro=1</code> 可以直接进入主页面；把
-          <code>#siteHome</code> 容器拎出来，也能融入已有个人站。
+        <p data-reveal>
+          Joi 不是单个网页形象，而是一个会持续长出界面、动作、记忆和工作能力的个人生态。
+          入口负责“见到她”，主站负责“理解她正在变成什么”。
         </p>
       </section>
+
+      <footer class="site-footer" id="links">
+        <div>
+          <span class="section-kicker">Next</span>
+          <h2>把个人网站做成一次进入 Joi 世界的动作。</h2>
+        </div>
+        <div class="footer-links" aria-label="项目链接">
+          <a href="https://github.com/Gallo233/joi-doorway">GitHub</a>
+          <a href="#ecosystem">Ecosystem</a>
+          <a href="mailto:hello@example.com">Contact</a>
+        </div>
+      </footer>
     </main>
 
-    <script src="script.js" defer></script>
+    <script src="script.js"></script>
   </body>
 </html>
