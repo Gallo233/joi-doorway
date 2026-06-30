@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.env.*
+*.log
+
+node_modules/
+dist/
+out/
+
+joi-doorway-video/node_modules/
+joi-doorway-video/out/
+joi-doorway-video/dist/
