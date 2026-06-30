@@ -8,7 +8,7 @@
       content="All Joi Doorway - cinematic QTE entrance and interactive Joi ecosystem studio."
     />
     <title>All Joi Doorway</title>
-    <link rel="preload" href="assets/doorway-qte-intro.mp4" as="video" type="video/mp4" />
+    <link rel="icon" href="data:," />
     <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
@@ -41,20 +41,17 @@
         <div class="qte-vignette" aria-hidden="true"></div>
         <div class="threshold-light" aria-hidden="true"></div>
 
+        <div class="handle-model-shell" id="handleModelShell" aria-hidden="true">
+          <div class="handle-video-softener"></div>
+          <canvas class="handle-canvas" id="handleCanvas"></canvas>
+        </div>
+
         <button
           class="handle-hotspot"
           id="handleHotspot"
           type="button"
           aria-label="按住门把手并向下拖动进入 All Joi"
-        >
-          <span class="handle-aura" aria-hidden="true"></span>
-          <span class="handle-pressure" aria-hidden="true"></span>
-          <span class="qte-vector" aria-hidden="true"></span>
-        </button>
-
-        <div class="qte-meter" id="qteMeter" aria-hidden="true">
-          <span></span>
-        </div>
+        ></button>
       </section>
     </div>
 

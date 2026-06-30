@@ -8,8 +8,9 @@ This is not a normal portfolio landing page. It is a ritualized entrance with ga
 
 1. A generated first-person video shows Joi Map near the door and turns toward the handle.
 2. The last frame freezes seamlessly on the door handle.
-3. The visitor presses the handle and drags downward, like a small QTE.
-4. The door transition opens into the All Joi studio homepage.
+3. A local Three.js brass handle model appears exactly over the static handle.
+4. The visitor presses the handle and drags downward; the 3D handle itself rotates.
+5. The door transition opens into the All Joi studio homepage.
 
 The emotional goal is: **Joi is not just a product page; she feels like a real partner arriving at the edge of the user's world.**
 
@@ -33,6 +34,7 @@ Root static site:
 - `script.js`
 - `assets/doorway-qte-intro.mp4`
 - `assets/door-handle-final-frame.png`
+- `assets/vendor/three.module.js`
 - `assets/joi-app-v3.png`
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
@@ -56,8 +58,9 @@ Important behavior:
 - `?skipIntro=1` should enter the homepage directly.
 - The video autoplays muted so browser autoplay does not block the flow.
 - When the video ends, `door-handle-final-frame.png` overlays it immediately.
-- The handle hotspot should align with the actual handle in the final frame.
-- A short downward drag should be enough to trigger entry, especially on mobile.
+- A Three.js handle model renders above the frozen frame.
+- The transparent handle hotspot and the 3D model layer should align with the actual handle in the final frame.
+- Dragging downward should visibly rotate the 3D handle before entry, especially on mobile.
 - Avoid adding visible instruction copy; use visual affordances instead.
 
 ## Homepage Direction
@@ -77,8 +80,8 @@ Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-on
 
 Good areas to improve:
 
-- Refine the video-to-QTE seam if a better final-frame asset is generated.
-- Tune the handle hotspot position for more device sizes.
+- Refine the video-to-3D-handle seam if a better final-frame asset is generated.
+- Tune the 3D handle model and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
@@ -88,6 +91,7 @@ Avoid:
 
 - Replacing the static site with a heavy framework unless truly necessary.
 - Reintroducing the old phone/peephole intro as the primary flow.
+- Replacing the moving 3D handle with a purely decorative QTE outline.
 - Adding new product claims or fake links.
 - Turning the site into a generic SaaS landing page.
 - Putting the main experience inside decorative card containers.
