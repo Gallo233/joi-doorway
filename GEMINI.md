@@ -6,11 +6,14 @@ You are helping refine the front end for **Joi Doorway**, an interactive persona
 
 This is not a normal portfolio landing page. It is a ritualized entrance with game-like timing:
 
-1. A generated first-person video shows Joi Map near the door and turns toward the handle.
-2. The last frame freezes seamlessly on the door handle.
-3. A transparent sprite cut from the final frame appears exactly over the static handle.
-4. The visitor presses the handle and drags downward; the original video handle pixels rotate.
-5. The door transition opens into the All Joi studio homepage.
+1. The visitor begins on an iPhone home screen and taps the Joi Map app icon.
+2. Joi Map opens into its main interface.
+3. Three knocks play, then the camera turns toward the door and pushes into the peephole.
+4. A generated first-person video shows Joi Map near the door and turns toward the handle.
+5. The last frame freezes seamlessly on the door handle.
+6. A transparent sprite cut from the final frame appears exactly over the static handle.
+7. The visitor presses the handle and drags downward; the original video handle pixels rotate.
+8. The door transition opens into the All Joi studio homepage.
 
 The emotional goal is: **Joi is not just a product page; she feels like a real partner arriving at the edge of the user's world.**
 
@@ -32,6 +35,9 @@ Root static site:
 - `index.html`
 - `styles.css`
 - `script.js`
+- `assets/iphone-home-joi-map.png`
+- `assets/joi-map-main-ui.png`
+- `assets/doorway-bg.png`
 - `assets/doorway-qte-intro.mp4`
 - `assets/door-handle-final-frame.png`
 - `assets/door-handle-clean-frame.png`
@@ -51,13 +57,17 @@ Legacy/experimental assets still present:
 The active intro state machine is in `script.js`:
 
 ```text
-videoIntro -> qteLocked -> qteDragging -> doorOpen -> home
+phoneHome -> mapOpening -> mapHome -> knocking -> doorTurn -> peepholeApproach -> videoIntro -> qteLocked -> qteDragging -> doorOpen -> home
 ```
 
 Important behavior:
 
 - `?skipIntro=1` should enter the homepage directly.
-- The video autoplays muted so browser autoplay does not block the flow.
+- The first interaction is clicking/tapping the Joi Map app icon inside the iPhone visual.
+- The two iPhone screenshots are temporary design placeholders. Later, the app icon and main UI can be replaced without changing the state machine.
+- The three knocks are synthesized with Web Audio after the app-icon user gesture.
+- The door approach should feel like a camera turn and push toward the peephole, then hand off to the peephole video.
+- The video starts only after the phone-to-door intro reaches `videoIntro`.
 - When the video ends, `door-handle-final-frame.png` overlays it immediately.
 - The visible freeze state uses `door-handle-clean-frame.png` plus `door-handle-lever-sprite.png`.
 - The transparent handle hotspot and pixel sprite layer should align with the actual handle in the final frame.
@@ -81,6 +91,8 @@ Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-on
 
 Good areas to improve:
 
+- Refine the iPhone-to-door camera turn so it feels continuous with the peephole video.
+- Replace the temporary Joi Map app icon and main UI screenshots with final approved art.
 - Refine the video-to-pixel-handle seam if a better final-frame asset is generated.
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
@@ -91,7 +103,7 @@ Good areas to improve:
 Avoid:
 
 - Replacing the static site with a heavy framework unless truly necessary.
-- Reintroducing the old phone/peephole intro as the primary flow.
+- Removing the phone-to-Joi-Map-to-door intro; it is now the primary flow.
 - Replacing the source-frame pixel handle with a mismatched 3D prop or decorative QTE outline.
 - Adding new product claims or fake links.
 - Turning the site into a generic SaaS landing page.

@@ -98,16 +98,311 @@ body[data-state="home"] .intro-root {
   color: var(--cream);
 }
 
-.qte-stage {
+.phone-sequence-stage,
+.door-approach-stage {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 520ms ease,
+    filter 520ms ease,
+    transform 520ms ease;
+}
+
+.phone-sequence-stage {
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(92, 154, 186, 0.3), transparent 34%),
+    linear-gradient(145deg, #151410, #090806 62%, #17100c);
+}
+
+body[data-state="phoneHome"] .phone-sequence-stage,
+body[data-state="mapOpening"] .phone-sequence-stage,
+body[data-state="mapHome"] .phone-sequence-stage,
+body[data-state="knocking"] .phone-sequence-stage,
+body[data-state="doorTurn"] .phone-sequence-stage {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body[data-state="doorTurn"] .phone-sequence-stage {
+  opacity: 0;
+  filter: blur(12px) brightness(0.72);
+  transform: perspective(900px) translate3d(-15vw, 7vh, -120px) rotateY(18deg) rotateZ(-7deg);
+}
+
+.phone-light {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 45% 38%, rgba(126, 202, 214, 0.32), transparent 26%),
+    radial-gradient(circle at 58% 62%, rgba(216, 148, 45, 0.22), transparent 32%);
+  filter: blur(28px);
+  opacity: 0.78;
+}
+
+.phone-device {
+  position: relative;
+  width: min(54vw, 430px);
+  aspect-ratio: 768 / 1654;
+  max-height: 92vh;
+  filter:
+    drop-shadow(0 42px 70px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+  transform:
+    translate3d(calc((var(--pointer-x) - 0.5) * -14px), calc((var(--pointer-y) - 0.5) * -10px), 0)
+    rotateX(calc((var(--pointer-y) - 0.5) * 3deg))
+    rotateY(calc((var(--pointer-x) - 0.5) * -4deg));
+  transform-style: preserve-3d;
+  transition:
+    transform 720ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    filter 520ms ease;
+}
+
+body[data-state="mapOpening"] .phone-device,
+body[data-state="mapHome"] .phone-device,
+body[data-state="knocking"] .phone-device {
+  transform: translate3d(0, -1.6vh, 0) scale(1.018);
+}
+
+body[data-state="knocking"] .phone-device {
+  animation: phone-knock 1180ms ease-in-out both;
+}
+
+.phone-visual {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition:
+    opacity 440ms ease,
+    transform 640ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    filter 440ms ease;
+}
+
+.phone-home-visual {
+  opacity: 1;
+}
+
+.phone-map-visual {
+  opacity: 0;
+  transform: scale(0.965);
+  filter: blur(5px) brightness(1.1);
+}
+
+body[data-state="mapOpening"] .phone-home-visual,
+body[data-state="mapHome"] .phone-home-visual,
+body[data-state="knocking"] .phone-home-visual,
+body[data-state="doorTurn"] .phone-home-visual {
+  opacity: 0;
+  transform: scale(1.06);
+  filter: blur(5px);
+}
+
+body[data-state="mapOpening"] .phone-map-visual,
+body[data-state="mapHome"] .phone-map-visual,
+body[data-state="knocking"] .phone-map-visual,
+body[data-state="doorTurn"] .phone-map-visual {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0) brightness(1);
+}
+
+.joi-map-app-hit {
+  position: absolute;
+  left: 52.6%;
+  top: 28.7%;
+  z-index: 3;
+  width: 17.8%;
+  height: 8.5%;
+  border: 0;
+  border-radius: 24%;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.joi-map-app-hit:focus-visible {
+  outline: 2px solid rgba(255, 246, 232, 0.82);
+  outline-offset: 6px;
+}
+
+body[data-state="mapOpening"] .joi-map-app-hit,
+body[data-state="mapHome"] .joi-map-app-hit,
+body[data-state="knocking"] .joi-map-app-hit,
+body[data-state="doorTurn"] .joi-map-app-hit {
+  pointer-events: none;
+}
+
+.tap-ripple {
+  position: absolute;
+  left: 61.5%;
+  top: 32.8%;
+  z-index: 2;
+  width: 18%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 28%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.86);
+  pointer-events: none;
+}
+
+body[data-state="mapOpening"] .tap-ripple {
+  animation: tap-ripple 520ms ease-out both;
+}
+
+.knock-field {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.knock-field span {
+  position: absolute;
+  width: min(72vw, 560px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 246, 232, 0.48);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.26);
+}
+
+body[data-state="knocking"] .knock-field span:nth-child(1) {
+  animation: knock-ring 380ms ease-out 0ms both;
+}
+
+body[data-state="knocking"] .knock-field span:nth-child(2) {
+  animation: knock-ring 380ms ease-out 360ms both;
+}
+
+body[data-state="knocking"] .knock-field span:nth-child(3) {
+  animation: knock-ring 420ms ease-out 730ms both;
+}
+
+.door-approach-stage {
+  z-index: 4;
+  background: #120b06;
+}
+
+body[data-state="doorTurn"] .door-approach-stage,
+body[data-state="peepholeApproach"] .door-approach-stage,
+body[data-state="videoIntro"] .door-approach-stage {
+  opacity: 1;
+}
+
+body[data-state="videoIntro"] .door-approach-stage {
+  opacity: 0;
+  filter: blur(8px) brightness(0.5);
+}
+
+.door-approach-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform-origin: 50% 46%;
+  transform: scale(1.08) translateX(5vw);
+  filter: saturate(0.98) brightness(0.92);
+  transition:
+    transform 1680ms cubic-bezier(0.16, 0.84, 0.16, 1),
+    filter 1680ms ease;
+}
+
+body[data-state="doorTurn"] .door-approach-bg {
+  animation: door-turn-in 980ms cubic-bezier(0.18, 0.74, 0.22, 1) both;
+}
+
+body[data-state="peepholeApproach"] .door-approach-bg,
+body[data-state="videoIntro"] .door-approach-bg {
+  transform: scale(4.85);
+  filter: saturate(1.02) brightness(0.8) blur(0.5px);
+}
+
+.turn-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 46%, transparent 0 18%, rgba(10, 6, 4, 0.18) 48%, rgba(7, 4, 3, 0.64) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.2), transparent 34% 66%, rgba(0, 0, 0, 0.24));
+}
+
+.peephole-lock {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: clamp(18px, 2.6vw, 34px);
+  aspect-ratio: 1;
+  border: 2px solid rgba(255, 232, 177, 0.72);
+  border-radius: 50%;
+  box-shadow:
+    0 0 24px rgba(255, 204, 124, 0.34),
+    0 0 0 999px rgba(0, 0, 0, 0);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition:
+    opacity 480ms ease,
+    transform 760ms cubic-bezier(0.18, 0.76, 0.2, 1);
+}
+
+body[data-state="doorTurn"] .peephole-lock,
+body[data-state="peepholeApproach"] .peephole-lock {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+body[data-state="peepholeApproach"] .peephole-lock {
+  transform: translate(-50%, -50%) scale(5.4);
+  opacity: 0.35;
+}
+
+.peephole-tunnel {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 46%, transparent 0 8%, rgba(0, 0, 0, 0.22) 12%, rgba(0, 0, 0, 0.84) 46%, #000 100%);
+  transition: opacity 900ms ease;
+}
+
+body[data-state="peepholeApproach"] .peephole-tunnel,
+body[data-state="videoIntro"] .peephole-tunnel {
+  opacity: 1;
+}
+
+.qte-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
   transform-origin: 40% 48%;
   background: #0b0907;
   transition:
+    opacity 520ms ease,
     transform 780ms cubic-bezier(0.2, 0.8, 0.22, 1),
-    opacity 680ms ease,
     filter 680ms ease;
+}
+
+body[data-state="videoIntro"] .qte-stage,
+body[data-state="qteLocked"] .qte-stage,
+body[data-state="qteDragging"] .qte-stage {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .doorway-video,
@@ -243,6 +538,59 @@ body[data-state="doorOpen"] .qte-stage {
 
 body[data-state="doorOpen"] .door-freeze {
   opacity: 1;
+}
+
+@keyframes tap-ripple {
+  0% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(0.72);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.42);
+  }
+}
+
+@keyframes knock-ring {
+  0% {
+    opacity: 0.52;
+    transform: scale(0.18);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes phone-knock {
+  0%,
+  16%,
+  44%,
+  72%,
+  100% {
+    transform: translate3d(0, -1.6vh, 0) scale(1.018);
+  }
+  9%,
+  36%,
+  64% {
+    transform: translate3d(-5px, -1.6vh, 0) rotateZ(-0.35deg) scale(1.02);
+  }
+  12%,
+  39%,
+  67% {
+    transform: translate3d(5px, -1.6vh, 0) rotateZ(0.32deg) scale(1.02);
+  }
+}
+
+@keyframes door-turn-in {
+  0% {
+    transform: perspective(900px) scale(1.18) translateX(18vw) rotateY(-10deg);
+    filter: saturate(0.86) brightness(0.62) blur(8px);
+  }
+  100% {
+    transform: perspective(900px) scale(1.08) translateX(0) rotateY(0deg);
+    filter: saturate(0.98) brightness(0.92) blur(0);
+  }
 }
 
 @keyframes threshold-open {
@@ -759,6 +1107,20 @@ body[data-state="home"] .site-home {
 }
 
 @media (max-width: 760px) {
+  .phone-device {
+    width: min(94vw, 420px);
+    max-height: 94vh;
+  }
+
+  .knock-field span {
+    width: 92vw;
+  }
+
+  body[data-state="peepholeApproach"] .door-approach-bg,
+  body[data-state="videoIntro"] .door-approach-bg {
+    transform: scale(5.35);
+  }
+
   .handle-hotspot {
     left: 58%;
     top: 61.2%;

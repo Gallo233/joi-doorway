@@ -9,16 +9,54 @@
     />
     <title>All Joi Doorway</title>
     <link rel="icon" href="data:," />
+    <link rel="preload" href="assets/iphone-home-joi-map.png" as="image" />
+    <link rel="preload" href="assets/joi-map-main-ui.png" as="image" />
+    <link rel="preload" href="assets/doorway-bg.png" as="image" />
     <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body data-state="videoIntro">
+  <body data-state="phoneHome">
     <div class="intro-root" id="introRoot" aria-live="off">
       <button class="skip-intro" id="skipIntro" type="button" aria-label="跳过开场">
         SKIP
       </button>
+
+      <section class="phone-sequence-stage" aria-label="Open Joi Map on iPhone">
+        <div class="phone-light" aria-hidden="true"></div>
+        <div class="phone-device" id="phoneDevice">
+          <img
+            class="phone-visual phone-home-visual"
+            src="assets/iphone-home-joi-map.png"
+            alt="iPhone home screen with Joi Map app icon"
+          />
+          <img
+            class="phone-visual phone-map-visual"
+            src="assets/joi-map-main-ui.png"
+            alt="Joi Map app main interface"
+          />
+          <button
+            class="joi-map-app-hit"
+            id="joiMapApp"
+            type="button"
+            aria-label="打开 Joi Map"
+          ></button>
+          <span class="tap-ripple" aria-hidden="true"></span>
+        </div>
+        <div class="knock-field" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+
+      <section class="door-approach-stage" aria-label="Approach the peephole">
+        <img class="door-approach-bg" src="assets/doorway-bg.png" alt="" aria-hidden="true" />
+        <div class="turn-vignette" aria-hidden="true"></div>
+        <div class="peephole-lock" aria-hidden="true"></div>
+        <div class="peephole-tunnel" aria-hidden="true"></div>
+      </section>
 
       <section class="qte-stage" aria-label="Joi Doorway cinematic handle entrance">
         <video
@@ -27,7 +65,6 @@
           src="assets/doorway-qte-intro.mp4"
           poster="assets/door-handle-final-frame.png"
           muted
-          autoplay
           playsinline
           preload="auto"
         ></video>

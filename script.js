@@ -9,7 +9,7 @@ const dialogueText = {
 };
 
 const state = {
-  current: "videoIntro",
+  current: "phoneHome",
   qteProgress: 0,
   dragging: false,
   dragStartY: 0,
@@ -23,6 +23,7 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const doorwayVideo = document.querySelector("#doorwayVideo");
 const handlePixelShell = document.querySelector("#handlePixelShell");
 const handleHotspot = document.querySelector("#handleHotspot");
+const joiMapApp = document.querySelector("#joiMapApp");
 const siteHome = document.querySelector("#siteHome");
 const skipIntro = document.querySelector("#skipIntro");
 const replayIntro = document.querySelector("#replayIntro");
@@ -33,7 +34,9 @@ const cards = Array.from(document.querySelectorAll("[data-joi-card]"));
 const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 
 let homeTimer = 0;
+let introTimers = [];
 let shaderController = null;
+let knockAudioContext = null;
 
 const HANDLE_FRAME = {
   width: 1256,
@@ -44,6 +47,16 @@ const HANDLE_FRAME = {
 
 function clamp(value, min = 0, max = 1) {
   return Math.max(min, Math.min(max, value));
+}
+
+function clearIntroTimers() {
+  introTimers.forEach((timer) => window.clearTimeout(timer));
+  introTimers = [];
+}
+
+function queueIntro(callback, delay) {
+  const timer = window.setTimeout(callback, reduceMotion ? Math.min(delay, 140) : delay);
+  introTimers.push(timer);
 }
 
 function setQteProgress(value) {
@@ -60,7 +73,13 @@ function setState(nextState) {
   state.current = nextState;
   body.dataset.state = nextState;
 
+  if (nextState === "videoIntro") {
+    playDoorwayVideo();
+  }
+
   if (nextState === "home") {
+    clearIntroTimers();
+    if (doorwayVideo) doorwayVideo.pause();
     siteHome.removeAttribute("aria-hidden");
     initShader();
     window.requestAnimationFrame(() => {
@@ -74,12 +93,21 @@ function setState(nextState) {
 }
 
 function startIntro() {
+  clearIntroTimers();
   state.completed = false;
   state.dragging = false;
   setQteProgress(0);
-  setState("videoIntro");
+  setState("phoneHome");
   window.scrollTo({ top: 0, behavior: "auto" });
 
+  if (doorwayVideo) {
+    doorwayVideo.pause();
+    doorwayVideo.currentTime = 0;
+  }
+  updateHandleLayerMetrics();
+}
+
+function playDoorwayVideo() {
   if (!doorwayVideo) {
     armQte();
     return;
@@ -90,6 +118,61 @@ function startIntro() {
   doorwayVideo.play().catch(() => {
     armQte();
   });
+}
+
+function ensureKnockAudio() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return null;
+  if (!knockAudioContext) {
+    knockAudioContext = new AudioContext();
+  }
+  if (knockAudioContext.state === "suspended") {
+    knockAudioContext.resume().catch(() => {});
+  }
+  return knockAudioContext;
+}
+
+function scheduleKnock(ctx, time, strength = 1) {
+  const osc = ctx.createOscillator();
+  const thump = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(180, time);
+  filter.frequency.exponentialRampToValueAtTime(58, time + 0.16);
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(118, time);
+  osc.frequency.exponentialRampToValueAtTime(46, time + 0.16);
+  thump.gain.setValueAtTime(0.0001, time);
+  thump.gain.exponentialRampToValueAtTime(0.26 * strength, time + 0.012);
+  thump.gain.exponentialRampToValueAtTime(0.0001, time + 0.2);
+  osc.connect(filter);
+  filter.connect(thump);
+  thump.connect(ctx.destination);
+  osc.start(time);
+  osc.stop(time + 0.22);
+}
+
+function playKnockPattern() {
+  const ctx = ensureKnockAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime + 0.035;
+  scheduleKnock(ctx, now, 0.9);
+  scheduleKnock(ctx, now + 0.36, 0.96);
+  scheduleKnock(ctx, now + 0.75, 1.05);
+}
+
+function openJoiMapFromPhone() {
+  if (state.current !== "phoneHome") return;
+  ensureKnockAudio();
+  setState("mapOpening");
+  queueIntro(() => setState("mapHome"), 540);
+  queueIntro(() => {
+    setState("knocking");
+    playKnockPattern();
+  }, 1180);
+  queueIntro(() => setState("doorTurn"), 2600);
+  queueIntro(() => setState("peepholeApproach"), 3580);
+  queueIntro(() => setState("videoIntro"), 5480);
 }
 
 function armQte() {
@@ -140,6 +223,10 @@ if (doorwayVideo) {
       doorwayVideo.play().catch(() => {});
     }
   });
+}
+
+if (joiMapApp) {
+  joiMapApp.addEventListener("click", openJoiMapFromPhone);
 }
 
 if (handleHotspot) {
