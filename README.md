@@ -2,7 +2,7 @@
 
 Joi Doorway is a static, embeddable entrance page for the All Joi personal-site ecosystem.
 
-The current version begins on an iPhone home screen. The visitor taps Joi Map, sees the map interface open, hears three knocks, then the camera turns toward the door and pushes into the peephole sequence. After the generated first-person doorway video reaches its final door-handle frame, dragging downward rotates a pixel cutout taken from that same frame before opening the All Joi studio homepage.
+The current version begins on an iPhone home screen. The visitor taps Joi Map, sees the map interface open, hears three knocks, then the camera turns toward the door and stops at an interactive peephole. Swiping/dragging upward opens the peephole and hands off to the generated first-person doorway video. After the video reaches its final door-handle frame, dragging downward rotates a pixel cutout taken from that same frame before opening the All Joi studio homepage.
 
 ## What Is Included
 
@@ -44,16 +44,18 @@ Useful URL flags:
 The active state flow is:
 
 ```text
-phoneHome -> mapOpening -> mapHome -> knocking -> doorTurn -> peepholeApproach -> videoIntro -> qteLocked -> qteDragging -> doorOpen -> home
+phoneHome -> mapOpening -> mapHome -> knocking -> doorTurn -> peepholeApproach -> peepholeLocked -> peepholeDragging -> peepholeOpening -> videoIntro -> qteLocked -> qteDragging -> doorOpen -> home
 ```
 
 Key behavior:
 
 - The visitor starts on an iPhone screen and clicks the Joi Map app icon.
+- The simulator toolbar region in the temporary iPhone screenshots is cropped out in CSS.
 - Joi Map opens into the temporary main-interface visual.
 - The page plays three synthesized knock sounds through Web Audio after the user gesture.
-- The camera turns to the door, pushes into the peephole, and hands off to `assets/doorway-qte-intro.mp4`.
-- `assets/doorway-qte-intro.mp4` starts only after the phone-to-door sequence completes.
+- The camera turns to the door and pushes into the peephole.
+- The peephole waits for upward drag/touch swipe or mouse-wheel up before opening.
+- `assets/doorway-qte-intro.mp4` starts only after the peephole interaction completes.
 - When the video ends, `assets/door-handle-final-frame.png` appears immediately above it.
 - A transparent sprite cut from the original video frame covers the static handle.
 - The visitor presses the handle and drags downward.
@@ -90,8 +92,9 @@ node --check script.js
 
 Browser-tested locally:
 
-- Desktop phone intro: clicking the Joi Map icon opens the app visual, enters the knock/door approach, and starts the peephole video with no console errors.
-- Mobile phone intro: the icon hit target remains aligned, no horizontal overflow appears, and the flow reaches the video stage.
+- Desktop phone intro: clicking the Joi Map icon opens the app visual, enters the knock/door approach, and stops at the peephole lock with no console errors.
+- Desktop peephole: the camera stops at `peepholeLocked`; upward drag opens it and starts the video.
+- Mobile phone intro and peephole: the icon and peephole hit targets remain aligned, no horizontal overflow appears, and upward drag reaches the video stage.
 - Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
 - Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.

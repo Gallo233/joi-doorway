@@ -11,9 +11,13 @@ const dialogueText = {
 const state = {
   current: "phoneHome",
   qteProgress: 0,
+  peepholeProgress: 0,
   dragging: false,
+  peepholeDragging: false,
   dragStartY: 0,
   dragStartProgress: 0,
+  peepholeStartY: 0,
+  peepholeStartProgress: 0,
   completed: false,
   pointerFrame: 0,
   accent: 0.18,
@@ -24,6 +28,7 @@ const doorwayVideo = document.querySelector("#doorwayVideo");
 const handlePixelShell = document.querySelector("#handlePixelShell");
 const handleHotspot = document.querySelector("#handleHotspot");
 const joiMapApp = document.querySelector("#joiMapApp");
+const peepholeHit = document.querySelector("#peepholeHit");
 const siteHome = document.querySelector("#siteHome");
 const skipIntro = document.querySelector("#skipIntro");
 const replayIntro = document.querySelector("#replayIntro");
@@ -35,6 +40,7 @@ const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 
 let homeTimer = 0;
 let introTimers = [];
+let peepholeWheelTimer = 0;
 let shaderController = null;
 let knockAudioContext = null;
 
@@ -68,17 +74,49 @@ function setQteProgress(value) {
   }
 }
 
+function setPeepholeProgress(value) {
+  state.peepholeProgress = clamp(value);
+  const progress = state.peepholeProgress;
+  root.style.setProperty("--peephole-progress", progress.toFixed(3));
+  root.style.setProperty("--peephole-scale", (0.92 + progress * 0.08).toFixed(3));
+  root.style.setProperty("--peephole-view-opacity", (0.18 + progress * 0.72).toFixed(3));
+  root.style.setProperty("--peephole-view-scale", (0.82 + progress * 0.18).toFixed(3));
+  root.style.setProperty("--peephole-view-blur", `${((1 - progress) * 7).toFixed(2)}px`);
+  root.style.setProperty("--peephole-shutter-y", `${(progress * -82).toFixed(2)}%`);
+  root.style.setProperty("--peephole-pull-opacity", Math.max(0.12, 0.9 - progress * 0.7).toFixed(3));
+  root.style.setProperty("--peephole-tunnel-opacity", (1 - progress * 0.68).toFixed(3));
+
+  if (
+    !state.completed &&
+    (state.current === "peepholeLocked" || state.current === "peepholeDragging") &&
+    state.peepholeProgress >= 0.72
+  ) {
+    openPeephole();
+  }
+}
+
 function setState(nextState) {
   window.clearTimeout(homeTimer);
+  const previousState = state.current;
   state.current = nextState;
   body.dataset.state = nextState;
 
+  if (nextState === "peepholeLocked") {
+    state.peepholeDragging = false;
+    if (previousState !== "peepholeDragging") {
+      setPeepholeProgress(0);
+    }
+    peepholeHit?.focus({ preventScroll: true });
+  }
+
   if (nextState === "videoIntro") {
+    setPeepholeProgress(1);
     playDoorwayVideo();
   }
 
   if (nextState === "home") {
     clearIntroTimers();
+    window.clearTimeout(peepholeWheelTimer);
     if (doorwayVideo) doorwayVideo.pause();
     siteHome.removeAttribute("aria-hidden");
     initShader();
@@ -94,9 +132,12 @@ function setState(nextState) {
 
 function startIntro() {
   clearIntroTimers();
+  window.clearTimeout(peepholeWheelTimer);
   state.completed = false;
   state.dragging = false;
+  state.peepholeDragging = false;
   setQteProgress(0);
+  setPeepholeProgress(0);
   setState("phoneHome");
   window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -172,7 +213,40 @@ function openJoiMapFromPhone() {
   }, 1180);
   queueIntro(() => setState("doorTurn"), 2600);
   queueIntro(() => setState("peepholeApproach"), 3580);
-  queueIntro(() => setState("videoIntro"), 5480);
+  queueIntro(() => setState("peepholeLocked"), 5480);
+}
+
+function openPeephole() {
+  if (
+    state.current !== "peepholeLocked" &&
+    state.current !== "peepholeDragging" &&
+    state.current !== "peepholeOpening"
+  ) {
+    return;
+  }
+
+  state.peepholeDragging = false;
+  window.clearTimeout(peepholeWheelTimer);
+  setState("peepholeOpening");
+  setPeepholeProgress(1);
+  queueIntro(() => setState("videoIntro"), reduceMotion ? 80 : 520);
+}
+
+function resetPeepholeAfterRelease() {
+  const start = state.peepholeProgress;
+  const startedAt = performance.now();
+  const duration = reduceMotion ? 40 : 260;
+
+  function tick(now) {
+    const t = clamp((now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    setPeepholeProgress(start * (1 - eased));
+    if (t < 1 && state.current === "peepholeLocked") {
+      window.requestAnimationFrame(tick);
+    }
+  }
+
+  window.requestAnimationFrame(tick);
 }
 
 function armQte() {
@@ -227,6 +301,80 @@ if (doorwayVideo) {
 
 if (joiMapApp) {
   joiMapApp.addEventListener("click", openJoiMapFromPhone);
+}
+
+if (peepholeHit) {
+  peepholeHit.addEventListener("pointerdown", (event) => {
+    if (state.current !== "peepholeLocked" && state.current !== "peepholeDragging") return;
+    event.preventDefault();
+    window.clearTimeout(peepholeWheelTimer);
+    state.peepholeDragging = true;
+    state.peepholeStartY = event.clientY;
+    state.peepholeStartProgress = state.peepholeProgress;
+    setState("peepholeDragging");
+    peepholeHit.setPointerCapture(event.pointerId);
+  });
+
+  peepholeHit.addEventListener("pointermove", (event) => {
+    if (!state.peepholeDragging || state.current === "peepholeOpening") return;
+    const dragDistance = clamp(window.innerHeight * 0.2, 112, 190);
+    const delta = state.peepholeStartY - event.clientY;
+    setPeepholeProgress(state.peepholeStartProgress + delta / dragDistance);
+  });
+
+  peepholeHit.addEventListener("pointerup", (event) => {
+    if (peepholeHit.hasPointerCapture(event.pointerId)) {
+      peepholeHit.releasePointerCapture(event.pointerId);
+    }
+
+    if (!state.peepholeDragging || state.current === "peepholeOpening") return;
+    state.peepholeDragging = false;
+
+    if (state.peepholeProgress >= 0.68) {
+      openPeephole();
+      return;
+    }
+
+    setState("peepholeLocked");
+    resetPeepholeAfterRelease();
+  });
+
+  peepholeHit.addEventListener("pointercancel", () => {
+    state.peepholeDragging = false;
+    if (state.current !== "peepholeOpening") {
+      setState("peepholeLocked");
+      resetPeepholeAfterRelease();
+    }
+  });
+
+  peepholeHit.addEventListener(
+    "wheel",
+    (event) => {
+      if (state.current !== "peepholeLocked" && state.current !== "peepholeDragging") return;
+      event.preventDefault();
+      window.clearTimeout(peepholeWheelTimer);
+      if (state.current === "peepholeLocked") {
+        setState("peepholeDragging");
+      }
+      setPeepholeProgress(state.peepholeProgress - event.deltaY / 420);
+      if (state.current !== "peepholeOpening") {
+        peepholeWheelTimer = window.setTimeout(() => {
+          if (state.current === "peepholeDragging") {
+            setState("peepholeLocked");
+            resetPeepholeAfterRelease();
+          }
+        }, 220);
+      }
+    },
+    { passive: false },
+  );
+
+  peepholeHit.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openPeephole();
+    }
+  });
 }
 
 if (handleHotspot) {

@@ -11,6 +11,14 @@
   --leaf: #94b983;
   --night: #15130f;
   --qte-progress: 0;
+  --peephole-progress: 0;
+  --peephole-scale: 0.92;
+  --peephole-view-opacity: 0.18;
+  --peephole-view-scale: 0.82;
+  --peephole-view-blur: 7px;
+  --peephole-shutter-y: 0%;
+  --peephole-pull-opacity: 0.9;
+  --peephole-tunnel-opacity: 1;
   --pointer-x: 0.5;
   --pointer-y: 0.5;
   --scroll-progress: 0;
@@ -148,8 +156,10 @@ body[data-state="doorTurn"] .phone-sequence-stage {
 .phone-device {
   position: relative;
   width: min(54vw, 430px);
-  aspect-ratio: 768 / 1654;
+  aspect-ratio: 768 / 1546;
   max-height: 92vh;
+  overflow: hidden;
+  --phone-image-y: -6.53%;
   filter:
     drop-shadow(0 42px 70px rgba(0, 0, 0, 0.5))
     drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
@@ -175,10 +185,10 @@ body[data-state="knocking"] .phone-device {
 
 .phone-visual {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
   user-select: none;
   -webkit-user-drag: none;
   transition:
@@ -189,11 +199,12 @@ body[data-state="knocking"] .phone-device {
 
 .phone-home-visual {
   opacity: 1;
+  transform: translateY(var(--phone-image-y));
 }
 
 .phone-map-visual {
   opacity: 0;
-  transform: scale(0.965);
+  transform: translateY(var(--phone-image-y)) scale(0.965);
   filter: blur(5px) brightness(1.1);
 }
 
@@ -202,7 +213,7 @@ body[data-state="mapHome"] .phone-home-visual,
 body[data-state="knocking"] .phone-home-visual,
 body[data-state="doorTurn"] .phone-home-visual {
   opacity: 0;
-  transform: scale(1.06);
+  transform: translateY(var(--phone-image-y)) scale(1.06);
   filter: blur(5px);
 }
 
@@ -211,17 +222,17 @@ body[data-state="mapHome"] .phone-map-visual,
 body[data-state="knocking"] .phone-map-visual,
 body[data-state="doorTurn"] .phone-map-visual {
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(var(--phone-image-y)) scale(1);
   filter: blur(0) brightness(1);
 }
 
 .joi-map-app-hit {
   position: absolute;
   left: 52.6%;
-  top: 28.7%;
+  top: 23.7%;
   z-index: 3;
   width: 17.8%;
-  height: 8.5%;
+  height: 9.1%;
   border: 0;
   border-radius: 24%;
   background: transparent;
@@ -244,7 +255,7 @@ body[data-state="doorTurn"] .joi-map-app-hit {
 .tap-ripple {
   position: absolute;
   left: 61.5%;
-  top: 32.8%;
+  top: 28.1%;
   z-index: 2;
   width: 18%;
   aspect-ratio: 1;
@@ -296,8 +307,17 @@ body[data-state="knocking"] .knock-field span:nth-child(3) {
 
 body[data-state="doorTurn"] .door-approach-stage,
 body[data-state="peepholeApproach"] .door-approach-stage,
+body[data-state="peepholeLocked"] .door-approach-stage,
+body[data-state="peepholeDragging"] .door-approach-stage,
+body[data-state="peepholeOpening"] .door-approach-stage,
 body[data-state="videoIntro"] .door-approach-stage {
   opacity: 1;
+}
+
+body[data-state="peepholeLocked"] .door-approach-stage,
+body[data-state="peepholeDragging"] .door-approach-stage,
+body[data-state="peepholeOpening"] .door-approach-stage {
+  pointer-events: auto;
 }
 
 body[data-state="videoIntro"] .door-approach-stage {
@@ -325,6 +345,9 @@ body[data-state="doorTurn"] .door-approach-bg {
 }
 
 body[data-state="peepholeApproach"] .door-approach-bg,
+body[data-state="peepholeLocked"] .door-approach-bg,
+body[data-state="peepholeDragging"] .door-approach-bg,
+body[data-state="peepholeOpening"] .door-approach-bg,
 body[data-state="videoIntro"] .door-approach-bg {
   transform: scale(4.85);
   filter: saturate(1.02) brightness(0.8) blur(0.5px);
@@ -358,14 +381,153 @@ body[data-state="videoIntro"] .door-approach-bg {
 }
 
 body[data-state="doorTurn"] .peephole-lock,
-body[data-state="peepholeApproach"] .peephole-lock {
+body[data-state="peepholeApproach"] .peephole-lock,
+body[data-state="peepholeLocked"] .peephole-lock,
+body[data-state="peepholeDragging"] .peephole-lock,
+body[data-state="peepholeOpening"] .peephole-lock {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-body[data-state="peepholeApproach"] .peephole-lock {
+body[data-state="peepholeApproach"] .peephole-lock,
+body[data-state="peepholeLocked"] .peephole-lock,
+body[data-state="peepholeDragging"] .peephole-lock,
+body[data-state="peepholeOpening"] .peephole-lock {
   transform: translate(-50%, -50%) scale(5.4);
   opacity: 0.35;
+}
+
+.peephole-interaction {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  z-index: 5;
+  width: clamp(232px, 34vw, 410px);
+  aspect-ratio: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform:
+    translate(-50%, -50%)
+    scale(var(--peephole-scale));
+  transition:
+    opacity 420ms ease,
+    transform 520ms cubic-bezier(0.18, 0.74, 0.2, 1),
+    filter 420ms ease;
+}
+
+body[data-state="peepholeLocked"] .peephole-interaction,
+body[data-state="peepholeDragging"] .peephole-interaction,
+body[data-state="peepholeOpening"] .peephole-interaction {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body[data-state="peepholeOpening"] .peephole-interaction {
+  filter: blur(1px) brightness(1.18);
+  transform: translate(-50%, -50%) scale(1.18);
+}
+
+.peephole-hit {
+  position: absolute;
+  inset: -18%;
+  z-index: 4;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: ns-resize;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.peephole-hit:focus-visible {
+  outline: 1px solid rgba(255, 246, 232, 0.78);
+  outline-offset: 12px;
+}
+
+.peephole-lens {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 224, 165, 0.66);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 42% 34%, rgba(255, 246, 226, 0.34), transparent 14%),
+    radial-gradient(circle at 54% 58%, rgba(74, 43, 20, 0.72), rgba(10, 6, 4, 0.96) 66%);
+  box-shadow:
+    0 0 0 1px rgba(30, 17, 9, 0.8) inset,
+    0 0 34px rgba(255, 196, 105, 0.24),
+    0 34px 80px rgba(0, 0, 0, 0.52);
+}
+
+.peephole-view {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 220, 150, 0.6), rgba(128, 70, 28, 0.3) 34%, rgba(10, 6, 4, 0.88) 76%),
+    linear-gradient(140deg, rgba(126, 202, 214, 0.18), rgba(239, 124, 104, 0.16));
+  opacity: var(--peephole-view-opacity);
+  transform: scale(var(--peephole-view-scale));
+  filter: blur(var(--peephole-view-blur));
+}
+
+.peephole-shutter {
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  top: -18%;
+  height: 136%;
+  border-radius: 42% 42% 50% 50%;
+  background:
+    linear-gradient(180deg, rgba(255, 220, 150, 0.34), rgba(72, 38, 17, 0.84) 28%, rgba(12, 7, 4, 0.98) 72%),
+    radial-gradient(circle at 48% 22%, rgba(255, 247, 220, 0.28), transparent 18%);
+  box-shadow:
+    0 20px 42px rgba(0, 0, 0, 0.52),
+    0 -1px 0 rgba(255, 232, 178, 0.42) inset;
+  transform: translateY(var(--peephole-shutter-y));
+  will-change: transform;
+}
+
+.peephole-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 35% 24%, rgba(255, 250, 229, 0.48), transparent 11%),
+    radial-gradient(circle at 64% 70%, transparent 0 40%, rgba(0, 0, 0, 0.36) 72%, rgba(0, 0, 0, 0.82) 100%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 30% 64%, rgba(255, 214, 145, 0.16));
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.peephole-pull {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  display: grid;
+  width: 58px;
+  height: 108px;
+  place-items: end center;
+  opacity: var(--peephole-pull-opacity);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.peephole-pull::before {
+  content: "";
+  width: 1px;
+  height: 74px;
+  background: linear-gradient(180deg, transparent, rgba(255, 246, 232, 0.74));
+}
+
+.peephole-pull span {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-top: 2px solid rgba(255, 246, 232, 0.8);
+  border-left: 2px solid rgba(255, 246, 232, 0.8);
+  transform: translateY(-8px) rotate(45deg);
+  animation: peephole-cue 1180ms ease-in-out infinite;
 }
 
 .peephole-tunnel {
@@ -379,8 +541,11 @@ body[data-state="peepholeApproach"] .peephole-lock {
 }
 
 body[data-state="peepholeApproach"] .peephole-tunnel,
+body[data-state="peepholeLocked"] .peephole-tunnel,
+body[data-state="peepholeDragging"] .peephole-tunnel,
+body[data-state="peepholeOpening"] .peephole-tunnel,
 body[data-state="videoIntro"] .peephole-tunnel {
-  opacity: 1;
+  opacity: var(--peephole-tunnel-opacity);
 }
 
 .qte-stage {
@@ -590,6 +755,18 @@ body[data-state="doorOpen"] .door-freeze {
   100% {
     transform: perspective(900px) scale(1.08) translateX(0) rotateY(0deg);
     filter: saturate(0.98) brightness(0.92) blur(0);
+  }
+}
+
+@keyframes peephole-cue {
+  0%,
+  100% {
+    opacity: 0.38;
+    transform: translateY(0) rotate(45deg);
+  }
+  44% {
+    opacity: 0.9;
+    transform: translateY(-14px) rotate(45deg);
   }
 }
 
@@ -1117,8 +1294,19 @@ body[data-state="home"] .site-home {
   }
 
   body[data-state="peepholeApproach"] .door-approach-bg,
+  body[data-state="peepholeLocked"] .door-approach-bg,
+  body[data-state="peepholeDragging"] .door-approach-bg,
+  body[data-state="peepholeOpening"] .door-approach-bg,
   body[data-state="videoIntro"] .door-approach-bg {
     transform: scale(5.35);
+  }
+
+  .peephole-interaction {
+    width: min(76vw, 330px);
+  }
+
+  .peephole-pull {
+    height: 96px;
   }
 
   .handle-hotspot {
