@@ -15,7 +15,7 @@
     <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260702d" />
+    <link rel="stylesheet" href="styles.css?v=20260702h" />
   </head>
   <body data-state="phoneHome">
     <div class="intro-root" id="introRoot" aria-live="off">
@@ -154,28 +154,39 @@
           <div
             class="all-joi-signature"
             id="allJoiSignature"
-            role="img"
-            aria-label="all joi handwritten signature"
+            aria-label="Interactive all joi title"
           >
             <div
               class="all-joi-lottie"
               id="allJoiLottie"
-              data-lottie-src="assets/all-joi-hello-lottie.json?v=20260702d"
+              data-lottie-src="assets/all-joi-hello-lottie.json?v=20260702h"
               aria-hidden="true"
             ></div>
-            <svg
-              class="all-joi-signature-fallback"
-              viewBox="0 0 820 210"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <text class="hello-word" x="58" y="142">all joi</text>
-            </svg>
+            <h1 class="all-joi-title" id="studioTitle" aria-label="all joi">
+              <svg
+                class="all-joi-wordmark"
+                viewBox="0 0 780 320"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <g class="all-joi-depth-stack">
+                  <text class="all-joi-depth depth-3" x="38" y="224">all joi</text>
+                  <text class="all-joi-depth depth-2" x="38" y="224">all joi</text>
+                  <text class="all-joi-depth depth-1" x="38" y="224">all joi</text>
+                </g>
+                <text class="all-joi-solid" x="38" y="224">all joi</text>
+                <text class="all-joi-letters" x="38" y="224">
+                  <tspan class="hello-letter" style="--i: 0; --letter-length: 430">a</tspan>
+                  <tspan class="hello-letter" style="--i: 1; --letter-length: 280">l</tspan>
+                  <tspan class="hello-letter" style="--i: 2; --letter-length: 280">l</tspan>
+                  <tspan class="hello-space"> </tspan>
+                  <tspan class="hello-letter" style="--i: 3; --letter-length: 360">j</tspan>
+                  <tspan class="hello-letter" style="--i: 4; --letter-length: 380">o</tspan>
+                  <tspan class="hello-letter" style="--i: 5; --letter-length: 260">i</tspan>
+                </text>
+              </svg>
+            </h1>
           </div>
-          <h1 id="studioTitle">
-            <span>JOI</span>
-            <span>DOORWAY</span>
-          </h1>
         </div>
 
         <aside class="joi-console" aria-label="Joi live console" data-reveal>
@@ -309,6 +320,6 @@
     </main>
 
     <script src="assets/lottie.min.js?v=5.12.2"></script>
-    <script src="script.js?v=20260702d"></script>
+    <script src="script.js?v=20260702h"></script>
   </body>
 </html>

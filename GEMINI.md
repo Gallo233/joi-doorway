@@ -92,7 +92,8 @@ The current homepage is an original Joi ecosystem studio inspired by the interac
 - pointer coordinate metadata
 - GMT+8 time display
 - full-screen WebGL shader background
-- an "all joi" handwritten Lottie accent on the homepage first screen only, not in the entrance sequence
+- a large "all joi" handwritten wordmark on the homepage first screen only, not in the entrance sequence
+- the homepage wordmark writes in letter-by-letter, then becomes pointer-driven with a 3D floating/tilt effect
 - large editorial typography
 - project cards that update Joi dialogue and shader accent state
 
@@ -109,7 +110,7 @@ Good areas to improve:
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
-- Refine the homepage "all joi" signature timing while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
+- Refine the homepage "all joi" wordmark timing and 3D hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
 - Optimize video loading and poster strategy.
 

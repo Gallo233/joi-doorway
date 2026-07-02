@@ -47,6 +47,7 @@ let shaderController = null;
 let knockAudioContext = null;
 let allJoiAnimation = null;
 let allJoiSignatureReady = false;
+let allJoiFloatTimer = 0;
 
 const HANDLE_FRAME = {
   width: 1256,
@@ -144,7 +145,9 @@ function startIntro() {
   state.peepholeDragging = false;
   setQteProgress(0);
   setPeepholeProgress(0);
-  allJoiSignature?.classList.remove("is-writing");
+  window.clearTimeout(allJoiFloatTimer);
+  allJoiSignature?.classList.remove("is-writing", "is-float-ready");
+  resetAllJoiFloat();
   setState("phoneHome");
   window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -324,19 +327,99 @@ function initAllJoiSignature() {
   allJoiAnimation.addEventListener("data_failed", () => {
     allJoiSignature.classList.remove("is-lottie-loaded");
   });
+
+  allJoiAnimation.addEventListener("complete", () => {
+    finishAllJoiSignature();
+  });
+}
+
+function setAllJoiFloatVars(values = {}) {
+  if (!allJoiSignature) return;
+  const defaults = {
+    tiltX: "0deg",
+    tiltY: "0deg",
+    floatX: "0px",
+    floatY: "0px",
+    shadowX: "14px",
+    shadowY: "22px",
+    shadowXSoft: "9px",
+    shadowYSoft: "15px",
+    depthX: "18px",
+    depthY: "22px",
+  };
+  const next = { ...defaults, ...values };
+  allJoiSignature.style.setProperty("--tilt-x", next.tiltX);
+  allJoiSignature.style.setProperty("--tilt-y", next.tiltY);
+  allJoiSignature.style.setProperty("--float-x", next.floatX);
+  allJoiSignature.style.setProperty("--float-y", next.floatY);
+  allJoiSignature.style.setProperty("--shadow-x", next.shadowX);
+  allJoiSignature.style.setProperty("--shadow-y", next.shadowY);
+  allJoiSignature.style.setProperty("--shadow-x-soft", next.shadowXSoft);
+  allJoiSignature.style.setProperty("--shadow-y-soft", next.shadowYSoft);
+  allJoiSignature.style.setProperty("--depth-x", next.depthX);
+  allJoiSignature.style.setProperty("--depth-y", next.depthY);
+}
+
+function finishAllJoiSignature() {
+  if (!allJoiSignature || state.current !== "home") return;
+  allJoiSignature.classList.add("is-float-ready");
 }
 
 function restartAllJoiSignature() {
   if (!allJoiSignature) return;
   initAllJoiSignature();
-  allJoiSignature.classList.remove("is-writing");
+  window.clearTimeout(allJoiFloatTimer);
+  setAllJoiFloatVars();
+  allJoiSignature.classList.remove("is-writing", "is-float-ready");
   void allJoiSignature.offsetWidth;
   allJoiSignature.classList.add("is-writing");
 
   if (allJoiAnimation) {
     allJoiAnimation.goToAndPlay(0, true);
   }
+
+  allJoiFloatTimer = window.setTimeout(
+    finishAllJoiSignature,
+    reduceMotion ? 0 : 2380,
+  );
 }
+
+function updateAllJoiFloat(event) {
+  if (
+    !allJoiSignature ||
+    !allJoiSignature.classList.contains("is-float-ready") ||
+    reduceMotion
+  ) {
+    return;
+  }
+
+  const rect = allJoiSignature.getBoundingClientRect();
+  const x = clamp((event.clientX - rect.left) / Math.max(rect.width, 1));
+  const y = clamp((event.clientY - rect.top) / Math.max(rect.height, 1));
+  const dx = x - 0.5;
+  const dy = y - 0.5;
+
+  setAllJoiFloatVars({
+    tiltX: `${(-dy * 13).toFixed(2)}deg`,
+    tiltY: `${(dx * 20).toFixed(2)}deg`,
+    floatX: `${(dx * 18).toFixed(2)}px`,
+    floatY: `${(dy * 13).toFixed(2)}px`,
+    shadowX: `${(14 - dx * 24).toFixed(2)}px`,
+    shadowY: `${(22 - dy * 16).toFixed(2)}px`,
+    shadowXSoft: `${(9 - dx * 15).toFixed(2)}px`,
+    shadowYSoft: `${(15 - dy * 11).toFixed(2)}px`,
+    depthX: `${(18 + dx * 18).toFixed(2)}px`,
+    depthY: `${(22 + dy * 14).toFixed(2)}px`,
+  });
+}
+
+function resetAllJoiFloat() {
+  setAllJoiFloatVars();
+}
+
+allJoiSignature?.addEventListener("pointermove", updateAllJoiFloat);
+allJoiSignature?.addEventListener("pointerleave", resetAllJoiFloat);
+allJoiSignature?.addEventListener("pointercancel", resetAllJoiFloat);
 
 if (doorwayVideo) {
   doorwayVideo.addEventListener("ended", armQte);
