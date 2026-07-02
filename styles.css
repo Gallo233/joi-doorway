@@ -918,6 +918,40 @@ body[data-state="doorOpen"] .door-freeze {
   }
 }
 
+@keyframes hello-write {
+  0% {
+    stroke-dashoffset: var(--path-length, 900);
+    opacity: 0.4;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.96;
+  }
+}
+
+@keyframes hello-fill {
+  0% {
+    fill: transparent;
+  }
+  100% {
+    fill: currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hello-word {
+    fill: currentColor;
+    stroke-dashoffset: 0;
+  }
+
+  .all-joi-signature.is-writing .hello-word {
+    animation: none;
+  }
+}
+
 .site-home {
   position: relative;
   min-height: 100vh;
@@ -1106,6 +1140,74 @@ body[data-state="home"] .site-home {
 
 .studio-title {
   margin-bottom: clamp(46px, 8vh, 92px);
+}
+
+.all-joi-signature {
+  position: relative;
+  width: min(760px, 100%);
+  height: clamp(92px, 13vw, 152px);
+  margin: 0 0 clamp(18px, 3.2vw, 38px);
+  color: rgba(25, 23, 20, 0.92);
+}
+
+.all-joi-lottie,
+.all-joi-signature-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.all-joi-lottie {
+  z-index: 2;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.all-joi-lottie svg {
+  overflow: visible;
+}
+
+.all-joi-signature.is-lottie-loaded .all-joi-lottie {
+  opacity: 0.82;
+}
+
+.all-joi-signature.is-lottie-loaded .all-joi-signature-fallback {
+  opacity: 1;
+}
+
+.all-joi-signature-fallback {
+  z-index: 1;
+  overflow: visible;
+  opacity: 1;
+  filter:
+    drop-shadow(0 12px 22px rgba(216, 148, 45, 0.12))
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.4));
+}
+
+.hello-word {
+  --path-length: 1650;
+  fill: transparent;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1650;
+  stroke-dashoffset: 1650;
+  paint-order: stroke fill;
+  font-family:
+    "Snell Roundhand", "Bradley Hand", "Segoe Script", "Apple Chancery",
+    cursive;
+  font-size: 136px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.all-joi-signature.is-writing .hello-word {
+  animation:
+    hello-write 1680ms cubic-bezier(0.18, 0.78, 0.18, 1) 80ms forwards,
+    hello-fill 560ms ease 1320ms forwards;
 }
 
 .studio-title h1 span {
@@ -1497,9 +1599,16 @@ body[data-state="home"] .site-home {
     margin-bottom: 0;
   }
 
+  .all-joi-signature {
+    width: min(96vw, 440px);
+    height: clamp(72px, 23vw, 98px);
+    margin-bottom: 18px;
+  }
+
   .joi-console {
-    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1fr);
+    grid-template-columns: minmax(118px, 0.74fr) minmax(0, 1.26fr);
     align-items: end;
+    gap: 12px;
   }
 
   .joi-portrait {

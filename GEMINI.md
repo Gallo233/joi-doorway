@@ -45,6 +45,8 @@ Root static site:
 - `assets/door-handle-final-frame.png`
 - `assets/door-handle-clean-frame.png`
 - `assets/door-handle-lever-sprite.png`
+- `assets/all-joi-hello-lottie.json`
+- `assets/lottie.min.js`
 - `assets/joi-app-v3.png`
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
@@ -90,6 +92,7 @@ The current homepage is an original Joi ecosystem studio inspired by the interac
 - pointer coordinate metadata
 - GMT+8 time display
 - full-screen WebGL shader background
+- an "all joi" handwritten Lottie accent on the homepage first screen only, not in the entrance sequence
 - large editorial typography
 - project cards that update Joi dialogue and shader accent state
 
@@ -106,6 +109,7 @@ Good areas to improve:
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
+- Refine the homepage "all joi" signature timing while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
 - Optimize video loading and poster strategy.
 

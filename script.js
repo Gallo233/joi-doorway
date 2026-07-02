@@ -35,6 +35,8 @@ const replayIntro = document.querySelector("#replayIntro");
 const dialogue = document.querySelector("#joiDialogue");
 const pointerHud = document.querySelector("#pointerHud");
 const timeHud = document.querySelector("#timeHud");
+const allJoiSignature = document.querySelector("#allJoiSignature");
+const allJoiLottie = document.querySelector("#allJoiLottie");
 const cards = Array.from(document.querySelectorAll("[data-joi-card]"));
 const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 
@@ -43,6 +45,8 @@ let introTimers = [];
 let peepholeWheelTimer = 0;
 let shaderController = null;
 let knockAudioContext = null;
+let allJoiAnimation = null;
+let allJoiSignatureReady = false;
 
 const HANDLE_FRAME = {
   width: 1256,
@@ -121,6 +125,7 @@ function setState(nextState) {
     if (doorwayVideo) doorwayVideo.pause();
     siteHome.removeAttribute("aria-hidden");
     initShader();
+    restartAllJoiSignature();
     window.requestAnimationFrame(() => {
       siteHome.focus({ preventScroll: true });
       revealVisible();
@@ -139,6 +144,7 @@ function startIntro() {
   state.peepholeDragging = false;
   setQteProgress(0);
   setPeepholeProgress(0);
+  allJoiSignature?.classList.remove("is-writing");
   setState("phoneHome");
   window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -288,6 +294,48 @@ function resetQteAfterRelease() {
   }
 
   window.requestAnimationFrame(tick);
+}
+
+function initAllJoiSignature() {
+  if (!allJoiSignature || allJoiSignatureReady) return;
+  allJoiSignatureReady = true;
+
+  if (!allJoiLottie || !window.lottie || reduceMotion) return;
+
+  allJoiAnimation = window.lottie.loadAnimation({
+    container: allJoiLottie,
+    renderer: "svg",
+    loop: false,
+    autoplay: false,
+    path: allJoiLottie.dataset.lottieSrc,
+    rendererSettings: {
+      progressiveLoad: true,
+      preserveAspectRatio: "xMidYMid meet",
+    },
+  });
+
+  allJoiAnimation.addEventListener("DOMLoaded", () => {
+    allJoiSignature.classList.add("is-lottie-loaded");
+    if (state.current === "home") {
+      allJoiAnimation.goToAndPlay(0, true);
+    }
+  });
+
+  allJoiAnimation.addEventListener("data_failed", () => {
+    allJoiSignature.classList.remove("is-lottie-loaded");
+  });
+}
+
+function restartAllJoiSignature() {
+  if (!allJoiSignature) return;
+  initAllJoiSignature();
+  allJoiSignature.classList.remove("is-writing");
+  void allJoiSignature.offsetWidth;
+  allJoiSignature.classList.add("is-writing");
+
+  if (allJoiAnimation) {
+    allJoiAnimation.goToAndPlay(0, true);
+  }
 }
 
 if (doorwayVideo) {

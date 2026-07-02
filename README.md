@@ -18,6 +18,8 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 - `assets/door-handle-final-frame.png` - extracted final frame used as the video reference.
 - `assets/door-handle-clean-frame.png` - final frame with the static lever softened/covered for the interactive moment.
 - `assets/door-handle-lever-sprite.png` - transparent pixel cutout of the original video handle lever.
+- `assets/all-joi-hello-lottie.json` - local Lottie accent for the homepage "all joi" handwritten signature.
+- `assets/lottie.min.js` - vendored Lottie Web runtime used by the homepage signature, avoiding a CDN dependency.
 - `assets/joi-app-v3.png` - Joi App visual reference, amber eyes, no side braid.
 - `assets/joi-map-v3.png` - Joi Map visual reference, amber eyes, side braid.
 - `joi-doorway-video/` - older Remotion source project kept for future rendered asset experiments.
@@ -63,6 +65,7 @@ Key behavior:
 - A transparent sprite cut from the original video frame covers the static handle.
 - The visitor presses the handle and drags downward.
 - The original video handle pixels rotate around the source-frame pivot, then transition into the homepage once pulled far enough.
+- The homepage first screen, not the entrance sequence, introduces an "all joi" handwritten signature with a local Lottie accent and SVG text fallback.
 - The homepage uses an original WebGL shader canvas, pointer coordinates, time HUD, scroll reveals, and project-card hover states.
 
 ## Design Direction
@@ -102,4 +105,5 @@ Browser-tested locally:
 - Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
 - Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.
+- Homepage first screen: the "all joi" signature appears on the studio page, Lottie loads locally, and the layout has no horizontal overflow on desktop or mobile.
 - Browser console: no warnings or errors observed during validation.
