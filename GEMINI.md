@@ -37,7 +37,9 @@ Root static site:
 - `styles.css`
 - `script.js`
 - `assets/iphone-home-joi-map.png`
+- `assets/iphone-home-joi-map@2x.png`
 - `assets/joi-map-main-ui.png`
+- `assets/joi-map-main-ui@2x.png`
 - `assets/doorway-bg.png`
 - `assets/doorway-qte-intro.mp4`
 - `assets/door-handle-final-frame.png`
@@ -66,10 +68,13 @@ Important behavior:
 - `?skipIntro=1` should enter the homepage directly.
 - The first interaction is clicking/tapping the Joi Map app icon inside the iPhone visual.
 - The two iPhone screenshots are temporary design placeholders. Later, the app icon and main UI can be replaced without changing the state machine.
+- The `@2x` screenshot files are deterministic upscales of the same source screenshots for sharper display; they are not generative redesigns.
+- Joi Map opens with an iOS-style icon-to-app expansion mask, not a generic fade or visible QTE ring.
 - The screenshot's simulator toolbar is intentionally cropped away in CSS; do not re-expose the "iPhone 17 Pro / iOS 26.5" simulator chrome.
 - The three knocks are synthesized with Web Audio after the app-icon user gesture.
+- The current intro timing is intentionally compact: roughly 4.3 seconds from app tap to peephole lock in normal motion.
 - The door approach should feel like a camera turn and push toward the peephole.
-- The peephole interaction is required: upward drag/touch swipe or mouse-wheel up opens it.
+- The peephole interaction is required: upward drag/touch swipe or mouse-wheel up opens it. Its material should stay richer than a flat brown circle, using layered metal, glass, highlight, and shutter cues.
 - The video starts only after the peephole reaches `peepholeOpening` and hands off to `videoIntro`.
 - When the video ends, `door-handle-final-frame.png` overlays it immediately.
 - The visible freeze state uses `door-handle-clean-frame.png` plus `door-handle-lever-sprite.png`.
@@ -95,7 +100,7 @@ Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-on
 Good areas to improve:
 
 - Refine the iPhone-to-door camera turn so it feels continuous with the peephole video.
-- Refine the peephole opening material/lighting while preserving the upward gesture gate.
+- Refine the peephole opening material/lighting while preserving the upward gesture gate and richer lens/ring texture.
 - Replace the temporary Joi Map app icon and main UI screenshots with final approved art.
 - Refine the video-to-pixel-handle seam if a better final-frame asset is generated.
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.

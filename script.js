@@ -61,7 +61,8 @@ function clearIntroTimers() {
 }
 
 function queueIntro(callback, delay) {
-  const timer = window.setTimeout(callback, reduceMotion ? Math.min(delay, 140) : delay);
+  const resolvedDelay = reduceMotion ? Math.max(260, Math.round(delay * 0.72)) : delay;
+  const timer = window.setTimeout(callback, resolvedDelay);
   introTimers.push(timer);
 }
 
@@ -198,22 +199,22 @@ function playKnockPattern() {
   if (!ctx) return;
   const now = ctx.currentTime + 0.035;
   scheduleKnock(ctx, now, 0.9);
-  scheduleKnock(ctx, now + 0.36, 0.96);
-  scheduleKnock(ctx, now + 0.75, 1.05);
+  scheduleKnock(ctx, now + 0.28, 0.96);
+  scheduleKnock(ctx, now + 0.58, 1.05);
 }
 
 function openJoiMapFromPhone() {
   if (state.current !== "phoneHome") return;
   ensureKnockAudio();
   setState("mapOpening");
-  queueIntro(() => setState("mapHome"), 540);
+  queueIntro(() => setState("mapHome"), 720);
   queueIntro(() => {
     setState("knocking");
     playKnockPattern();
-  }, 1180);
-  queueIntro(() => setState("doorTurn"), 2600);
-  queueIntro(() => setState("peepholeApproach"), 3580);
-  queueIntro(() => setState("peepholeLocked"), 5480);
+  }, 1020);
+  queueIntro(() => setState("doorTurn"), 2120);
+  queueIntro(() => setState("peepholeApproach"), 2920);
+  queueIntro(() => setState("peepholeLocked"), 4300);
 }
 
 function openPeephole() {
@@ -229,7 +230,7 @@ function openPeephole() {
   window.clearTimeout(peepholeWheelTimer);
   setState("peepholeOpening");
   setPeepholeProgress(1);
-  queueIntro(() => setState("videoIntro"), reduceMotion ? 80 : 520);
+  queueIntro(() => setState("videoIntro"), reduceMotion ? 80 : 440);
 }
 
 function resetPeepholeAfterRelease() {

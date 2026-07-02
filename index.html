@@ -9,13 +9,13 @@
     />
     <title>All Joi Doorway</title>
     <link rel="icon" href="data:," />
-    <link rel="preload" href="assets/iphone-home-joi-map.png" as="image" />
-    <link rel="preload" href="assets/joi-map-main-ui.png" as="image" />
+    <link rel="preload" href="assets/iphone-home-joi-map@2x.png" as="image" />
+    <link rel="preload" href="assets/joi-map-main-ui@2x.png" as="image" />
     <link rel="preload" href="assets/doorway-bg.png" as="image" />
     <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260702a" />
   </head>
   <body data-state="phoneHome">
     <div class="intro-root" id="introRoot" aria-live="off">
@@ -29,13 +29,22 @@
           <img
             class="phone-visual phone-home-visual"
             src="assets/iphone-home-joi-map.png"
+            srcset="assets/iphone-home-joi-map.png 1x, assets/iphone-home-joi-map@2x.png 2x"
             alt="iPhone home screen with Joi Map app icon"
           />
           <img
             class="phone-visual phone-map-visual"
             src="assets/joi-map-main-ui.png"
+            srcset="assets/joi-map-main-ui.png 1x, assets/joi-map-main-ui@2x.png 2x"
             alt="Joi Map app main interface"
           />
+          <div class="app-launch-surface" aria-hidden="true">
+            <img
+              src="assets/joi-map-main-ui.png"
+              srcset="assets/joi-map-main-ui.png 1x, assets/joi-map-main-ui@2x.png 2x"
+              alt=""
+            />
+          </div>
           <button
             class="joi-map-app-hit"
             id="joiMapApp"
@@ -278,6 +287,6 @@
       </footer>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260702a"></script>
   </body>
 </html>

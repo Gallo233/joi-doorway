@@ -160,6 +160,10 @@ body[data-state="doorTurn"] .phone-sequence-stage {
   max-height: 92vh;
   overflow: hidden;
   --phone-image-y: -6.53%;
+  --app-left: 52.6%;
+  --app-top: 23.7%;
+  --app-right: 29.6%;
+  --app-bottom: 67.2%;
   filter:
     drop-shadow(0 42px 70px rgba(0, 0, 0, 0.5))
     drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
@@ -180,7 +184,7 @@ body[data-state="knocking"] .phone-device {
 }
 
 body[data-state="knocking"] .phone-device {
-  animation: phone-knock 1180ms ease-in-out both;
+  animation: phone-knock 920ms ease-in-out both;
 }
 
 .phone-visual {
@@ -192,9 +196,9 @@ body[data-state="knocking"] .phone-device {
   user-select: none;
   -webkit-user-drag: none;
   transition:
-    opacity 440ms ease,
-    transform 640ms cubic-bezier(0.2, 0.82, 0.2, 1),
-    filter 440ms ease;
+    opacity 520ms ease,
+    transform 680ms cubic-bezier(0.2, 0.82, 0.2, 1),
+    filter 520ms ease;
 }
 
 .phone-home-visual {
@@ -208,7 +212,6 @@ body[data-state="knocking"] .phone-device {
   filter: blur(5px) brightness(1.1);
 }
 
-body[data-state="mapOpening"] .phone-home-visual,
 body[data-state="mapHome"] .phone-home-visual,
 body[data-state="knocking"] .phone-home-visual,
 body[data-state="doorTurn"] .phone-home-visual {
@@ -217,7 +220,12 @@ body[data-state="doorTurn"] .phone-home-visual {
   filter: blur(5px);
 }
 
-body[data-state="mapOpening"] .phone-map-visual,
+body[data-state="mapOpening"] .phone-home-visual {
+  opacity: 0.98;
+  transform: translateY(var(--phone-image-y)) scale(0.992);
+  filter: saturate(0.92) brightness(0.92) blur(0.6px);
+}
+
 body[data-state="mapHome"] .phone-map-visual,
 body[data-state="knocking"] .phone-map-visual,
 body[data-state="doorTurn"] .phone-map-visual {
@@ -226,10 +234,38 @@ body[data-state="doorTurn"] .phone-map-visual {
   filter: blur(0) brightness(1);
 }
 
+.app-launch-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 61.5% 28.2%;
+  clip-path: inset(var(--app-top) var(--app-right) var(--app-bottom) var(--app-left) round 6%);
+  will-change: clip-path, opacity, transform, filter;
+}
+
+.app-launch-surface img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  transform: translateY(var(--phone-image-y));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body[data-state="mapOpening"] .app-launch-surface {
+  opacity: 1;
+  animation: ios-app-open 680ms cubic-bezier(0.16, 0.86, 0.22, 1) both;
+}
+
 .joi-map-app-hit {
   position: absolute;
-  left: 52.6%;
-  top: 23.7%;
+  left: var(--app-left);
+  top: var(--app-top);
   z-index: 3;
   width: 17.8%;
   height: 9.1%;
@@ -257,17 +293,22 @@ body[data-state="doorTurn"] .joi-map-app-hit {
   left: 61.5%;
   top: 28.1%;
   z-index: 2;
-  width: 18%;
+  width: 17.8%;
   aspect-ratio: 1;
-  border: 1px solid rgba(255, 255, 255, 0.76);
+  border: 0;
   border-radius: 28%;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.22) inset,
+    0 10px 24px rgba(0, 0, 0, 0.16);
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.86);
+  transform: translate(-50%, -50%) scale(0.96);
   pointer-events: none;
+  backdrop-filter: blur(4px);
 }
 
 body[data-state="mapOpening"] .tap-ripple {
-  animation: tap-ripple 520ms ease-out both;
+  animation: ios-icon-press 420ms cubic-bezier(0.2, 0.78, 0.2, 1) both;
 }
 
 .knock-field {
@@ -293,11 +334,11 @@ body[data-state="knocking"] .knock-field span:nth-child(1) {
 }
 
 body[data-state="knocking"] .knock-field span:nth-child(2) {
-  animation: knock-ring 380ms ease-out 360ms both;
+  animation: knock-ring 380ms ease-out 280ms both;
 }
 
 body[data-state="knocking"] .knock-field span:nth-child(3) {
-  animation: knock-ring 420ms ease-out 730ms both;
+  animation: knock-ring 420ms ease-out 580ms both;
 }
 
 .door-approach-stage {
@@ -336,12 +377,12 @@ body[data-state="videoIntro"] .door-approach-stage {
   transform: scale(1.08) translateX(5vw);
   filter: saturate(0.98) brightness(0.92);
   transition:
-    transform 1680ms cubic-bezier(0.16, 0.84, 0.16, 1),
-    filter 1680ms ease;
+    transform 1320ms cubic-bezier(0.16, 0.84, 0.16, 1),
+    filter 1320ms ease;
 }
 
 body[data-state="doorTurn"] .door-approach-bg {
-  animation: door-turn-in 980ms cubic-bezier(0.18, 0.74, 0.22, 1) both;
+  animation: door-turn-in 860ms cubic-bezier(0.18, 0.74, 0.22, 1) both;
 }
 
 body[data-state="peepholeApproach"] .door-approach-bg,
@@ -406,6 +447,7 @@ body[data-state="peepholeOpening"] .peephole-lock {
   aspect-ratio: 1;
   opacity: 0;
   pointer-events: none;
+  isolation: isolate;
   transform:
     translate(-50%, -50%)
     scale(var(--peephole-scale));
@@ -413,6 +455,39 @@ body[data-state="peepholeOpening"] .peephole-lock {
     opacity 420ms ease,
     transform 520ms cubic-bezier(0.18, 0.74, 0.2, 1),
     filter 420ms ease;
+}
+
+.peephole-interaction::before,
+.peephole-interaction::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.peephole-interaction::before {
+  inset: -7.5%;
+  z-index: -2;
+  background:
+    conic-gradient(from 18deg, #231107, #7a4b23 9%, #e2b46e 15%, #4c2810 27%, #1a0b05 40%, #b88442 54%, #f0ca83 61%, #5b3016 72%, #251006 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 222, 154, 0.26) inset,
+    0 0 0 10px rgba(11, 6, 3, 0.18),
+    0 36px 110px rgba(0, 0, 0, 0.58),
+    0 0 72px rgba(190, 111, 38, 0.22);
+  opacity: 0.78;
+}
+
+.peephole-interaction::after {
+  inset: -2.8%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 35% 24%, rgba(255, 238, 191, 0.42), transparent 18%),
+    conic-gradient(from 120deg, rgba(255, 228, 160, 0.34), rgba(45, 21, 8, 0.4), rgba(221, 154, 70, 0.28), rgba(31, 14, 6, 0.56), rgba(255, 231, 170, 0.24));
+  box-shadow:
+    0 0 0 1px rgba(255, 226, 165, 0.48) inset,
+    0 0 0 9px rgba(30, 14, 6, 0.36) inset,
+    0 0 42px rgba(255, 187, 94, 0.16);
 }
 
 body[data-state="peepholeLocked"] .peephole-interaction,
@@ -448,15 +523,45 @@ body[data-state="peepholeOpening"] .peephole-interaction {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border: 1px solid rgba(255, 224, 165, 0.66);
+  border: 1px solid rgba(255, 231, 178, 0.72);
   border-radius: 50%;
   background:
-    radial-gradient(circle at 42% 34%, rgba(255, 246, 226, 0.34), transparent 14%),
-    radial-gradient(circle at 54% 58%, rgba(74, 43, 20, 0.72), rgba(10, 6, 4, 0.96) 66%);
+    radial-gradient(circle at 34% 23%, rgba(255, 248, 226, 0.42), transparent 11%),
+    radial-gradient(circle at 58% 62%, rgba(125, 74, 33, 0.5), rgba(16, 8, 4, 0.98) 65%),
+    conic-gradient(from 210deg, rgba(255, 225, 151, 0.18), rgba(50, 24, 10, 0.48), rgba(238, 170, 82, 0.12), rgba(13, 6, 3, 0.66), rgba(255, 218, 139, 0.16));
   box-shadow:
-    0 0 0 1px rgba(30, 17, 9, 0.8) inset,
-    0 0 34px rgba(255, 196, 105, 0.24),
-    0 34px 80px rgba(0, 0, 0, 0.52);
+    0 0 0 1px rgba(31, 14, 5, 0.86) inset,
+    0 0 0 10px rgba(6, 3, 2, 0.3) inset,
+    0 14px 28px rgba(255, 215, 135, 0.08) inset,
+    0 -24px 40px rgba(0, 0, 0, 0.54) inset,
+    0 0 48px rgba(255, 196, 105, 0.28),
+    0 34px 80px rgba(0, 0, 0, 0.55);
+}
+
+.peephole-lens::before,
+.peephole-lens::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.peephole-lens::before {
+  background:
+    repeating-conic-gradient(from 8deg, rgba(255, 231, 172, 0.08) 0 1deg, transparent 1deg 4deg),
+    repeating-radial-gradient(circle at 50% 48%, transparent 0 13px, rgba(255, 231, 172, 0.045) 14px, transparent 15px 31px);
+  mix-blend-mode: overlay;
+  opacity: 0.45;
+}
+
+.peephole-lens::after {
+  background:
+    radial-gradient(circle at 30% 21%, rgba(255, 249, 228, 0.6), rgba(255, 235, 199, 0.26) 8%, transparent 16%),
+    radial-gradient(ellipse at 35% 12%, rgba(255, 255, 255, 0.28), transparent 18%),
+    linear-gradient(145deg, rgba(255, 244, 210, 0.16), transparent 26% 68%, rgba(255, 205, 122, 0.16));
+  mix-blend-mode: screen;
+  opacity: 0.84;
 }
 
 .peephole-view {
@@ -464,8 +569,8 @@ body[data-state="peepholeOpening"] .peephole-interaction {
   inset: 0;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 50% 46%, rgba(255, 220, 150, 0.6), rgba(128, 70, 28, 0.3) 34%, rgba(10, 6, 4, 0.88) 76%),
-    linear-gradient(140deg, rgba(126, 202, 214, 0.18), rgba(239, 124, 104, 0.16));
+    radial-gradient(circle at 50% 44%, rgba(255, 225, 153, 0.62), rgba(144, 83, 33, 0.34) 34%, rgba(11, 6, 4, 0.88) 76%),
+    linear-gradient(140deg, rgba(126, 202, 214, 0.2), rgba(239, 124, 104, 0.14));
   opacity: var(--peephole-view-opacity);
   transform: scale(var(--peephole-view-scale));
   filter: blur(var(--peephole-view-blur));
@@ -479,11 +584,13 @@ body[data-state="peepholeOpening"] .peephole-interaction {
   height: 136%;
   border-radius: 42% 42% 50% 50%;
   background:
-    linear-gradient(180deg, rgba(255, 220, 150, 0.34), rgba(72, 38, 17, 0.84) 28%, rgba(12, 7, 4, 0.98) 72%),
-    radial-gradient(circle at 48% 22%, rgba(255, 247, 220, 0.28), transparent 18%);
+    radial-gradient(circle at 48% 15%, rgba(255, 235, 180, 0.3), transparent 18%),
+    linear-gradient(180deg, rgba(255, 222, 150, 0.36), rgba(86, 43, 17, 0.9) 28%, rgba(14, 7, 4, 0.98) 72%),
+    repeating-linear-gradient(92deg, rgba(255, 238, 190, 0.05) 0 1px, transparent 1px 7px);
   box-shadow:
-    0 20px 42px rgba(0, 0, 0, 0.52),
-    0 -1px 0 rgba(255, 232, 178, 0.42) inset;
+    0 20px 42px rgba(0, 0, 0, 0.56),
+    0 -1px 0 rgba(255, 232, 178, 0.46) inset,
+    0 9px 26px rgba(255, 202, 107, 0.08) inset;
   transform: translateY(var(--peephole-shutter-y));
   will-change: transform;
 }
@@ -493,7 +600,8 @@ body[data-state="peepholeOpening"] .peephole-interaction {
   inset: 0;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 35% 24%, rgba(255, 250, 229, 0.48), transparent 11%),
+    radial-gradient(circle at 32% 22%, rgba(255, 250, 229, 0.58), transparent 10%),
+    radial-gradient(ellipse at 42% 12%, rgba(255, 244, 215, 0.22), transparent 19%),
     radial-gradient(circle at 64% 70%, transparent 0 40%, rgba(0, 0, 0, 0.36) 72%, rgba(0, 0, 0, 0.82) 100%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent 30% 64%, rgba(255, 214, 145, 0.16));
   mix-blend-mode: screen;
@@ -705,14 +813,40 @@ body[data-state="doorOpen"] .door-freeze {
   opacity: 1;
 }
 
-@keyframes tap-ripple {
+@keyframes ios-icon-press {
   0% {
-    opacity: 0.72;
-    transform: translate(-50%, -50%) scale(0.72);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  24% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(0.9);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(1.42);
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
+@keyframes ios-app-open {
+  0% {
+    clip-path: inset(var(--app-top) var(--app-right) var(--app-bottom) var(--app-left) round 6%);
+    filter: brightness(1.12) saturate(1.06);
+    transform: scale(0.985);
+  }
+  18% {
+    filter: brightness(1.08) saturate(1.04);
+    transform: scale(0.972);
+  }
+  58% {
+    clip-path: inset(4% 5% 5% 4% round 5%);
+    filter: brightness(1.02) saturate(1.02);
+    transform: scale(1.008);
+  }
+  100% {
+    clip-path: inset(0 0 0 0 round 0);
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
   }
 }
 
