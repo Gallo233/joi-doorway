@@ -2,10 +2,12 @@ const body = document.body;
 const root = document.documentElement;
 
 const dialogueText = {
-  app: "“桌面这边交给我。代码、屏幕、任务和记忆，我会在旁边接住。”",
-  map: "“出门的时候我换这套。侧边麻花辫是我的 Map 标记，很好认吧？”",
-  autopilot: "“把想法交给工坊，我们让它一轮一轮长成真正能跑的东西。”",
-  universe: "“角色、宠物、故事、世界观，都可以慢慢变成能被体验的入口。”",
+  joi: "Joi is the main desktop companion line: planner, memory, local skills, screen watching, audit, and character shell.",
+  aiguide: "AIGuide turns the Map side of Joi into an on-site narrator with location, vision, itinerary, language, and voice paths.",
+  doorway: "Joi Doorway is the ritual entrance: phone, knock, peephole, generated video, and a pixel handle that opens the site.",
+  autopilot: "Joi Autopilot is the build loop: design, develop, test, review, and keep human approval at the commit boundary.",
+  quant: "quant-ai explores the analytical side: market data, indicators, strategy generation, backtesting, and AI commentary.",
+  sitianjian: "司天监夜话 keeps the story layer alive: bilingual visual novel, time-message mechanic, and a world that can hold character emotion.",
 };
 
 const state = {
@@ -32,11 +34,10 @@ const peepholeHit = document.querySelector("#peepholeHit");
 const siteHome = document.querySelector("#siteHome");
 const skipIntro = document.querySelector("#skipIntro");
 const replayIntro = document.querySelector("#replayIntro");
+const footerReplayIntro = document.querySelector("#footerReplayIntro");
 const dialogue = document.querySelector("#joiDialogue");
 const pointerHud = document.querySelector("#pointerHud");
 const timeHud = document.querySelector("#timeHud");
-const allJoiSignature = document.querySelector("#allJoiSignature");
-const allJoiLottie = document.querySelector("#allJoiLottie");
 const cards = Array.from(document.querySelectorAll("[data-joi-card]"));
 const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 
@@ -45,9 +46,6 @@ let introTimers = [];
 let peepholeWheelTimer = 0;
 let shaderController = null;
 let knockAudioContext = null;
-let allJoiAnimation = null;
-let allJoiSignatureReady = false;
-let allJoiFloatTimer = 0;
 
 const HANDLE_FRAME = {
   width: 1256,
@@ -126,7 +124,6 @@ function setState(nextState) {
     if (doorwayVideo) doorwayVideo.pause();
     siteHome.removeAttribute("aria-hidden");
     initShader();
-    restartAllJoiSignature();
     window.requestAnimationFrame(() => {
       siteHome.focus({ preventScroll: true });
       revealVisible();
@@ -145,9 +142,6 @@ function startIntro() {
   state.peepholeDragging = false;
   setQteProgress(0);
   setPeepholeProgress(0);
-  window.clearTimeout(allJoiFloatTimer);
-  allJoiSignature?.classList.remove("is-writing", "is-float-ready");
-  resetAllJoiFloat();
   setState("phoneHome");
   window.scrollTo({ top: 0, behavior: "auto" });
 
@@ -299,128 +293,6 @@ function resetQteAfterRelease() {
   window.requestAnimationFrame(tick);
 }
 
-function initAllJoiSignature() {
-  if (!allJoiSignature || allJoiSignatureReady) return;
-  allJoiSignatureReady = true;
-
-  if (!allJoiLottie || !window.lottie || reduceMotion) return;
-
-  allJoiAnimation = window.lottie.loadAnimation({
-    container: allJoiLottie,
-    renderer: "svg",
-    loop: false,
-    autoplay: false,
-    path: allJoiLottie.dataset.lottieSrc,
-    rendererSettings: {
-      progressiveLoad: true,
-      preserveAspectRatio: "xMidYMid meet",
-    },
-  });
-
-  allJoiAnimation.addEventListener("DOMLoaded", () => {
-    allJoiSignature.classList.add("is-lottie-loaded");
-    if (state.current === "home") {
-      allJoiAnimation.goToAndPlay(0, true);
-    }
-  });
-
-  allJoiAnimation.addEventListener("data_failed", () => {
-    allJoiSignature.classList.remove("is-lottie-loaded");
-  });
-
-  allJoiAnimation.addEventListener("complete", () => {
-    finishAllJoiSignature();
-  });
-}
-
-function setAllJoiFloatVars(values = {}) {
-  if (!allJoiSignature) return;
-  const defaults = {
-    tiltX: "0deg",
-    tiltY: "0deg",
-    floatX: "0px",
-    floatY: "0px",
-    shadowX: "14px",
-    shadowY: "22px",
-    shadowXSoft: "9px",
-    shadowYSoft: "15px",
-    depthX: "18px",
-    depthY: "22px",
-  };
-  const next = { ...defaults, ...values };
-  allJoiSignature.style.setProperty("--tilt-x", next.tiltX);
-  allJoiSignature.style.setProperty("--tilt-y", next.tiltY);
-  allJoiSignature.style.setProperty("--float-x", next.floatX);
-  allJoiSignature.style.setProperty("--float-y", next.floatY);
-  allJoiSignature.style.setProperty("--shadow-x", next.shadowX);
-  allJoiSignature.style.setProperty("--shadow-y", next.shadowY);
-  allJoiSignature.style.setProperty("--shadow-x-soft", next.shadowXSoft);
-  allJoiSignature.style.setProperty("--shadow-y-soft", next.shadowYSoft);
-  allJoiSignature.style.setProperty("--depth-x", next.depthX);
-  allJoiSignature.style.setProperty("--depth-y", next.depthY);
-}
-
-function finishAllJoiSignature() {
-  if (!allJoiSignature || state.current !== "home") return;
-  allJoiSignature.classList.add("is-float-ready");
-}
-
-function restartAllJoiSignature() {
-  if (!allJoiSignature) return;
-  initAllJoiSignature();
-  window.clearTimeout(allJoiFloatTimer);
-  setAllJoiFloatVars();
-  allJoiSignature.classList.remove("is-writing", "is-float-ready");
-  void allJoiSignature.offsetWidth;
-  allJoiSignature.classList.add("is-writing");
-
-  if (allJoiAnimation) {
-    allJoiAnimation.goToAndPlay(0, true);
-  }
-
-  allJoiFloatTimer = window.setTimeout(
-    finishAllJoiSignature,
-    reduceMotion ? 0 : 2380,
-  );
-}
-
-function updateAllJoiFloat(event) {
-  if (
-    !allJoiSignature ||
-    !allJoiSignature.classList.contains("is-float-ready") ||
-    reduceMotion
-  ) {
-    return;
-  }
-
-  const rect = allJoiSignature.getBoundingClientRect();
-  const x = clamp((event.clientX - rect.left) / Math.max(rect.width, 1));
-  const y = clamp((event.clientY - rect.top) / Math.max(rect.height, 1));
-  const dx = x - 0.5;
-  const dy = y - 0.5;
-
-  setAllJoiFloatVars({
-    tiltX: `${(-dy * 13).toFixed(2)}deg`,
-    tiltY: `${(dx * 20).toFixed(2)}deg`,
-    floatX: `${(dx * 18).toFixed(2)}px`,
-    floatY: `${(dy * 13).toFixed(2)}px`,
-    shadowX: `${(14 - dx * 24).toFixed(2)}px`,
-    shadowY: `${(22 - dy * 16).toFixed(2)}px`,
-    shadowXSoft: `${(9 - dx * 15).toFixed(2)}px`,
-    shadowYSoft: `${(15 - dy * 11).toFixed(2)}px`,
-    depthX: `${(18 + dx * 18).toFixed(2)}px`,
-    depthY: `${(22 + dy * 14).toFixed(2)}px`,
-  });
-}
-
-function resetAllJoiFloat() {
-  setAllJoiFloatVars();
-}
-
-allJoiSignature?.addEventListener("pointermove", updateAllJoiFloat);
-allJoiSignature?.addEventListener("pointerleave", resetAllJoiFloat);
-allJoiSignature?.addEventListener("pointercancel", resetAllJoiFloat);
-
 if (doorwayVideo) {
   doorwayVideo.addEventListener("ended", armQte);
   doorwayVideo.addEventListener("error", armQte);
@@ -566,6 +438,10 @@ skipIntro?.addEventListener("click", () => {
 });
 
 replayIntro?.addEventListener("click", () => {
+  startIntro();
+});
+
+footerReplayIntro?.addEventListener("click", () => {
   startIntro();
 });
 

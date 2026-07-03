@@ -36,6 +36,7 @@ Root static site:
 - `index.html`
 - `styles.css`
 - `script.js`
+- `three-title.js`
 - `assets/iphone-home-joi-map.png`
 - `assets/iphone-home-joi-map@2x.png`
 - `assets/joi-map-main-ui.png`
@@ -45,8 +46,10 @@ Root static site:
 - `assets/door-handle-final-frame.png`
 - `assets/door-handle-clean-frame.png`
 - `assets/door-handle-lever-sprite.png`
-- `assets/all-joi-hello-lottie.json`
-- `assets/lottie.min.js`
+- `assets/three.module.js`
+- `assets/three-addons/loaders/FontLoader.js`
+- `assets/three-addons/geometries/TextGeometry.js`
+- `assets/three-fonts/helvetiker_bold.typeface.json`
 - `assets/joi-app-v3.png`
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
@@ -92,10 +95,10 @@ The current homepage is an original Joi ecosystem studio inspired by the interac
 - pointer coordinate metadata
 - GMT+8 time display
 - full-screen WebGL shader background
-- a large "all joi" handwritten wordmark on the homepage first screen only, not in the entrance sequence
-- the homepage wordmark writes in letter-by-letter, then becomes pointer-driven with a 3D floating/tilt effect
+- a large glossy extruded "all joi" Three.js wordmark on the homepage first screen only, not in the entrance sequence
+- the homepage wordmark uses real TextGeometry, local font data, physical materials, multiple lights, and pointer-driven floating/tilt motion
 - large editorial typography
-- project cards that update Joi dialogue and shader accent state
+- project cards from current `Gallo233` GitHub README content that update Joi dialogue and shader accent state
 
 Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-one. The reference is for interaction density and visual confidence only.
 
@@ -110,7 +113,7 @@ Good areas to improve:
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
-- Refine the homepage "all joi" wordmark timing and 3D hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
+- Refine the homepage "all joi" Three.js wordmark lighting, material, and hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
 - Optimize video loading and poster strategy.
 
@@ -131,6 +134,7 @@ Run from the repository root:
 
 ```bash
 node --check script.js
+node --check three-title.js
 ```
 
 Optional if Remotion sources change:

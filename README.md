@@ -9,6 +9,7 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 - `index.html` - static entry page, phone intro, door approach, pixel-handle layer, and All Joi studio homepage.
 - `styles.css` - iPhone/map intro, cinematic video/pixel-handle styling, responsive grid, and high-interaction visual system.
 - `script.js` - phone-to-peephole state control, knock audio, video-to-handle state control, pixel layer alignment, drag gesture handling, reveal effects, pointer HUD, and original WebGL shader background.
+- `three-title.js` - local Three.js scene for the glossy extruded "all joi" homepage wordmark.
 - `assets/iphone-home-joi-map.png` - temporary iPhone home visual with Joi Map app icon.
 - `assets/iphone-home-joi-map@2x.png` - deterministic 2x upscale of the same screenshot for sharper Retina display.
 - `assets/joi-map-main-ui.png` - temporary Joi Map main-interface visual.
@@ -18,8 +19,9 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 - `assets/door-handle-final-frame.png` - extracted final frame used as the video reference.
 - `assets/door-handle-clean-frame.png` - final frame with the static lever softened/covered for the interactive moment.
 - `assets/door-handle-lever-sprite.png` - transparent pixel cutout of the original video handle lever.
-- `assets/all-joi-hello-lottie.json` - local Lottie accent for the homepage "all joi" handwritten wordmark.
-- `assets/lottie.min.js` - vendored Lottie Web runtime used by the homepage signature, avoiding a CDN dependency.
+- `assets/three.module.js` - vendored Three.js runtime used by the homepage wordmark, avoiding a CDN dependency.
+- `assets/three-addons/` - local FontLoader and TextGeometry modules for real 3D text extrusion.
+- `assets/three-fonts/helvetiker_bold.typeface.json` - local font data used by the Three.js title scene.
 - `assets/joi-app-v3.png` - Joi App visual reference, amber eyes, no side braid.
 - `assets/joi-map-v3.png` - Joi Map visual reference, amber eyes, side braid.
 - `joi-doorway-video/` - older Remotion source project kept for future rendered asset experiments.
@@ -65,9 +67,20 @@ Key behavior:
 - A transparent sprite cut from the original video frame covers the static handle.
 - The visitor presses the handle and drags downward.
 - The original video handle pixels rotate around the source-frame pivot, then transition into the homepage once pulled far enough.
-- The homepage first screen, not the entrance sequence, replaces the old `JOI DOORWAY` title with a large "all joi" handwritten wordmark.
-- The wordmark writes in letter-by-letter, then unlocks a pointer-driven 3D floating/tilt effect with dimensional shadows.
+- The homepage first screen, not the entrance sequence, replaces the old `JOI DOORWAY` title with a large glossy extruded "all joi" Three.js wordmark.
+- The wordmark is real 3D text with local font geometry, directional/rim/glint lighting, glossy physical materials, and pointer-driven floating/tilt motion.
 - The homepage uses an original WebGL shader canvas, pointer coordinates, time HUD, scroll reveals, and project-card hover states.
+
+## GitHub Project Content
+
+The homepage project cards are based on the current GitHub READMEs from the `Gallo233` account:
+
+- `Joi` - Windows-first multimodal desktop companion with planner, policy gate, memory, tool registry, screen watching, Codex/browser/game/MCP adapters, and character-fronted shell.
+- `aiguide-ios` - SwiftUI on-site AI guide MVP with MapKit, location, nearby recommendations, narration, photo recognition, itinerary/search, settings, localization, and voice/map-style paths.
+- `joi-doorway` - this interactive entrance and personal-site surface.
+- `joi-autopilot-control-center` - local Codex control center for design-to-develop-to-test-to-review loops with user approval at the commit boundary.
+- `quant-ai` - AI quant assistant covering market data, indicators, LLM commentary, strategy generation, and backtesting.
+- `sitianjian` - Godot/Dialogic bilingual visual novel experiment around ancient-China time messages and story-world building.
 
 ## Design Direction
 
@@ -95,6 +108,7 @@ Current checks used:
 
 ```bash
 node --check script.js
+node --check three-title.js
 ```
 
 Browser-tested locally:
@@ -106,5 +120,5 @@ Browser-tested locally:
 - Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
 - Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.
-- Homepage first screen: the large "all joi" wordmark appears on the studio page, Lottie loads locally, the pointer-driven floating state activates after the intro write-on, and the layout has no horizontal overflow on desktop or mobile.
+- Homepage first screen: the large "all joi" Three.js wordmark loads locally, uses real extruded geometry, responds to pointer movement, and the layout has no horizontal overflow on desktop or mobile.
 - Browser console: no warnings or errors observed during validation.
