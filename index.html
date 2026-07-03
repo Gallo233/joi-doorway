@@ -15,7 +15,7 @@
     <link rel="preload" href="assets/door-handle-final-frame.png" as="image" />
     <link rel="preload" href="assets/joi-map-v3.png" as="image" />
     <link rel="preload" href="assets/joi-app-v3.png" as="image" />
-    <link rel="stylesheet" href="styles.css?v=20260703b" />
+    <link rel="stylesheet" href="styles.css?v=20260703c" />
   </head>
   <body data-state="phoneHome">
     <div class="intro-root" id="introRoot" aria-live="off">
@@ -124,6 +124,11 @@
       <canvas class="shader-canvas" id="shaderCanvas" aria-hidden="true"></canvas>
       <div class="site-grain" aria-hidden="true"></div>
       <div class="site-grid-overlay" aria-hidden="true"></div>
+      <div class="sticker-layer" aria-hidden="true">
+        <img class="floating-sticker sticker-cursor" src="assets/stickers/joi-cursor-sticker.png" alt="" />
+        <img class="floating-sticker sticker-star" src="assets/stickers/joi-star-sticker.png" alt="" />
+        <img class="floating-sticker sticker-pin" src="assets/stickers/joi-pin-sticker.png" alt="" />
+      </div>
 
       <header class="site-hud" aria-label="All Joi navigation">
         <a class="brand" href="#studio" aria-label="All Joi home">
@@ -172,6 +177,11 @@
           <div class="three-title-stage" id="threeTitleStage" aria-label="all joi 3D wordmark">
             <canvas id="allJoiThreeCanvas" aria-hidden="true"></canvas>
             <span class="three-title-fallback">all joi</span>
+          </div>
+          <div class="hero-display-copy" aria-hidden="true">
+            <span>I build</span>
+            <span>companions</span>
+            <span>that feel real</span>
           </div>
         </div>
 
@@ -236,6 +246,7 @@
           <article class="project-card" data-joi-card="doorway" data-accent="0.58" data-reveal tabindex="0" aria-expanded="false">
             <a href="https://github.com/Gallo233/joi-doorway" target="_blank" rel="noopener noreferrer" aria-label="Open Joi Doorway repository">
               <div class="project-visual doorway-visual">
+                <img src="assets/door-handle-final-frame.png" alt="Joi Doorway final handle frame" />
                 <span>Doorway</span>
               </div>
               <div class="project-meta">
@@ -249,10 +260,7 @@
           <article class="project-card" data-joi-card="autopilot" data-accent="0.72" data-reveal tabindex="0" aria-expanded="false">
             <a href="https://github.com/Gallo233/joi-autopilot-control-center" target="_blank" rel="noopener noreferrer" aria-label="Open Joi Autopilot Control Center repository">
               <div class="project-visual loop-visual">
-                <span>Design</span>
-                <span>Develop</span>
-                <span>Test</span>
-                <span>Review</span>
+                <img src="assets/project-thumbs/joi-autopilot-thumb.png" alt="Joi Autopilot control center thumbnail" />
               </div>
               <div class="project-meta">
                 <span>Joi Autopilot</span>
@@ -265,9 +273,7 @@
           <article class="project-card" data-joi-card="quant" data-accent="0.84" data-reveal tabindex="0" aria-expanded="false">
             <a href="https://github.com/Gallo233/quant-ai" target="_blank" rel="noopener noreferrer" aria-label="Open quant-ai repository">
               <div class="project-visual quant-visual">
-                <span>MA</span>
-                <span>MACD</span>
-                <span>RAG</span>
+                <img src="assets/project-thumbs/quant-ai-thumb.png" alt="quant-ai dashboard thumbnail" />
               </div>
               <div class="project-meta">
                 <span>quant-ai</span>
@@ -280,8 +286,7 @@
           <article class="project-card" data-joi-card="sitianjian" data-accent="0.94" data-reveal tabindex="0" aria-expanded="false">
             <a href="https://github.com/Gallo233/sitianjian" target="_blank" rel="noopener noreferrer" aria-label="Open sitianjian repository">
               <div class="project-visual story-visual">
-                <span>司天监</span>
-                <span>夜话</span>
+                <img src="assets/project-thumbs/sitianjian-thumb.png" alt="司天监夜话 visual novel thumbnail" />
               </div>
               <div class="project-meta">
                 <span>司天监夜话</span>
@@ -332,12 +337,11 @@
     <script type="importmap">
       {
         "imports": {
-          "three": "./assets/three.module.js",
-          "three/addons/": "./assets/three-addons/"
+          "three": "./assets/three.module.js"
         }
       }
     </script>
-    <script src="script.js?v=20260703b"></script>
-    <script type="module" src="three-title.js?v=20260703b"></script>
+    <script src="script.js?v=20260703c"></script>
+    <script type="module" src="three-title.js?v=20260703c"></script>
   </body>
 </html>

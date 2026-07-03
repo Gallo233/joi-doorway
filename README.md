@@ -9,7 +9,7 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 - `index.html` - static entry page, phone intro, door approach, pixel-handle layer, and All Joi studio homepage.
 - `styles.css` - iPhone/map intro, cinematic video/pixel-handle styling, responsive grid, and high-interaction visual system.
 - `script.js` - phone-to-peephole state control, knock audio, video-to-handle state control, pixel layer alignment, drag gesture handling, reveal effects, pointer HUD, and original WebGL shader background.
-- `three-title.js` - local Three.js scene for the glossy extruded "all joi" homepage wordmark.
+- `three-title.js` - local Three.js scene for the glossy soft-tube "all joi" homepage wordmark.
 - `assets/iphone-home-joi-map.png` - temporary iPhone home visual with Joi Map app icon.
 - `assets/iphone-home-joi-map@2x.png` - deterministic 2x upscale of the same screenshot for sharper Retina display.
 - `assets/joi-map-main-ui.png` - temporary Joi Map main-interface visual.
@@ -20,12 +20,13 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 - `assets/door-handle-clean-frame.png` - final frame with the static lever softened/covered for the interactive moment.
 - `assets/door-handle-lever-sprite.png` - transparent pixel cutout of the original video handle lever.
 - `assets/three.module.js` - vendored Three.js runtime used by the homepage wordmark, avoiding a CDN dependency.
-- `assets/three-addons/` - local FontLoader and TextGeometry modules for real 3D text extrusion.
-- `assets/three-fonts/helvetiker_bold.typeface.json` - local font data used by the Three.js title scene.
+- `assets/stickers/` - transparent glossy sticker assets used by the homepage floating visual layer.
+- `assets/project-thumbs/` - generated raster thumbnails for Autopilot, quant-ai, and 司天监夜话 project cards.
 - `assets/joi-app-v3.png` - Joi App visual reference, amber eyes, no side braid.
 - `assets/joi-map-v3.png` - Joi Map visual reference, amber eyes, side braid.
 - `joi-doorway-video/` - older Remotion source project kept for future rendered asset experiments.
 - `GEMINI.md` - front-end context and constraints for AI-assisted iteration.
+- `design-qa.md` - visual QA notes and screenshot evidence for the current homepage pass.
 
 ## Run Locally
 
@@ -67,9 +68,9 @@ Key behavior:
 - A transparent sprite cut from the original video frame covers the static handle.
 - The visitor presses the handle and drags downward.
 - The original video handle pixels rotate around the source-frame pivot, then transition into the homepage once pulled far enough.
-- The homepage first screen, not the entrance sequence, replaces the old `JOI DOORWAY` title with a large glossy extruded "all joi" Three.js wordmark.
-- The wordmark is real 3D text with local font geometry, directional/rim/glint lighting, glossy physical materials, and pointer-driven floating/tilt motion.
-- The homepage uses an original WebGL shader canvas, pointer coordinates, time HUD, scroll reveals, and project-card hover states.
+- The homepage first screen, not the entrance sequence, replaces the old `JOI DOORWAY` title with a large glossy soft-tube "all joi" Three.js wordmark.
+- The wordmark is built from Three.js tube geometry with rounded caps, directional/rim/glint lighting, glossy physical materials, and pointer-driven floating/tilt motion.
+- The homepage keeps the light All Joi tone while borrowing the reference site's mechanisms: fixed HUD, grid/crosshair layer, floating stickers, large foreground typography, real project thumbnails, sticky scroll beats, and project-card hover states.
 
 ## GitHub Project Content
 
@@ -109,6 +110,7 @@ Current checks used:
 ```bash
 node --check script.js
 node --check three-title.js
+git diff --check
 ```
 
 Browser-tested locally:
@@ -120,5 +122,6 @@ Browser-tested locally:
 - Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
 - Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.
-- Homepage first screen: the large "all joi" Three.js wordmark loads locally, uses real extruded geometry, responds to pointer movement, and the layout has no horizontal overflow on desktop or mobile.
+- Homepage first screen: the large "all joi" Three.js wordmark loads locally, uses soft tube geometry, responds to pointer movement, includes floating sticker assets, and the layout has no horizontal overflow on desktop or mobile.
+- Homepage sticky process section: sticks to the viewport on desktop and mobile, with mobile typography adjusted to avoid clipping.
 - Browser console: no warnings or errors observed during validation.

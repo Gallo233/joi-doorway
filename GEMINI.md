@@ -47,12 +47,16 @@ Root static site:
 - `assets/door-handle-clean-frame.png`
 - `assets/door-handle-lever-sprite.png`
 - `assets/three.module.js`
-- `assets/three-addons/loaders/FontLoader.js`
-- `assets/three-addons/geometries/TextGeometry.js`
-- `assets/three-fonts/helvetiker_bold.typeface.json`
+- `assets/stickers/joi-cursor-sticker.png`
+- `assets/stickers/joi-star-sticker.png`
+- `assets/stickers/joi-pin-sticker.png`
+- `assets/project-thumbs/joi-autopilot-thumb.png`
+- `assets/project-thumbs/quant-ai-thumb.png`
+- `assets/project-thumbs/sitianjian-thumb.png`
 - `assets/joi-app-v3.png`
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
+- `design-qa.md`
 
 Legacy/experimental assets still present:
 
@@ -95,12 +99,13 @@ The current homepage is an original Joi ecosystem studio inspired by the interac
 - pointer coordinate metadata
 - GMT+8 time display
 - full-screen WebGL shader background
-- a large glossy extruded "all joi" Three.js wordmark on the homepage first screen only, not in the entrance sequence
-- the homepage wordmark uses real TextGeometry, local font data, physical materials, multiple lights, and pointer-driven floating/tilt motion
+- a large glossy soft-tube "all joi" Three.js wordmark on the homepage first screen only, not in the entrance sequence
+- the homepage wordmark uses real Three.js tube geometry, rounded caps, physical materials, multiple lights, and pointer-driven floating/tilt motion
+- floating glossy sticker bitmap assets, a grid/crosshair layer, foreground impact typography, real project thumbnails, and sticky scroll beats
 - large editorial typography
 - project cards from current `Gallo233` GitHub README content that update Joi dialogue and shader accent state
 
-Do not copy `haoqi.design` source, assets, shaders, wording, or layout one-to-one. The reference is for interaction density and visual confidence only.
+Do not switch the homepage to the reference site's dark blue palette unless explicitly requested. The current target is a light All Joi interpretation of the reference site's mechanics.
 
 ## Front-End Improvement Priorities
 
@@ -113,9 +118,10 @@ Good areas to improve:
 - Tune the pixel sprite pivot, cleanup mask, and hotspot position for more device sizes.
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
-- Refine the homepage "all joi" Three.js wordmark lighting, material, and hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
+- Refine the homepage "all joi" Three.js soft-tube wordmark lighting, material, and hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
 - Optimize video loading and poster strategy.
+- Use `design-qa.md` before major visual changes so the light All Joi interpretation does not drift back into a generic portfolio or a dark clone.
 
 Avoid:
 

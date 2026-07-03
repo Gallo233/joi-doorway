@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
 const canvas = document.querySelector("#allJoiThreeCanvas");
 const stage = document.querySelector("#threeTitleStage");
@@ -16,51 +14,156 @@ if (canvas && stage) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
+  renderer.toneMappingExposure = 1.26;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-  camera.position.set(0, 0.08, 6.2);
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  camera.position.set(0, 0.16, 8.2);
 
-  const ambient = new THREE.HemisphereLight(0xfff6e8, 0x5b4030, 2.1);
-  const key = new THREE.DirectionalLight(0xffffff, 4.8);
-  key.position.set(-2.4, 3.4, 5.2);
-  const rim = new THREE.DirectionalLight(0xf2a84c, 2.4);
-  rim.position.set(4.2, 1.2, 3.6);
-  const glint = new THREE.PointLight(0xffffff, 14, 10);
-  glint.position.set(-1.9, 1.4, 2.4);
-  scene.add(ambient, key, rim, glint);
+  const group = new THREE.Group();
+  group.rotation.set(-0.05, -0.16, -0.03);
+  scene.add(group);
 
-  const frontMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0x181510,
-    metalness: 0.24,
-    roughness: 0.18,
+  const ambient = new THREE.HemisphereLight(0xfff6e6, 0x5264ff, 2.4);
+  const key = new THREE.DirectionalLight(0xffffff, 5.2);
+  key.position.set(-3.4, 4.2, 5.8);
+  const rim = new THREE.DirectionalLight(0x7ca8ff, 3.1);
+  rim.position.set(4.4, 1.9, 4.2);
+  const warm = new THREE.PointLight(0xffbd48, 10, 11);
+  warm.position.set(-3.1, -1.4, 3.2);
+  const glint = new THREE.PointLight(0xffffff, 18, 9);
+  glint.position.set(1.6, 1.8, 3.4);
+  scene.add(ambient, key, rim, warm, glint);
+
+  const tubeMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0x3548ff,
+    emissive: 0x11148c,
+    emissiveIntensity: 0.38,
+    metalness: 0.08,
+    roughness: 0.11,
     clearcoat: 1,
-    clearcoatRoughness: 0.1,
-    reflectivity: 0.82,
+    clearcoatRoughness: 0.05,
+    reflectivity: 0.9,
     transparent: true,
     opacity: 0,
   });
 
   const sideMaterial = new THREE.MeshPhysicalMaterial({
-    color: 0xc88d45,
-    metalness: 0.38,
-    roughness: 0.2,
-    clearcoat: 0.9,
-    clearcoatRoughness: 0.16,
+    color: 0x7351ff,
+    emissive: 0x25128e,
+    emissiveIntensity: 0.3,
+    metalness: 0.05,
+    roughness: 0.12,
+    clearcoat: 1,
+    clearcoatRoughness: 0.08,
     transparent: true,
     opacity: 0,
   });
 
-  let textMesh = null;
+  const shineMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
   let textWidth = 1;
   let startTime = performance.now();
   const pointer = { x: 0, y: 0 };
   const target = { x: 0, y: 0 };
 
-  function setMaterialOpacity(value) {
-    frontMaterial.opacity = value;
+  function v(x, y, z = 0) {
+    return new THREE.Vector3(x, y, z);
+  }
+
+  function ellipse(cx, cy, rx, ry, count = 28, z = 0, start = 0) {
+    return Array.from({ length: count }, (_, index) => {
+      const a = start + (index / count) * Math.PI * 2;
+      return v(cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, z + Math.sin(a) * 0.04);
+    });
+  }
+
+  function addCap(point, radius, material) {
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(radius * 1.04, 28, 18),
+      material,
+    );
+    cap.position.copy(point);
+    group.add(cap);
+    return cap;
+  }
+
+  function makeTube(points, radius = 0.18, closed = false, material = tubeMaterial) {
+    const curve = new THREE.CatmullRomCurve3(points, closed, "catmullrom", 0.42);
+    const geometry = new THREE.TubeGeometry(curve, closed ? 120 : 88, radius, 28, closed);
+    const mesh = new THREE.Mesh(geometry, material);
+    group.add(mesh);
+
+    if (!closed) {
+      addCap(points[0], radius, material);
+      addCap(points[points.length - 1], radius, material);
+    }
+
+    return { curve, mesh };
+  }
+
+  function makeShine(points, radius = 0.034, closed = false) {
+    const lifted = points.map((point) => v(point.x - 0.035, point.y + 0.09, point.z + 0.17));
+    const curve = new THREE.CatmullRomCurve3(lifted, closed, "catmullrom", 0.42);
+    const geometry = new THREE.TubeGeometry(curve, closed ? 90 : 64, radius, 12, closed);
+    const mesh = new THREE.Mesh(geometry, shineMaterial);
+    group.add(mesh);
+    return mesh;
+  }
+
+  function buildWord() {
+    const strokes = [
+      { points: ellipse(-3.75, -0.24, 0.42, 0.58, 32, 0.02, 0.32), closed: true },
+      {
+        points: [v(-3.38, 0.42, 0.06), v(-3.18, 0.12, 0.08), v(-2.95, -0.55, 0.05), v(-2.68, -0.82, 0.02)],
+      },
+      {
+        points: [v(-2.3, -0.92), v(-2.36, -0.15, 0.04), v(-2.28, 1.18, 0.12), v(-2.02, 1.5, 0.08), v(-1.86, 0.98)],
+      },
+      {
+        points: [v(-1.42, -0.94), v(-1.5, -0.1, 0.04), v(-1.43, 1.22, 0.13), v(-1.17, 1.48, 0.08), v(-1.02, 0.95)],
+      },
+      {
+        points: [v(0.05, 1.1, 0.06), v(-0.02, 0.2, 0.1), v(-0.13, -1.18, 0.05), v(-0.48, -1.44, 0.04), v(-0.78, -1.05, 0.02)],
+      },
+      { points: ellipse(1.06, -0.18, 0.54, 0.62, 34, 0.07, 0.1), closed: true, material: sideMaterial },
+      {
+        points: [v(2.05, -0.92, 0.04), v(2.06, -0.18, 0.08), v(2.09, 0.78, 0.12)],
+        material: sideMaterial,
+      },
+    ];
+
+    strokes.forEach(({ points, closed = false, material = tubeMaterial }) => {
+      makeTube(points, 0.19, closed, material);
+      makeShine(points, closed ? 0.026 : 0.032, closed);
+    });
+
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.22, 34, 22), sideMaterial);
+    dot.position.set(2.12, 1.28, 0.08);
+    group.add(dot);
+    const dotShine = new THREE.Mesh(new THREE.SphereGeometry(0.055, 18, 10), shineMaterial);
+    dotShine.position.set(2.04, 1.38, 0.31);
+    group.add(dotShine);
+
+    const box = new THREE.Box3().setFromObject(group);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    group.position.sub(center);
+    textWidth = Math.max(size.x, 1);
+  }
+
+  function setOpacity(value) {
+    tubeMaterial.opacity = value;
     sideMaterial.opacity = value;
+    shineMaterial.opacity = value * 0.55;
   }
 
   function resize() {
@@ -68,16 +171,14 @@ if (canvas && stage) {
     const height = Math.max(stage.clientHeight, 1);
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    camera.position.z = camera.aspect < 1.3 ? 7.2 : 6.1;
+    camera.position.z = camera.aspect < 1.2 ? 9.3 : 7.3;
     camera.updateProjectionMatrix();
 
-    if (textMesh) {
-      const visibleHeight =
-        2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.position.z;
-      const visibleWidth = visibleHeight * camera.aspect;
-      const scalar = Math.min(1.32, Math.max(0.48, (visibleWidth * 0.84) / textWidth));
-      textMesh.scale.setScalar(scalar);
-    }
+    const visibleHeight =
+      2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.position.z;
+    const visibleWidth = visibleHeight * camera.aspect;
+    const scalar = Math.min(1.26, Math.max(0.58, (visibleWidth * 0.88) / textWidth));
+    group.scale.setScalar(scalar);
   }
 
   function onPointerMove(event) {
@@ -95,63 +196,35 @@ if (canvas && stage) {
 
   function tick(now) {
     const elapsed = (now - startTime) / 1000;
-    pointer.x += (target.x - pointer.x) * 0.08;
-    pointer.y += (target.y - pointer.y) * 0.08;
+    pointer.x += (target.x - pointer.x) * 0.075;
+    pointer.y += (target.y - pointer.y) * 0.075;
+    const intro = reduceMotion ? 1 : THREE.MathUtils.smoothstep(elapsed, 0.1, 1.36);
+    setOpacity(intro);
 
-    if (textMesh) {
-      const intro = reduceMotion ? 1 : THREE.MathUtils.smoothstep(elapsed, 0.1, 1.28);
-      setMaterialOpacity(intro);
-      textMesh.rotation.x = -pointer.y * 0.34 + Math.sin(elapsed * 0.7) * 0.022;
-      textMesh.rotation.y = pointer.x * 0.54 + Math.sin(elapsed * 0.45) * 0.03;
-      textMesh.rotation.z = pointer.x * -0.05;
-      textMesh.position.x = pointer.x * 0.22;
-      textMesh.position.y = -0.04 + pointer.y * -0.13 + Math.sin(elapsed * 0.9) * 0.035;
-      textMesh.position.z = intro * 0.12;
-    }
+    group.rotation.x = -0.06 - pointer.y * 0.22 + Math.sin(elapsed * 0.65) * 0.028;
+    group.rotation.y = -0.16 + pointer.x * 0.36 + Math.sin(elapsed * 0.42) * 0.04;
+    group.rotation.z = -0.035 - pointer.x * 0.03;
+    group.position.x = pointer.x * 0.2;
+    group.position.y = -0.08 - pointer.y * 0.12 + Math.sin(elapsed * 0.78) * 0.035;
+    group.position.z = intro * 0.16;
 
-    glint.position.x = -1.9 + Math.sin(elapsed * 0.65) * 1.7 + pointer.x * 2.2;
-    glint.position.y = 1.35 + Math.cos(elapsed * 0.52) * 0.6 - pointer.y * 1.3;
+    glint.position.x = 1.4 + Math.sin(elapsed * 0.72) * 2.2 + pointer.x * 2.4;
+    glint.position.y = 1.8 + Math.cos(elapsed * 0.53) * 0.7 - pointer.y * 1.6;
     renderer.render(scene, camera);
     window.requestAnimationFrame(tick);
   }
 
-  async function boot() {
-    try {
-      const font = await new FontLoader().loadAsync(
-        "assets/three-fonts/helvetiker_bold.typeface.json",
-      );
-      const geometry = new TextGeometry("all joi", {
-        font,
-        size: 1.1,
-        height: 0.3,
-        curveSegments: 18,
-        bevelEnabled: true,
-        bevelThickness: 0.04,
-        bevelSize: 0.024,
-        bevelOffset: 0,
-        bevelSegments: 6,
-      });
-      geometry.computeBoundingBox();
-      const box = geometry.boundingBox;
-      textWidth = Math.max(box.max.x - box.min.x, 1);
-      geometry.center();
-
-      textMesh = new THREE.Mesh(geometry, [frontMaterial, sideMaterial]);
-      textMesh.rotation.set(0.08, -0.1, 0);
-      scene.add(textMesh);
-
-      stage.classList.add("is-three-ready");
-      resize();
-      startTime = performance.now();
-      window.requestAnimationFrame(tick);
-    } catch (error) {
-      stage.classList.add("is-three-failed");
-      console.warn("Unable to load All Joi 3D title", error);
-    }
+  try {
+    buildWord();
+    resize();
+    stage.classList.add("is-three-ready");
+    startTime = performance.now();
+    window.requestAnimationFrame(tick);
+    stage.addEventListener("pointermove", onPointerMove);
+    stage.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("resize", resize);
+  } catch (error) {
+    stage.classList.add("is-three-failed");
+    console.warn("Unable to build All Joi soft 3D title", error);
   }
-
-  stage.addEventListener("pointermove", onPointerMove);
-  stage.addEventListener("pointerleave", onPointerLeave);
-  window.addEventListener("resize", resize);
-  boot();
 }
