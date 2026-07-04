@@ -1,0 +1,95 @@
+{
+  "article": "",
+  "bodyChildren": 15,
+  "href": "https://haoqi.design/adrive",
+  "imgs": [
+    {
+      "alt": "首页、传输列表、相册分享菜单",
+      "nh": 1621,
+      "nw": 2251,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad1.jpg"
+    },
+    {
+      "alt": "文件预览、文件预览讨论圈点、视频弹幕圈点（概念）",
+      "nh": 1620,
+      "nw": 2251,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad2.jpg"
+    },
+    {
+      "alt": "ADS 架构",
+      "nh": 1080,
+      "nw": 1920,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad3.png"
+    },
+    {
+      "alt": "规范简洁",
+      "nh": 1080,
+      "nw": 1920,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad4.png"
+    },
+    {
+      "alt": "高度复用",
+      "nh": 1080,
+      "nw": 1920,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad5.png"
+    },
+    {
+      "alt": "高度复用",
+      "nh": 1080,
+      "nw": 1920,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad6.png"
+    },
+    {
+      "alt": "可持续性",
+      "nh": 1128,
+      "nw": 1920,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad7.png"
+    },
+    {
+      "alt": "ADS 周边工具链",
+      "nh": 1628,
+      "nw": 2168,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad8.png"
+    },
+    {
+      "alt": "阿里云盘设计概览",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad9.jpg"
+    },
+    {
+      "alt": "滑动导航与启动器",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad10.jpg"
+    },
+    {
+      "alt": "多功能菜单、分享菜单",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad11.jpg"
+    },
+    {
+      "alt": "音频播放器、视频播放器、放映室",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad12.jpg"
+    },
+    {
+      "alt": "占位符",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad13.jpg"
+    },
+    {
+      "alt": "高度统一的桌面端",
+      "nh": 0,
+      "nw": 0,
+      "src": "https://mysite2026-blog-cyn6.vercel.app/blog/adrive/ad14.jpg"
+    }
+  ],
+  "lenis": null,
+  "readyState": "complete",
+  "text": "",
+  "title": "aDrive 阿里云盘"
+}

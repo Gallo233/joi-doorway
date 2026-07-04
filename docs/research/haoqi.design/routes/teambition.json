@@ -1,0 +1,56 @@
+{
+  "articleText": "",
+  "bodyClass": "",
+  "headings": [
+    {
+      "cls": "font-bold text-3xl! text-l1 lg:text-5xl! leading-tight tracking-tight",
+      "rect": {
+        "bottom": 246,
+        "h": 60,
+        "top": 186,
+        "w": 832,
+        "x": 304,
+        "y": 186
+      },
+      "tag": "h1",
+      "text": "Teambition"
+    }
+  ],
+  "htmlClass": "dark",
+  "links": [
+    {
+      "href": "https://haoqi.design/",
+      "text": "haoqi.design"
+    },
+    {
+      "href": "https://www.teambition.com/",
+      "text": "teambition.com"
+    },
+    {
+      "href": "https://haoqi.design/",
+      "text": "Home"
+    },
+    {
+      "href": "https://twitter.com/wenhaoqi",
+      "text": "Twitter/X"
+    },
+    {
+      "href": "https://github.com/wenhaoqiasd",
+      "text": "GitHub"
+    },
+    {
+      "href": "https://www.figma.com/@wenhaoqi",
+      "text": "Figma"
+    }
+  ],
+  "media": {
+    "canvases": [],
+    "images": [],
+    "videos": []
+  },
+  "readyState": "complete",
+  "scrollables": [],
+  "text": "",
+  "title": "Teambition",
+  "url": "https://haoqi.design/teambition"
+}

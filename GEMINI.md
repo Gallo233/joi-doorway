@@ -29,9 +29,27 @@ The emotional goal is: **Joi is not just a product page; she feels like a real p
 - Do not add subtitles/caption overlays inside the generated video.
 - Do not add long in-app explanations of how the interface works.
 
-## Current Files
+## Current Implementation
 
-Root static site:
+The site has been refactored into a small Next.js App Router project because the reference site `haoqi.design` is also Next.js. Keep this structure unless there is a strong reason to change it.
+
+Next.js shell:
+
+- `app/layout.tsx`
+- `app/page.tsx`
+- `app/[slug]/page.tsx`
+- `components/projectData.ts`
+- `components/legacyMarkup.ts`
+- `public/script.js`
+- `public/three-title.js`
+- `public/assets/`
+- `package.json`
+- `pnpm-lock.yaml`
+- `pnpm-workspace.yaml`
+- `next.config.mjs`
+- `tsconfig.json`
+
+Preserved source/static files:
 
 - `index.html`
 - `styles.css`
@@ -57,6 +75,8 @@ Root static site:
 - `assets/joi-map-v3.png`
 - `assets/joi-peephole-closeup.png`
 - `design-qa.md`
+- `docs/research/haoqi.design/`
+- `docs/design-references/`
 
 Legacy/experimental assets still present:
 
@@ -93,15 +113,19 @@ Important behavior:
 
 ## Homepage Direction
 
-The current homepage is an original Joi ecosystem studio inspired by the interaction grammar of `haoqi.design`:
+The current site is an original light All Joi ecosystem studio inspired by the full interaction grammar of `haoqi.design`:
 
 - fixed HUD navigation
 - pointer coordinate metadata
 - GMT+8 time display
-- full-screen WebGL shader background
-- a large glossy soft-tube "all joi" Three.js wordmark on the homepage first screen only, not in the entrance sequence
+- pale full-screen grid/crosshair field
+- a large pale glossy soft-tube "all joi" Three.js wordmark on the homepage first screen only, not in the entrance sequence
 - the homepage wordmark uses real Three.js tube geometry, rounded caps, physical materials, multiple lights, and pointer-driven floating/tilt motion
-- floating glossy sticker bitmap assets, a grid/crosshair layer, foreground impact typography, real project thumbnails, and sticky scroll beats
+- floating glossy sticker bitmap assets, foreground impact typography, real project thumbnails, and sticky scroll beats
+- a source-style long work grid
+- a dark speed-line interlude translated into "Build with a human touch"
+- a principle fragment section with orbit marks
+- internal project detail pages at `/joi`, `/joi-map`, `/doorway`, `/autopilot`, `/quant-ai`, and `/sitianjian`
 - large editorial typography
 - project cards from current `Gallo233` GitHub README content that update Joi dialogue and shader accent state
 
@@ -119,13 +143,14 @@ Good areas to improve:
 - Make the push-door transition feel more physical.
 - Improve homepage scroll choreography and shader response.
 - Refine the homepage "all joi" Three.js soft-tube wordmark lighting, material, and hover feel while keeping it on the first studio page rather than the doorway/iPhone/peephole entrance.
+- Refine each project detail route with richer All Joi-specific images/case-study copy.
 - Replace placeholder links with real GitHub/Demo/Essay URLs.
 - Optimize video loading and poster strategy.
 - Use `design-qa.md` before major visual changes so the light All Joi interpretation does not drift back into a generic portfolio or a dark clone.
 
 Avoid:
 
-- Replacing the static site with a heavy framework unless truly necessary.
+- Undoing the Next.js refactor or splitting the experience into unrelated pages.
 - Removing the phone-to-Joi-Map-to-door intro; it is now the primary flow.
 - Removing or bypassing the interactive peephole gate.
 - Replacing the source-frame pixel handle with a mismatched 3D prop or decorative QTE outline.
@@ -141,6 +166,7 @@ Run from the repository root:
 ```bash
 node --check script.js
 node --check three-title.js
+pnpm exec next build
 ```
 
 Optional if Remotion sources change:

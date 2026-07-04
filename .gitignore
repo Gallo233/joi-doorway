@@ -4,6 +4,7 @@
 *.log
 
 node_modules/
+.next/
 dist/
 out/
 

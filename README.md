@@ -1,10 +1,24 @@
-# Joi Doorway
+# All Joi Doorway
 
-Joi Doorway is a static, embeddable entrance page for the All Joi personal-site ecosystem.
+All Joi Doorway is a Next.js personal-site entrance for the All Joi ecosystem. It keeps the cinematic Joi Map doorway flow, then opens into a light, high-interaction studio site inspired by the full structure and motion language of `haoqi.design`.
 
 The current version begins on an iPhone home screen. The visitor taps Joi Map, sees the map interface open, hears three knocks, then the camera turns toward the door and stops at an interactive peephole. Swiping/dragging upward opens the peephole and hands off to the generated first-person doorway video. After the video reaches its final door-handle frame, dragging downward rotates a pixel cutout taken from that same frame before opening the All Joi studio homepage.
 
 ## What Is Included
+
+Current Next.js shell:
+
+- `app/layout.tsx` - App Router document shell and global CSS import.
+- `app/page.tsx` - renders the preserved doorway/home markup and loads the interaction scripts.
+- `app/[slug]/page.tsx` - project detail routes for the All Joi ecosystem.
+- `components/projectData.ts` - content model for the project detail pages.
+- `components/legacyMarkup.ts` - generated markup extracted from the previous static `index.html` body.
+- `public/` - Next-served copy of runtime scripts and assets.
+- `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `next.config.mjs`, `tsconfig.json` - local Next.js project configuration.
+- `docs/research/haoqi.design/` - source-site behavior notes, topology, route extraction, and component specs.
+- `docs/design-references/` - browser QA screenshots for the current full-site clone pass.
+
+Preserved static entry source:
 
 - `index.html` - static entry page, phone intro, door approach, pixel-handle layer, and All Joi studio homepage.
 - `styles.css` - iPhone/map intro, cinematic video/pixel-handle styling, responsive grid, and high-interaction visual system.
@@ -30,21 +44,28 @@ The current version begins on an iPhone home screen. The visitor taps Joi Map, s
 
 ## Run Locally
 
-The site is static. You can open `index.html` directly, or run a tiny local server:
+Install dependencies with pnpm, then start the local Next.js server:
 
 ```bash
-python3 -m http.server 4177
+pnpm install
+pnpm exec next dev -p 4178 -H 127.0.0.1
 ```
 
 Then open:
 
 ```text
-http://localhost:4177
+http://127.0.0.1:4178
 ```
 
 Useful URL flags:
 
 - `?skipIntro=1` jumps directly to the All Joi studio homepage.
+
+Production build check:
+
+```bash
+pnpm exec next build
+```
 
 ## Current Interaction
 
@@ -85,7 +106,9 @@ The homepage project cards are based on the current GitHub READMEs from the `Gal
 
 ## Design Direction
 
-The homepage references the interaction density and visual confidence of `haoqi.design` without copying its source, assets, or shaders. Public inspection showed a canvas/WebGL-heavy Next.js site with dense typography, fixed HUD, pointer/time metadata, and scroll-driven content. Joi Doorway translates that into an original warm, non-sci-fi Joi ecosystem studio.
+The source reference `haoqi.design` is a Next.js site. The current implementation therefore moved the All Joi surface into a Next.js shell while keeping the entrance state machine intact.
+
+The site references the interaction density and visual confidence of `haoqi.design` without copying its source, assets, or shaders. Public inspection showed a canvas/WebGL-heavy Next.js site with dense typography, fixed HUD, pointer/time metadata, sticker-like visual assets, real work tiles, an inverted speed-line interlude, and multiple internal project routes. Joi Doorway translates that into an original warm, non-sci-fi Joi ecosystem studio.
 
 Visual tone:
 
@@ -94,6 +117,16 @@ Visual tone:
 - Cream, ink, amber, coral, aqua, and muted green accents.
 - Large editorial typography paired with character-system cards.
 - No subtitles over the generated video.
+
+Routes:
+
+- `/` - doorway intro plus full All Joi studio home.
+- `/joi` - desktop companion case-study page.
+- `/joi-map` - world-facing guide case-study page.
+- `/doorway` - cinematic entrance case-study page.
+- `/autopilot` - build loop control case-study page.
+- `/quant-ai` - market analysis assistant case-study page.
+- `/sitianjian` - story-world experiment case-study page.
 
 ## Character Rules
 
@@ -111,10 +144,12 @@ Current checks used:
 node --check script.js
 node --check three-title.js
 git diff --check
+pnpm exec next build
 ```
 
 Browser-tested locally:
 
+- Next dev server at `http://127.0.0.1:4178`.
 - Desktop phone intro: clicking the Joi Map icon opens the app visual, enters the knock/door approach, and stops at the peephole lock with no console errors.
 - Retina asset path: browser selects `@2x` screenshots when device pixel ratio asks for sharper sources.
 - Desktop peephole: the camera stops at `peepholeLocked`; upward drag opens it and starts the video.
@@ -122,6 +157,10 @@ Browser-tested locally:
 - Desktop pixel handle: video ends on the handle frame, the source-frame handle cutout aligns and drag-down opens the homepage.
 - Mobile pixel handle: handle layer aligns with the cropped final video frame and drag-down opens the homepage.
 - `?skipIntro=1`: enters the homepage directly.
-- Homepage first screen: the large "all joi" Three.js wordmark loads locally, uses soft tube geometry, responds to pointer movement, includes floating sticker assets, and the layout has no horizontal overflow on desktop or mobile.
+- Homepage first screen: the large "all joi" Three.js wordmark loads locally, uses pale glossy soft-tube geometry, responds to pointer movement, includes floating sticker assets, and the layout has no horizontal overflow on desktop or mobile.
+- Homepage work section: project heading and cards remain readable without horizontal clipping.
+- Homepage project cards now link to internal project detail routes.
+- Full home now includes the source-style long work grid, dark speed-line interlude, principle fragment section, sticky word section, and terminal CTA footer.
 - Homepage sticky process section: sticks to the viewport on desktop and mobile, with mobile typography adjusted to avoid clipping.
-- Browser console: no warnings or errors observed during validation.
+- Project detail routes build through `app/[slug]/page.tsx`; desktop `/joi` and mobile `/joi-map` passed browser QA with no horizontal overflow and no missing images.
+- Browser console: no page-script errors observed during validation. Next dev Fast Refresh may log warnings after server restarts or CSS edits.

@@ -1,0 +1,728 @@
+{
+  "bodyText": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[|]\nGMT+8 CN 19:51 26°C\n0720 X 0450 Y\nDesign &\nEngineering\nThinking in systems. Designing with care.\nI'm Haoqi Wen, leading Design Engineering and AI exploration at \n■\n■\n■\n■\n■\n■\n, engineering, and AI at scale. Outside work, I build design tools for team efficiency.\nI BRING\nCRAFT & TASTE\nTO DIGITAL WORK\n\nI explore how to shape AI-era workflows with craft and taste, building the next generation of digital products.\n\nI’m building reunimos™, and previously worked on Alibaba aDrive, Teambition, and 100offer.\n\nCODING PROJECT\nREUNIMOS™\n2024-2026\nCODING PROJECT\nINSPIRE MONO\n2025\nCODING PROJECT\nWASM DESIGN UTILS\n2025\nCODING PROJECT\nVECTORSYMBOLS\n2023\nTOOLS\n↗\nCODING PROJECT\nDARKSIDE\n2021\nTOOLS\n↗\nADRIVE 阿里云盘\n2020-2022\nSHORE ICON\n2022\nTEAMBITION\n2018-2020\nFOF: SEE HEAR TOUCH\n2022\nEVENT\n↗\nFOF: DESIGN SYSTEM\n2021\nEVENT\n↗\nINNOVATE\nWITH\nPURPOSE\nLET'S\nCREATE\nSOMETHING\nEXTRAORDINARY\nCURIOSITY.WEN@GMAIL.COM\nTWITTER/X\nFIGMA\nGITHUB",
+  "canvases": [
+    {
+      "cls": "",
+      "height": 900,
+      "rect": {
+        "h": 900,
+        "w": 1440,
+        "x": 0,
+        "y": 0
+      },
+      "width": 1440
+    }
+  ],
+  "classes": {
+    "body": "",
+    "html": "dark"
+  },
+  "links": [
+    {
+      "href": "https://haoqi.design/",
+      "text": "haoqi.design"
+    },
+    {
+      "href": "https://reunimos.cc/",
+      "text": "reunimos™"
+    },
+    {
+      "href": "https://www.alipan.com/",
+      "text": "aDrive"
+    },
+    {
+      "href": "https://www.teambition.com/",
+      "text": "Teambition"
+    },
+    {
+      "href": "https://haoqi.design/reunimos",
+      "text": "Coding ProjectReunimos™2024-2026"
+    },
+    {
+      "href": "https://haoqi.design/inspire_mono",
+      "text": "Coding ProjectInspire Mono2025"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils",
+      "text": "Coding ProjectWasm design utils2025"
+    },
+    {
+      "href": "https://www.figma.com/community/plugin/1255914175202017737/vectorsymbols",
+      "text": "Coding ProjectVectorSymbols2023tools↗"
+    },
+    {
+      "href": "https://www.figma.com/community/plugin/986289377230504703/darkside",
+      "text": "Coding ProjectDarkSide2021tools↗"
+    },
+    {
+      "href": "https://haoqi.design/adrive",
+      "text": "aDrive 阿里云盘2020-2022"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon",
+      "text": "Shore Icon2022"
+    },
+    {
+      "href": "https://haoqi.design/teambition",
+      "text": "Teambition2018-2020"
+    },
+    {
+      "href": "https://friends.figma.com/events/details/figma-shanghai-presents-see-hear-touch/",
+      "text": "FoF: See Hear Touch2022event↗"
+    },
+    {
+      "href": "https://friends.figma.com/events/details/figma-shanghai-presents-design-system/",
+      "text": "FoF: Design System2021event↗"
+    },
+    {
+      "href": "mailto:curiosity.wen@gmail.com",
+      "text": "curiosity.wen@gmail.com"
+    },
+    {
+      "href": "https://twitter.com/wenhaoqi",
+      "text": "Twitter/X"
+    },
+    {
+      "href": "https://www.figma.com/@wenhaoqi",
+      "text": "Figma"
+    },
+    {
+      "href": "https://github.com/wenhaoqiasd",
+      "text": "GitHub"
+    }
+  ],
+  "page": {
+    "bodyScrollHeight": 900,
+    "docScrollHeight": 900,
+    "scrollY": 0
+  },
+  "scrollables": [
+    {
+      "clientHeight": 900,
+      "cls": "w-full h-full overflow-y-auto overscroll-contain no-scrollbar lenis",
+      "id": "",
+      "overflowY": "auto",
+      "position": "static",
+      "scrollHeight": 12319,
+      "tag": "div"
+    }
+  ],
+  "textBlocks": [
+    {
+      "cls": "relative before:content-[''] before:absolute before:inset-0 before:border-2 before:border-dotted before:border-transpare",
+      "tag": "a",
+      "text": "haoqi.design"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "haoqi"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "haoqi"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": ".design"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": ".design"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Work"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Work"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Contact"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Contact"
+    },
+    {
+      "cls": "relative before:content-[''] before:absolute before:inset-0 before:border-2 before:border-dotted before:border-transpare",
+      "tag": "span",
+      "text": "THEME[A]"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "THEME[A]"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "THEME[A]"
+    },
+    {
+      "cls": "inline-flex shrink-0 items-baseline gap-0 relative before:content-[''] before:absolute before:inset-0 before:border-2 be",
+      "tag": "span",
+      "text": "SOUND[|]"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "SOUND[|]"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "SOUND[|]"
+    },
+    {
+      "cls": "lg:hidden p-2 uppercase transition-colors duration-300 ease-out motion-reduce:transition-none ",
+      "tag": "span",
+      "text": "19:51 26°C"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "19:51 26°C"
+    },
+    {
+      "cls": "hidden lg:inline p-2 uppercase",
+      "tag": "span",
+      "text": "GMT+8 CN 19:51 26°C"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "GMT+8 CN 19:51 26°C"
+    },
+    {
+      "cls": "relative before:content-[''] before:absolute before:inset-0 before:border-2 before:border-dotted before:border-transpare",
+      "tag": "span",
+      "text": "0720 X 0450 Y"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "0720 X 0450 Y"
+    },
+    {
+      "cls": "hidden lg:block lg:col-span-3 xl:col-span-2 lg:col-start-1 xl:col-start-1 p-2 font-sans font-medium text-[4svw] sm:text-",
+      "tag": "span",
+      "text": "Design &Engineering"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Design &"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Design &"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Engineering"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Engineering"
+    },
+    {
+      "cls": "hidden lg:block lg:col-span-3 xl:col-span-2 lg:col-start-4 xl:col-start-5 p-2 text-balance",
+      "tag": "span",
+      "text": "Thinking in systems. Designing with care."
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Thinking in systems. Designing with care."
+    },
+    {
+      "cls": "col-span-12 lg:col-span-6 xl:col-span-4 lg:col-start-7 xl:col-start-9 mt-auto lg:mt-0 p-2",
+      "tag": "span",
+      "text": "I'm Haoqi Wen, leading Design Engineering and AI exploration at ■■■■■■, engineering, and AI at scale. Outside work, I build design tools for team efficiency."
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "I'm Haoqi Wen, leading Design Engineering and AI exploration at"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "■■■■■■"
+    },
+    {
+      "cls": "inline-flex items-baseline gap-[0.12em] mx-[0.06em] align-baseline cursor-pointer select-text",
+      "tag": "span",
+      "text": "■■■■■■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "inline-block min-w-[0.62em] text-center text-l1 tabular-nums select-text",
+      "tag": "span",
+      "text": "■"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": ", engineering, and AI at scale. Outside work, I build design tools for team efficiency."
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "I bring"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "I bring"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "craft & taste"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "craft & taste"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "to digital work"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "to digital work"
+    },
+    {
+      "cls": "p-2 w-full text-l1 md:text-[4.2svw] text-xl leading-[1.3] md:leading-none select-text",
+      "tag": "p",
+      "text": "I explore how to shape AI-era workflows with craft and taste, building the next generation of digital products."
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "I explore how to shape AI-era workflows with craft and taste, building the next generation of digital products."
+    },
+    {
+      "cls": "p-2 w-full text-l2 md:text-[4.2svw] text-xl leading-[1.3] md:leading-none select-text",
+      "tag": "p",
+      "text": "I’m building reunimos™, and previously worked on Alibaba aDrive, Teambition, and 100offer."
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "I’m building reunimos™, and previously worked on Alibaba aDrive, Teambition, and 100offer."
+    },
+    {
+      "cls": "inline text-l1 underline underline-offset-[0.08em] decoration-solid decoration-(--label-3) transition-[text-decoration-c",
+      "tag": "a",
+      "text": "reunimos™"
+    },
+    {
+      "cls": "inline text-l1 underline underline-offset-[0.08em] decoration-solid decoration-(--label-3) transition-[text-decoration-c",
+      "tag": "a",
+      "text": "aDrive"
+    },
+    {
+      "cls": "inline text-l1 underline underline-offset-[0.08em] decoration-solid decoration-(--label-3) transition-[text-decoration-c",
+      "tag": "a",
+      "text": "Teambition"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Coding ProjectReunimos™2024-2026"
+    },
+    {
+      "cls": "top-0 right-0 z-10 absolute bg-selection px-1 font-mono-2 text-black text-xs uppercase pointer-events-none select-none",
+      "tag": "span",
+      "text": "Coding Project"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "Reunimos™"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2024-2026"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Coding ProjectInspire Mono2025"
+    },
+    {
+      "cls": "top-0 right-0 z-10 absolute bg-selection px-1 font-mono-2 text-black text-xs uppercase pointer-events-none select-none",
+      "tag": "span",
+      "text": "Coding Project"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "Inspire Mono"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2025"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Coding ProjectWasm design utils2025"
+    },
+    {
+      "cls": "top-0 right-0 z-10 absolute bg-selection px-1 font-mono-2 text-black text-xs uppercase pointer-events-none select-none",
+      "tag": "span",
+      "text": "Coding Project"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "Wasm design utils"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2025"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Coding ProjectVectorSymbols2023tools↗"
+    },
+    {
+      "cls": "top-0 right-0 z-10 absolute bg-selection px-1 font-mono-2 text-black text-xs uppercase pointer-events-none select-none",
+      "tag": "span",
+      "text": "Coding Project"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "VectorSymbols"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2023"
+    },
+    {
+      "cls": "hidden lg:inline-flex items-center gap-1",
+      "tag": "span",
+      "text": "tools↗"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "tools"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "↗"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Coding ProjectDarkSide2021tools↗"
+    },
+    {
+      "cls": "top-0 right-0 z-10 absolute bg-selection px-1 font-mono-2 text-black text-xs uppercase pointer-events-none select-none",
+      "tag": "span",
+      "text": "Coding Project"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "DarkSide"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2021"
+    },
+    {
+      "cls": "hidden lg:inline-flex items-center gap-1",
+      "tag": "span",
+      "text": "tools↗"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "tools"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "↗"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "aDrive 阿里云盘2020-2022"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "aDrive 阿里云盘"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2020-2022"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Shore Icon2022"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "Shore Icon"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2022"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "Teambition2018-2020"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "Teambition"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2018-2020"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "FoF: See Hear Touch2022event↗"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "FoF: See Hear Touch"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2022"
+    },
+    {
+      "cls": "hidden lg:inline-flex items-center gap-1",
+      "tag": "span",
+      "text": "event↗"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "event"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "↗"
+    },
+    {
+      "cls": "group block space-y-3 p-2",
+      "tag": "a",
+      "text": "FoF: Design System2021event↗"
+    },
+    {
+      "cls": "flex-1 min-w-0 truncate",
+      "tag": "span",
+      "text": "FoF: Design System"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "2021"
+    },
+    {
+      "cls": "hidden lg:inline-flex items-center gap-1",
+      "tag": "span",
+      "text": "event↗"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "event"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "↗"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Innovate"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "with"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "purpose"
+    },
+    {
+      "cls": "col-span-6 md:col-span-5 xl:col-span-4 md:col-start-2 xl:col-start-3 text-left pointer-events-auto",
+      "tag": "span",
+      "text": "Let's"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Let's"
+    },
+    {
+      "cls": "col-span-6 md:col-span-5 xl:col-span-4 text-right pointer-events-auto",
+      "tag": "span",
+      "text": "Create"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Create"
+    },
+    {
+      "cls": "col-span-12 md:col-start-2 xl:col-start-3 text-left pointer-events-auto",
+      "tag": "span",
+      "text": "Something"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Something"
+    },
+    {
+      "cls": "col-span-12 md:col-end-12 xl:col-end-11 text-right pointer-events-auto",
+      "tag": "span",
+      "text": "Extraordinary"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Extraordinary"
+    },
+    {
+      "cls": "block before:absolute relative before:inset-0 p-2 lg:hover:before:border-l1 before:border-2 before:border-transparent ac",
+      "tag": "a",
+      "text": "curiosity.wen@gmail.com"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "curiosity.wen@gmail.com"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "curiosity.wen@gmail.com"
+    },
+    {
+      "cls": "block before:absolute relative before:inset-0 p-2 lg:hover:before:border-l1 before:border-2 before:border-transparent ac",
+      "tag": "a",
+      "text": "Twitter/X"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Twitter/X"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Twitter/X"
+    },
+    {
+      "cls": "block before:absolute relative before:inset-0 p-2 lg:hover:before:border-l1 before:border-2 before:border-transparent ac",
+      "tag": "a",
+      "text": "Figma"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Figma"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "Figma"
+    },
+    {
+      "cls": "block before:absolute relative before:inset-0 p-2 lg:hover:before:border-l1 before:border-2 before:border-transparent ac",
+      "tag": "a",
+      "text": "GitHub"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "GitHub"
+    },
+    {
+      "cls": "",
+      "tag": "span",
+      "text": "GitHub"
+    }
+  ],
+  "title": "HAOQI©2026",
+  "url": "https://haoqi.design/",
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}

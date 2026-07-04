@@ -1,0 +1,224 @@
+{
+  "articleText": "Wasm design utils\n\nMay 31, 2026\n\n2025\n\n@wenhaoqi/wasm_design_utils 是一组浏览器端设计小工具：sRGB ↔ OKLCH 色彩转换、图片取色、以及 squircle / capsule 的 SVG 路径生成。npm：@wenhaoqi/wasm_design_utils。\n\n它最初是在做 Reunimos™ 时沉淀下来的，后来打包开源。\n\n#\n安装\nBash\nCOPY\n1\nnpm install @wenhaoqi/wasm_design_utils\n\n包是 ESM，WASM 默认内联在包里，一般不用自己托管 .wasm 文件。\n\n所有 API 都是 async，调用时要 await。\n\n#\n三个模块，按需引入\n@wenhaoqi/wasm_design_utils/color — RGB ↔ OKLCH\n@wenhaoqi/wasm_design_utils/extract-colors — 从图片提取主色\n@wenhaoqi/wasm_design_utils/squircle — 生成平滑圆角 SVG path\n\n也可以从根路径 @wenhaoqi/wasm_design_utils 一次性导入全部 API。\n\n#\n颜色\nJavaScript\nCOPY\n1\nimport { rgb2oklch, oklch2rgb_abs, oklch2rgb_rel } from \"@wenhaoqi/wasm_design_utils/color\";\n2\n\n\n3\n// sRGB 0–255 → OKLCH\n4\nconst { L, C, h } = await rgb2oklch(128, 100, 231);\n5\n\n\n6\n// OKLCH → sRGB，直接指定色度\n7\nconst { R, G, B } = await oklch2rgb_abs(L, C, h);\n8\n\n\n9\n// 只定明暗和色相，彩度用 0–1 滑杆（更直觉）\n10\nconst tint = await oklch2rgb_rel(L, h, 0.5);\n\ninit() 可选。不传的话，第一次调用转换函数时会自动加载 WASM；想在页面启动时预热，可以提前 await init()。\n\n#\n取色\nJavaScript\nCOPY\n1\nimport extractColors from \"@wenhaoqi/wasm_design_utils/extract-colors\";\n2\n\n\n3\n// 从 <img> 提取调色板，第一个色块通常是主色\n4\nconst [dominant, ...rest] = await extractColors(img);\n5\n\n\n6\n// 常用参数\n7\nconst palette = await extractColors(img, {\n8\n  pixels: 64000,        // 抽样分辨率，默认 64000\n9\n  distance: 0.22,       // 聚类距离\n10\n  crossOrigin: \"anonymous\", // 跨域图片 URL 时需要\n11\n});\n\ninput 支持：图片 URL 字符串、<img> / Image、ImageData。\n\n#\n平滑圆角\n\n普通 border-radius 在大圆角时转角容易发尖；squircle 用 SVG path 过渡更顺。\n\nJavaScript\nCOPY\n1\nimport { getPath } from \"@wenhaoqi/wasm_design_utils/squircle\";\n2\n\n\n3\nconst d = await getPath(\"squircle\", 200, 120, 16);\n4\npathEl.setAttribute(\"d\", d);\n5\n// viewBox 对应：0 0 200 120\n\nshape 也可以是 \"capsule\"（胶囊形标签、Chip 等）。\n\n#\n本站怎么用\n\n文章页图片放大时，会用取色 + OKLCH 生成跟图片主色接近的蒙层背景：\n\nextractColors 取主色\nrgb2oklch 转成 OKLCH\n按明暗主题调整亮度，再 oklch2rgb_abs 转回 RGB\n\n这样全屏查看图片时，背景不会突兀地跳成纯黑。\n\n#\nNext.js 注意\n\n需要在客户端使用（依赖 Image 和 WebAssembly）。放在 \"use client\" 组件里，或用动态 import() 加载即可。\n\nMetadata\nLast Updated\nMay 31, 2026\nDimensions\n1440×900\nCharacters\n1,840\nLinks\nHome\nWork\nContact\nTwitter/X\nGitHub\nFigma",
+  "bodyClass": "",
+  "headings": [
+    {
+      "cls": "font-bold text-3xl! text-l1 lg:text-5xl! leading-tight tracking-tight",
+      "rect": {
+        "bottom": 246,
+        "h": 60,
+        "top": 186,
+        "w": 832,
+        "x": 304,
+        "y": 186
+      },
+      "tag": "h1",
+      "text": "Wasm design utils"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 507,
+        "h": 30,
+        "top": 477,
+        "w": 832,
+        "x": 304,
+        "y": 477
+      },
+      "tag": "h2",
+      "text": "#安装"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 780,
+        "h": 30,
+        "top": 750,
+        "w": 832,
+        "x": 304,
+        "y": 750
+      },
+      "tag": "h2",
+      "text": "#三个模块，按需引入"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 978,
+        "h": 30,
+        "top": 948,
+        "w": 832,
+        "x": 304,
+        "y": 948
+      },
+      "tag": "h2",
+      "text": "#颜色"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 1439,
+        "h": 30,
+        "top": 1409,
+        "w": 832,
+        "x": 304,
+        "y": 1409
+      },
+      "tag": "h2",
+      "text": "#取色"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 1898,
+        "h": 30,
+        "top": 1868,
+        "w": 832,
+        "x": 304,
+        "y": 1868
+      },
+      "tag": "h2",
+      "text": "#平滑圆角"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 2261,
+        "h": 30,
+        "top": 2231,
+        "w": 832,
+        "x": 304,
+        "y": 2231
+      },
+      "tag": "h2",
+      "text": "#本站怎么用"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 2501,
+        "h": 30,
+        "top": 2471,
+        "w": 832,
+        "x": 304,
+        "y": 2471
+      },
+      "tag": "h2",
+      "text": "#Next.js 注意"
+    }
+  ],
+  "htmlClass": "dark",
+  "links": [
+    {
+      "href": "https://haoqi.design/",
+      "text": "haoqi.design"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%AE%89%E8%A3%85",
+      "text": "安装"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E4%B8%89%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5",
+      "text": "三个模块，按需引入"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E9%A2%9C%E8%89%B2",
+      "text": "颜色"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%8F%96%E8%89%B2",
+      "text": "取色"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%B9%B3%E6%BB%91%E5%9C%86%E8%A7%92",
+      "text": "平滑圆角"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E6%9C%AC%E7%AB%99%E6%80%8E%E4%B9%88%E7%94%A8",
+      "text": "本站怎么用"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#nextjs-%E6%B3%A8%E6%84%8F",
+      "text": "Next.js 注意"
+    },
+    {
+      "href": "https://www.npmjs.com/package/@wenhaoqi/wasm_design_utils",
+      "text": "@wenhaoqi/wasm_design_utils"
+    },
+    {
+      "href": "https://haoqi.design/reunimos",
+      "text": "Reunimos™"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%AE%89%E8%A3%85",
+      "text": "#安装"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E4%B8%89%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5",
+      "text": "#三个模块，按需引入"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E9%A2%9C%E8%89%B2",
+      "text": "#颜色"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%8F%96%E8%89%B2",
+      "text": "#取色"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E5%B9%B3%E6%BB%91%E5%9C%86%E8%A7%92",
+      "text": "#平滑圆角"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#%E6%9C%AC%E7%AB%99%E6%80%8E%E4%B9%88%E7%94%A8",
+      "text": "#本站怎么用"
+    },
+    {
+      "href": "https://haoqi.design/wasm_design_utils#nextjs-%E6%B3%A8%E6%84%8F",
+      "text": "#Next.js 注意"
+    },
+    {
+      "href": "https://haoqi.design/",
+      "text": "Home"
+    },
+    {
+      "href": "https://twitter.com/wenhaoqi",
+      "text": "Twitter/X"
+    },
+    {
+      "href": "https://github.com/wenhaoqiasd",
+      "text": "GitHub"
+    },
+    {
+      "href": "https://www.figma.com/@wenhaoqi",
+      "text": "Figma"
+    }
+  ],
+  "media": {
+    "canvases": [],
+    "images": [],
+    "videos": []
+  },
+  "readyState": "complete",
+  "scrollables": [
+    {
+      "clientHeight": 900,
+      "cls": "w-full h-full overflow-y-auto overscroll-contain no-scrollbar",
+      "id": "",
+      "overflowY": "auto",
+      "rect": {
+        "bottom": 900,
+        "h": 900,
+        "top": 0,
+        "w": 1440,
+        "x": 0,
+        "y": 0
+      },
+      "scrollHeight": 3000,
+      "tag": "div"
+    }
+  ],
+  "text": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[-]\n+*[+8 CN 19:58 26°C\n0720 X 0450 Y\nWasm design utils\n\nMay 31, 2026\n\n2025\n\n@wenhaoqi/wasm_design_utils 是一组浏览器端设计小工具：sRGB ↔ OKLCH 色彩转换、图片取色、以及 squircle / capsule 的 SVG 路径生成。npm：@wenhaoqi/wasm_design_utils。\n\n它最初是在做 Reunimos™ 时沉淀下来的，后来打包开源。\n\n#\n安装\nBash\nCOPY\n1\nnpm install @wenhaoqi/wasm_design_utils\n\n包是 ESM，WASM 默认内联在包里，一般不用自己托管 .wasm 文件。\n\n所有 API 都是 async，调用时要 await。\n\n#\n三个模块，按需引入\n@wenhaoqi/wasm_design_utils/color — RGB ↔ OKLCH\n@wenhaoqi/wasm_design_utils/extract-colors — 从图片提取主色\n@wenhaoqi/wasm_design_utils/squircle — 生成平滑圆角 SVG path\n\n也可以从根路径 @wenhaoqi/wasm_design_utils 一次性导入全部 API。\n\n#\n颜色\nJavaScript\nCOPY\n1\nimport { rgb2oklch, oklch2rgb_abs, oklch2rgb_rel } from \"@wenhaoqi/wasm_design_utils/color\";\n2\n\n\n3\n// sRGB 0–255 → OKLCH\n4\nconst { L, C, h } = await rgb2oklch(128, 100, 231);\n5\n\n\n6\n// OKLCH → sRGB，直接指定色度\n7\nconst { R, G, B } = await oklch2rgb_abs(L, C, h);\n8\n\n\n9\n// 只定明暗和色相，彩度用 0–1 滑杆（更直觉）\n10\nconst tint = await oklch2rgb_rel(L, h, 0.5);\n\ninit() 可选。不传的话，第一次调用转换函数时会自动加载 WASM；想在页面启动时预热，可以提前 await init()。\n\n#\n取色\nJavaScript\nCOPY\n1\nimport extractColors from \"@wenhaoqi/wasm_design_utils/extract-colors\";\n2\n\n\n3\n// 从 <img> 提取调色板，第一个色块通常是主色\n4\nconst [dominant, ...rest] = await extractColors(img);\n5\n\n\n6\n// 常用参数\n7\nconst palette = await extractColors(img, {\n8\n  pixels: 64000,        // 抽样分辨率，默认 64000\n9\n  distance: 0.22,       // 聚类距离\n10\n  crossOrigin: \"anonymous\", // 跨域图片 URL 时需要\n11\n});\n\ninput 支持：图片 URL 字符串、<img> / Image、ImageData。\n\n#\n平滑圆角\n\n普通 border-radius 在大圆角时转角容易发尖；squircle 用 SVG path 过渡更顺。\n\nJavaScript\nCOPY\n1\nimport { getPath } from \"@wenhaoqi/wasm_design_utils/squircle\";\n2\n\n\n3\nconst d = await getPath(\"squircle\", 200, 120, 16);\n4\npathEl.setAttribute(\"d\", d);\n5\n// viewBox 对应：0 0 200 120\n\nshape 也可以是 \"capsule\"（胶囊形标签、Chip 等）。\n\n#\n本站怎么用\n\n文章页图片放大时，会用取色 + OKLCH 生成跟图片主色接近的蒙层背景：\n\nextractColors 取主色\nrgb2oklch 转成 OKLCH\n按明暗主题调整亮度，再 oklch2rgb_abs 转回 RGB\n\n这样全屏查看图片时，背景不会突兀地跳成纯黑。\n\n#\nNext.js 注意\n\n需要在客户端使用（依赖 Image 和 WebAssembly）。放在 \"use client\" 组件里，或用动态 import() 加载即可。\n\nMetadata\nLast Updated\nMay 31, 2026\nDimensions\n1440×900\nCharacters\n1,840\nLinks\nHome\nWork\nContact\nTwitter/X\nGitHub\nFigma",
+  "title": "Wasm design utils",
+  "url": "https://haoqi.design/wasm_design_utils"
+}

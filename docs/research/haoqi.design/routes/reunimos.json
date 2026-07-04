@@ -1,0 +1,77 @@
+{
+  "articleText": "Reunimos™\n\nMay 31, 2026\n\n2024-2026\n\nReunimos™ 是我从 2024 年起构建的个人 AI 灵感收藏夹。一个地方，接住你在浏览、阅读、随手截图时掉落的参考：图片、链接、文档、片段想法，先收进来，不必先想好该放进哪个文件夹。\n\n它面向个人：不做协作，也不催促你「整理得更漂亮」。我更希望它像一块私人的视觉记忆板，少花时间管理，多留空间给真正会回访的灵感。\n\n保存之后，AI 会理解内容、补全上下文；界面以视觉优先的方式呈现，让你按颜色、意象，或某一刻模糊的印象去找回来，而不只是靠标题或路径回忆。\n\n动效与界面质感由 Rive、Motion 与 Shader 共同驱动，整体视觉偏向圆润平滑，贴合年轻用户，长时间使用也依然耐看。2025 年还在 Chrome 下接入了 Liquid Glass 特效，让玻璃质感与这套界面语言更统一。\n\n我对 UI 要求很高，现成工具链往往达不到我想要的效果，于是我为自己搭了一整套 UI 工具库，后来打包开源为 @wenhaoqi/wasm_design_utils。图片主色与调色板提取用 extractColors（@wenhaoqi/wasm_design_utils/extract-colors）；sRGB ↔ OKLCH 转换用 rgb2oklch、oklch2rgb_abs、oklch2rgb_rel（@wenhaoqi/wasm_design_utils/color）；squircle / capsule 平滑圆角路径用 getSquircle、getCapsule、getPath（@wenhaoqi/wasm_design_utils/squircle）。Reunimos 里三者都会用到：取色支撑视觉检索与卡片氛围，OKLCH 负责色彩换算，squircle 路径撑起圆润的界面形态，都是我在做设计、打磨产品时沉淀下来的，后来发布开源，也希望帮到有需要的人。\n\n欢迎去 reunimos.cc 注册体验，保存一张图、一条链接，感受一下这套视觉优先的收藏方式。\n\nMetadata\nLast Updated\nMay 31, 2026\nDimensions\n1440×900\nCharacters\n863\nLinks\nHome\nWork\nContact\nTwitter/X\nGitHub\nFigma",
+  "bodyClass": "",
+  "headings": [
+    {
+      "cls": "font-bold text-3xl! text-l1 lg:text-5xl! leading-tight tracking-tight",
+      "rect": {
+        "bottom": 246,
+        "h": 60,
+        "top": 186,
+        "w": 832,
+        "x": 304,
+        "y": 186
+      },
+      "tag": "h1",
+      "text": "Reunimos™"
+    }
+  ],
+  "htmlClass": "dark",
+  "links": [
+    {
+      "href": "https://haoqi.design/",
+      "text": "haoqi.design"
+    },
+    {
+      "href": "https://www.npmjs.com/package/@wenhaoqi/wasm_design_utils",
+      "text": "@wenhaoqi/wasm_design_utils"
+    },
+    {
+      "href": "https://www.reunimos.cc/",
+      "text": "reunimos.cc"
+    },
+    {
+      "href": "https://haoqi.design/",
+      "text": "Home"
+    },
+    {
+      "href": "https://twitter.com/wenhaoqi",
+      "text": "Twitter/X"
+    },
+    {
+      "href": "https://github.com/wenhaoqiasd",
+      "text": "GitHub"
+    },
+    {
+      "href": "https://www.figma.com/@wenhaoqi",
+      "text": "Figma"
+    }
+  ],
+  "media": {
+    "canvases": [],
+    "images": [],
+    "videos": []
+  },
+  "readyState": "complete",
+  "scrollables": [
+    {
+      "clientHeight": 900,
+      "cls": "w-full h-full overflow-y-auto overscroll-contain no-scrollbar",
+      "id": "",
+      "overflowY": "auto",
+      "rect": {
+        "bottom": 900,
+        "h": 900,
+        "top": 0,
+        "w": 1440,
+        "x": 0,
+        "y": 0
+      },
+      "scrollHeight": 1862,
+      "tag": "div"
+    }
+  ],
+  "text": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[-]\n7MT+8 CN 19:57 26°C\n0720 X 0450 Y\nReunimos™\n\nMay 31, 2026\n\n2024-2026\n\nReunimos™ 是我从 2024 年起构建的个人 AI 灵感收藏夹。一个地方，接住你在浏览、阅读、随手截图时掉落的参考：图片、链接、文档、片段想法，先收进来，不必先想好该放进哪个文件夹。\n\n它面向个人：不做协作，也不催促你「整理得更漂亮」。我更希望它像一块私人的视觉记忆板，少花时间管理，多留空间给真正会回访的灵感。\n\n保存之后，AI 会理解内容、补全上下文；界面以视觉优先的方式呈现，让你按颜色、意象，或某一刻模糊的印象去找回来，而不只是靠标题或路径回忆。\n\n动效与界面质感由 Rive、Motion 与 Shader 共同驱动，整体视觉偏向圆润平滑，贴合年轻用户，长时间使用也依然耐看。2025 年还在 Chrome 下接入了 Liquid Glass 特效，让玻璃质感与这套界面语言更统一。\n\n我对 UI 要求很高，现成工具链往往达不到我想要的效果，于是我为自己搭了一整套 UI 工具库，后来打包开源为 @wenhaoqi/wasm_design_utils。图片主色与调色板提取用 extractColors（@wenhaoqi/wasm_design_utils/extract-colors）；sRGB ↔ OKLCH 转换用 rgb2oklch、oklch2rgb_abs、oklch2rgb_rel（@wenhaoqi/wasm_design_utils/color）；squircle / capsule 平滑圆角路径用 getSquircle、getCapsule、getPath（@wenhaoqi/wasm_design_utils/squircle）。Reunimos 里三者都会用到：取色支撑视觉检索与卡片氛围，OKLCH 负责色彩换算，squircle 路径撑起圆润的界面形态，都是我在做设计、打磨产品时沉淀下来的，后来发布开源，也希望帮到有需要的人。\n\n欢迎去 reunimos.cc 注册体验，保存一张图、一条链接，感受一下这套视觉优先的收藏方式。\n\nMetadata\nLast Updated\nMay 31, 2026\nDimensions\n1440×900\nCharacters\n863\nLinks\nHome\nWork\nContact\nTwitter/X\nGitHub\nFigma",
+  "title": "Reunimos™",
+  "url": "https://haoqi.design/reunimos"
+}

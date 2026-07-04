@@ -1,0 +1,162 @@
+[
+  {
+    "route": "/",
+    "title": "HAOQI©2026",
+    "scrollHeight": 12319,
+    "textStart": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[-]\nGMT+8 CN 19:57 26°C\n0720 X 0450 Y\nDesign &\nEngineering\nThinking in systems. Designing with care.\nI'm Haoqi Wen, leading Design Engineering and AI exploration at \n■\n■\n■\n■\n■\n■\n, engineering, and AI at scale. Outside work, I build design tools for team efficiency.\nI BRING\nCRAFT & TASTE\nTO DIGITAL WORK\n\nI explore how to shape AI-era workflows with craft and taste, building the next generation of digital products.\n\nI’m building reunimos™, and previously worked on Alibaba aDrive, Teambition, and 100offer.\n\nCODING PROJECT\nREUNIMOS™\n2024-2026\nCODING PROJECT\nINSPIRE MONO\n2025\nCODING PROJECT\nWASM DESIGN UTILS\n2025\nCODING PROJECT\nVECTORSYMBOLS\n2023\nTOOLS\n↗\nCODING PROJECT\nDARKSIDE\n2021\nTOOLS\n↗\nADRIVE 阿里云盘\n2020-2022\nSHORE ICON\n2022\nTEAMBITION\n2018-2020\nFOF: SEE HEAR TOUCH\n2022\nEVENT\n↗\nFOF: DESIGN SYSTEM\n2021\nEVENT\n↗\nINNOVATE\nWITH\nPURPOSE\nLET'S\nCREATE\nSOMETH",
+    "headingCount": 0,
+    "imageCount": 0,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/reunimos",
+      "https://haoqi.design/inspire_mono",
+      "https://haoqi.design/wasm_design_utils",
+      "https://haoqi.design/adrive",
+      "https://haoqi.design/shore_icon",
+      "https://haoqi.design/teambition"
+    ]
+  },
+  {
+    "route": "/reunimos",
+    "title": "Reunimos™",
+    "scrollHeight": 1862,
+    "textStart": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[-]\n7MT+8 CN 19:57 26°C\n0720 X 0450 Y\nReunimos™\n\nMay 31, 2026\n\n2024-2026\n\nReunimos™ 是我从 2024 年起构建的个人 AI 灵感收藏夹。一个地方，接住你在浏览、阅读、随手截图时掉落的参考：图片、链接、文档、片段想法，先收进来，不必先想好该放进哪个文件夹。\n\n它面向个人：不做协作，也不催促你「整理得更漂亮」。我更希望它像一块私人的视觉记忆板，少花时间管理，多留空间给真正会回访的灵感。\n\n保存之后，AI 会理解内容、补全上下文；界面以视觉优先的方式呈现，让你按颜色、意象，或某一刻模糊的印象去找回来，而不只是靠标题或路径回忆。\n\n动效与界面质感由 Rive、Motion 与 Shader 共同驱动，整体视觉偏向圆润平滑，贴合年轻用户，长时间使用也依然耐看。2025 年还在 Chrome 下接入了 Liquid Glass 特效，让玻璃质感与这套界面语言更统一。\n\n我对 UI 要求很高，现成工具链往往达不到我想要的效果，于是我为自己搭了一整套 UI 工具库，后来打包开源为 @wenhaoqi/wasm_design_utils。图片主色与调色板提取用 extractColors（@wenhaoqi/wasm_design_utils/extract-colors）；sRGB ↔ OKLCH 转换用 rgb2oklch、oklch2rgb_abs、oklch2rgb_rel（@wenhaoqi/wasm_design_utils/color）；squircle / capsule 平滑圆角路径用 getSquircle、getCapsule、getPath（@wenhaoqi/wasm_design_utils/squircle）。Reunimos 里三者都会用到：取色支撑视觉检索与卡片氛围，OKLCH 负责色彩换算，squircle 路径撑起圆润的界面形态，都是我在做设计、打磨产品时沉淀下来的，后来发布开源，也希望帮",
+    "headingCount": 1,
+    "imageCount": 0,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/"
+    ]
+  },
+  {
+    "route": "/inspire_mono",
+    "title": "Inspire Mono",
+    "scrollHeight": 3007,
+    "textStart": "",
+    "headingCount": 1,
+    "imageCount": 15,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/fonts/InspireMono.zip",
+      "https://haoqi.design/"
+    ]
+  },
+  {
+    "route": "/wasm_design_utils",
+    "title": "Wasm design utils",
+    "scrollHeight": 3000,
+    "textStart": "HAOQI.DESIGN\nWORK\nCONTACT\nTHEME[A]\nSOUND[-]\n+*[+8 CN 19:58 26°C\n0720 X 0450 Y\nWasm design utils\n\nMay 31, 2026\n\n2025\n\n@wenhaoqi/wasm_design_utils 是一组浏览器端设计小工具：sRGB ↔ OKLCH 色彩转换、图片取色、以及 squircle / capsule 的 SVG 路径生成。npm：@wenhaoqi/wasm_design_utils。\n\n它最初是在做 Reunimos™ 时沉淀下来的，后来打包开源。\n\n#\n安装\nBash\nCOPY\n1\nnpm install @wenhaoqi/wasm_design_utils\n\n包是 ESM，WASM 默认内联在包里，一般不用自己托管 .wasm 文件。\n\n所有 API 都是 async，调用时要 await。\n\n#\n三个模块，按需引入\n@wenhaoqi/wasm_design_utils/color — RGB ↔ OKLCH\n@wenhaoqi/wasm_design_utils/extract-colors — 从图片提取主色\n@wenhaoqi/wasm_design_utils/squircle — 生成平滑圆角 SVG path\n\n也可以从根路径 @wenhaoqi/wasm_design_utils 一次性导入全部 API。\n\n#\n颜色\nJavaScript\nCOPY\n1\nimport { rgb2oklch, oklch2rgb_abs, oklch2rgb_rel } from \"@wenhaoqi/wasm_design_utils/color\";\n2\n\n\n3\n// sRGB 0–255 → OKLCH\n4\nconst { L, C, h } = await rgb2oklch(128, 100, 231);\n5\n\n\n6\n// OKLCH → sRGB，直接指定色度\n7\nconst { R, G, B } = await oklch2rgb_abs(L, C",
+    "headingCount": 8,
+    "imageCount": 0,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/wasm_design_utils#%E5%AE%89%E8%A3%85",
+      "https://haoqi.design/wasm_design_utils#%E4%B8%89%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5",
+      "https://haoqi.design/wasm_design_utils#%E9%A2%9C%E8%89%B2",
+      "https://haoqi.design/wasm_design_utils#%E5%8F%96%E8%89%B2",
+      "https://haoqi.design/wasm_design_utils#%E5%B9%B3%E6%BB%91%E5%9C%86%E8%A7%92",
+      "https://haoqi.design/wasm_design_utils#%E6%9C%AC%E7%AB%99%E6%80%8E%E4%B9%88%E7%94%A8",
+      "https://haoqi.design/wasm_design_utils#nextjs-%E6%B3%A8%E6%84%8F",
+      "https://haoqi.design/reunimos",
+      "https://haoqi.design/wasm_design_utils#%E5%AE%89%E8%A3%85",
+      "https://haoqi.design/wasm_design_utils#%E4%B8%89%E4%B8%AA%E6%A8%A1%E5%9D%97%E6%8C%89%E9%9C%80%E5%BC%95%E5%85%A5",
+      "https://haoqi.design/wasm_design_utils#%E9%A2%9C%E8%89%B2",
+      "https://haoqi.design/wasm_design_utils#%E5%8F%96%E8%89%B2",
+      "https://haoqi.design/wasm_design_utils#%E5%B9%B3%E6%BB%91%E5%9C%86%E8%A7%92",
+      "https://haoqi.design/wasm_design_utils#%E6%9C%AC%E7%AB%99%E6%80%8E%E4%B9%88%E7%94%A8",
+      "https://haoqi.design/wasm_design_utils#nextjs-%E6%B3%A8%E6%84%8F",
+      "https://haoqi.design/"
+    ]
+  },
+  {
+    "route": "/adrive",
+    "title": "aDrive 阿里云盘",
+    "scrollHeight": 5083,
+    "textStart": "",
+    "headingCount": 10,
+    "imageCount": 14,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/adrive#teambition-%E7%BD%91%E7%9B%98",
+      "https://haoqi.design/adrive#ads-adrive-design-system",
+      "https://haoqi.design/adrive#ads-%E6%9E%B6%E6%9E%84",
+      "https://haoqi.design/adrive#ads-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99",
+      "https://haoqi.design/adrive#%E8%A7%84%E8%8C%83%E7%AE%80%E6%B4%81",
+      "https://haoqi.design/adrive#%E9%AB%98%E5%BA%A6%E5%A4%8D%E7%94%A8",
+      "https://haoqi.design/adrive#%E5%8F%AF%E6%8C%81%E7%BB%AD%E6%80%A7",
+      "https://haoqi.design/adrive#ads-%E5%91%A8%E8%BE%B9%E5%B7%A5%E5%85%B7%E9%93%BE",
+      "https://haoqi.design/adrive#%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E8%AE%BE%E8%AE%A1%E6%A6%82%E8%A7%88",
+      "https://haoqi.design/adrive#teambition-%E7%BD%91%E7%9B%98",
+      "https://haoqi.design/adrive#ads-adrive-design-system",
+      "https://haoqi.design/adrive#ads-%E6%9E%B6%E6%9E%84",
+      "https://haoqi.design/adrive#ads-%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99",
+      "https://haoqi.design/adrive#%E8%A7%84%E8%8C%83%E7%AE%80%E6%B4%81",
+      "https://haoqi.design/adrive#%E9%AB%98%E5%BA%A6%E5%A4%8D%E7%94%A8",
+      "https://haoqi.design/adrive#%E5%8F%AF%E6%8C%81%E7%BB%AD%E6%80%A7",
+      "https://haoqi.design/adrive#ads-%E5%91%A8%E8%BE%B9%E5%B7%A5%E5%85%B7%E9%93%BE",
+      "https://haoqi.design/adrive#%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E8%AE%BE%E8%AE%A1%E6%A6%82%E8%A7%88",
+      "https://haoqi.design/"
+    ]
+  },
+  {
+    "route": "/shore_icon",
+    "title": "Shore Icon",
+    "scrollHeight": 5595,
+    "textStart": "",
+    "headingCount": 16,
+    "imageCount": 11,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/shore_icon#%E7%97%9B%E7%82%B9",
+      "https://haoqi.design/shore_icon#%E9%A3%8E%E6%A0%BC%E7%BB%9F%E4%B8%80",
+      "https://haoqi.design/shore_icon#%E8%AF%86%E5%88%AB%E6%B8%85%E6%99%B0",
+      "https://haoqi.design/shore_icon#%E4%BA%A4%E4%BB%98%E4%B8%8E%E7%AE%A1%E7%90%86",
+      "https://haoqi.design/shore_icon#%E5%8F%91%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0",
+      "https://haoqi.design/shore_icon#sf-symbols",
+      "https://haoqi.design/shore_icon#microsoft-fluent-system-icons",
+      "https://haoqi.design/shore_icon#spotify-icon-system",
+      "https://haoqi.design/shore_icon#shore-icon-system",
+      "https://haoqi.design/shore_icon#%E5%A4%9A%E9%87%8D%E7%BA%BF%E5%AE%BD",
+      "https://haoqi.design/shore_icon#%E9%9D%9E%E4%B8%A5%E6%A0%BC%E7%9A%84%E7%BD%91%E6%A0%BC",
+      "https://haoqi.design/shore_icon#%E9%9D%9E%E9%9B%B6%E4%B8%8E%E5%81%B6%E5%A5%87%E5%A1%AB%E5%85%85",
+      "https://haoqi.design/shore_icon#%E7%BB%9F%E4%B8%80%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F",
+      "https://haoqi.design/shore_icon#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86",
+      "https://haoqi.design/shore_icon#%E6%9C%AA%E6%9D%A5",
+      "https://haoqi.design/shore_icon#%E7%97%9B%E7%82%B9",
+      "https://haoqi.design/shore_icon#%E9%A3%8E%E6%A0%BC%E7%BB%9F%E4%B8%80",
+      "https://haoqi.design/shore_icon#%E8%AF%86%E5%88%AB%E6%B8%85%E6%99%B0",
+      "https://haoqi.design/shore_icon#%E4%BA%A4%E4%BB%98%E4%B8%8E%E7%AE%A1%E7%90%86",
+      "https://haoqi.design/shore_icon#%E5%8F%91%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0",
+      "https://haoqi.design/shore_icon#sf-symbols",
+      "https://haoqi.design/shore_icon#microsoft-fluent-system-icons",
+      "https://haoqi.design/shore_icon#spotify-icon-system",
+      "https://haoqi.design/shore_icon#shore-icon-system",
+      "https://haoqi.design/stories/figma_and_me#vectors",
+      "https://haoqi.design/shore_icon#%E5%A4%9A%E9%87%8D%E7%BA%BF%E5%AE%BD",
+      "https://haoqi.design/shore_icon#%E9%9D%9E%E4%B8%A5%E6%A0%BC%E7%9A%84%E7%BD%91%E6%A0%BC",
+      "https://haoqi.design/shore_icon#%E9%9D%9E%E9%9B%B6%E4%B8%8E%E5%81%B6%E5%A5%87%E5%A1%AB%E5%85%85",
+      "https://haoqi.design/shore_icon#%E7%BB%9F%E4%B8%80%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F",
+      "https://haoqi.design/shore_icon#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86",
+      "https://haoqi.design/shore_icon#%E6%9C%AA%E6%9D%A5",
+      "https://haoqi.design/"
+    ]
+  },
+  {
+    "route": "/teambition",
+    "title": "Teambition",
+    "textStart": "",
+    "headingCount": 1,
+    "imageCount": 0,
+    "videoCount": 0,
+    "internalLinks": [
+      "https://haoqi.design/",
+      "https://haoqi.design/"
+    ]
+  }
+]

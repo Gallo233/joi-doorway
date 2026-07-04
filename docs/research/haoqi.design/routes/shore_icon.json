@@ -1,0 +1,594 @@
+{
+  "articleText": "",
+  "bodyClass": "",
+  "headings": [
+    {
+      "cls": "font-bold text-3xl! text-l1 lg:text-5xl! leading-tight tracking-tight",
+      "rect": {
+        "bottom": 246,
+        "h": 60,
+        "top": 186,
+        "w": 832,
+        "x": 304,
+        "y": 186
+      },
+      "tag": "h1",
+      "text": "Shore Icon"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-12 text-2xl leading-tight lg:mt-14 lg:text-[28px]",
+      "rect": {
+        "bottom": 534,
+        "h": 35,
+        "top": 499,
+        "w": 832,
+        "x": 304,
+        "y": 499
+      },
+      "tag": "h1",
+      "text": "#痛点"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 680,
+        "h": 30,
+        "top": 650,
+        "w": 832,
+        "x": 304,
+        "y": 650
+      },
+      "tag": "h2",
+      "text": "#风格统一"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 928,
+        "h": 30,
+        "top": 898,
+        "w": 832,
+        "x": 304,
+        "y": 898
+      },
+      "tag": "h2",
+      "text": "#识别清晰"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-8 text-lg leading-snug lg:mt-10 lg:text-xl",
+      "rect": {
+        "bottom": 1064,
+        "h": 28,
+        "top": 1036,
+        "w": 832,
+        "x": 304,
+        "y": 1036
+      },
+      "tag": "h3",
+      "text": "#交付与管理"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-12 text-2xl leading-tight lg:mt-14 lg:text-[28px]",
+      "rect": {
+        "bottom": 1291,
+        "h": 35,
+        "top": 1256,
+        "w": 832,
+        "x": 304,
+        "y": 1256
+      },
+      "tag": "h1",
+      "text": "#发现与学习"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 1369,
+        "h": 30,
+        "top": 1339,
+        "w": 832,
+        "x": 304,
+        "y": 1339
+      },
+      "tag": "h2",
+      "text": "#SF Symbols"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 1805,
+        "h": 30,
+        "top": 1775,
+        "w": 832,
+        "x": 304,
+        "y": 1775
+      },
+      "tag": "h2",
+      "text": "#Microsoft Fluent System Icons"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 2069,
+        "h": 30,
+        "top": 2039,
+        "w": 832,
+        "x": 304,
+        "y": 2039
+      },
+      "tag": "h2",
+      "text": "#Spotify Icon System"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-12 text-2xl leading-tight lg:mt-14 lg:text-[28px]",
+      "rect": {
+        "bottom": 2380,
+        "h": 35,
+        "top": 2345,
+        "w": 832,
+        "x": 304,
+        "y": 2345
+      },
+      "tag": "h1",
+      "text": "#Shore Icon System"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 2552,
+        "h": 30,
+        "top": 2522,
+        "w": 832,
+        "x": 304,
+        "y": 2522
+      },
+      "tag": "h2",
+      "text": "#多重线宽"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 2800,
+        "h": 30,
+        "top": 2770,
+        "w": 832,
+        "x": 304,
+        "y": 2770
+      },
+      "tag": "h2",
+      "text": "#非严格的网格"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 3014,
+        "h": 30,
+        "top": 2984,
+        "w": 832,
+        "x": 304,
+        "y": 2984
+      },
+      "tag": "h2",
+      "text": "#非零与偶奇填充"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 3330,
+        "h": 30,
+        "top": 3300,
+        "w": 832,
+        "x": 304,
+        "y": 3300
+      },
+      "tag": "h2",
+      "text": "#统一输出格式"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-10 text-xl leading-tight lg:mt-12 lg:text-2xl",
+      "rect": {
+        "bottom": 4835,
+        "h": 30,
+        "top": 4805,
+        "w": 832,
+        "x": 304,
+        "y": 4805
+      },
+      "tag": "h2",
+      "text": "#版本管理"
+    },
+    {
+      "cls": "group relative scroll-mt-24 font-semibold tracking-tight text-l1 [&:first-child]:mt-0 mt-12 text-2xl leading-tight lg:mt-14 lg:text-[28px]",
+      "rect": {
+        "bottom": 4994,
+        "h": 35,
+        "top": 4959,
+        "w": 832,
+        "x": 304,
+        "y": 4959
+      },
+      "tag": "h1",
+      "text": "#未来"
+    }
+  ],
+  "htmlClass": "dark",
+  "links": [
+    {
+      "href": "https://haoqi.design/",
+      "text": "haoqi.design"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%97%9B%E7%82%B9",
+      "text": "痛点"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%A3%8E%E6%A0%BC%E7%BB%9F%E4%B8%80",
+      "text": "风格统一"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E8%AF%86%E5%88%AB%E6%B8%85%E6%99%B0",
+      "text": "识别清晰"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E4%BA%A4%E4%BB%98%E4%B8%8E%E7%AE%A1%E7%90%86",
+      "text": "交付与管理"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E5%8F%91%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0",
+      "text": "发现与学习"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#sf-symbols",
+      "text": "SF Symbols"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#microsoft-fluent-system-icons",
+      "text": "Microsoft Fluent System Icons"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#spotify-icon-system",
+      "text": "Spotify Icon System"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#shore-icon-system",
+      "text": "Shore Icon System"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E5%A4%9A%E9%87%8D%E7%BA%BF%E5%AE%BD",
+      "text": "多重线宽"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%9D%9E%E4%B8%A5%E6%A0%BC%E7%9A%84%E7%BD%91%E6%A0%BC",
+      "text": "非严格的网格"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%9D%9E%E9%9B%B6%E4%B8%8E%E5%81%B6%E5%A5%87%E5%A1%AB%E5%85%85",
+      "text": "非零与偶奇填充"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%BB%9F%E4%B8%80%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F",
+      "text": "统一输出格式"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86",
+      "text": "版本管理"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E6%9C%AA%E6%9D%A5",
+      "text": "未来"
+    },
+    {
+      "href": "https://spotify.design/article/refreshing-our-icon-system-the-why-and-how-behind-the-changes",
+      "text": "Spotify Icon System"
+    },
+    {
+      "href": "https://www.figma.com/community/file/836835755999342788/Microsoft-Fluent-System-Icons",
+      "text": "Microsoft Fluent System Icons"
+    },
+    {
+      "href": "https://developer.apple.com/design/resources/#sf-symbols",
+      "text": "SF Symbols"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%97%9B%E7%82%B9",
+      "text": "#痛点"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%A3%8E%E6%A0%BC%E7%BB%9F%E4%B8%80",
+      "text": "#风格统一"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E8%AF%86%E5%88%AB%E6%B8%85%E6%99%B0",
+      "text": "#识别清晰"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E4%BA%A4%E4%BB%98%E4%B8%8E%E7%AE%A1%E7%90%86",
+      "text": "#交付与管理"
+    },
+    {
+      "href": "https://www.iconfont.cn/",
+      "text": "iconfont"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E5%8F%91%E7%8E%B0%E4%B8%8E%E5%AD%A6%E4%B9%A0",
+      "text": "#发现与学习"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#sf-symbols",
+      "text": "#SF Symbols"
+    },
+    {
+      "href": "https://developer.apple.com/design/resources/#sf-symbols",
+      "text": "SF Symbols →"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#microsoft-fluent-system-icons",
+      "text": "#Microsoft Fluent System Icons"
+    },
+    {
+      "href": "https://www.figma.com/community/file/836835755999342788/Microsoft-Fluent-System-Icons",
+      "text": "Microsoft Fluent System Icons →"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#spotify-icon-system",
+      "text": "#Spotify Icon System"
+    },
+    {
+      "href": "https://spotify.design/article/refreshing-our-icon-system-the-why-and-how-behind-the-changes",
+      "text": "Refreshing our Icon System: the why and how behind the changes →"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#shore-icon-system",
+      "text": "#Shore Icon System"
+    },
+    {
+      "href": "https://developer.mozilla.org/zh-CN/docs/Web/SVG/Element/symbol",
+      "text": "SVG Symbol"
+    },
+    {
+      "href": "https://haoqi.design/stories/figma_and_me#vectors",
+      "text": "VectorS"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E5%A4%9A%E9%87%8D%E7%BA%BF%E5%AE%BD",
+      "text": "#多重线宽"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%9D%9E%E4%B8%A5%E6%A0%BC%E7%9A%84%E7%BD%91%E6%A0%BC",
+      "text": "#非严格的网格"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E9%9D%9E%E9%9B%B6%E4%B8%8E%E5%81%B6%E5%A5%87%E5%A1%AB%E5%85%85",
+      "text": "#非零与偶奇填充"
+    },
+    {
+      "href": "https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/fill-rule",
+      "text": "fill-rule"
+    },
+    {
+      "href": "https://www.figma.com/community/plugin/771155994770327940/Fill-Rule-Editor",
+      "text": "Fill Rule Editor"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%BB%9F%E4%B8%80%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F",
+      "text": "#统一输出格式"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86",
+      "text": "#版本管理"
+    },
+    {
+      "href": "https://haoqi.design/shore_icon#%E6%9C%AA%E6%9D%A5",
+      "text": "#未来"
+    },
+    {
+      "href": "https://haoqi.design/",
+      "text": "Home"
+    },
+    {
+      "href": "https://twitter.com/wenhaoqi",
+      "text": "Twitter/X"
+    },
+    {
+      "href": "https://github.com/wenhaoqiasd",
+      "text": "GitHub"
+    },
+    {
+      "href": "https://www.figma.com/@wenhaoqi",
+      "text": "Figma"
+    }
+  ],
+  "media": {
+    "canvases": [],
+    "images": [
+      {
+        "alt": "Material 与 Ant Design 的图标网格",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 800,
+          "h": 2,
+          "top": 798,
+          "w": 832,
+          "x": 304,
+          "y": 798
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon01.png"
+      },
+      {
+        "alt": "SF Symbols 图标与文字系统",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 1505,
+          "h": 2,
+          "top": 1503,
+          "w": 832,
+          "x": 304,
+          "y": 1503
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon02.png"
+      },
+      {
+        "alt": "SF Symbols 多档线宽与相对宽度",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 1727,
+          "h": 2,
+          "top": 1725,
+          "w": 832,
+          "x": 304,
+          "y": 1725
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon03.png"
+      },
+      {
+        "alt": "Microsoft Fluent System Icons 规范",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 1915,
+          "h": 2,
+          "top": 1913,
+          "w": 832,
+          "x": 304,
+          "y": 1913
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon04.png"
+      },
+      {
+        "alt": "Spotify Icon System 文章截图",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 2137,
+          "h": 2,
+          "top": 2135,
+          "w": 832,
+          "x": 304,
+          "y": 2135
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon05.png"
+      },
+      {
+        "alt": "Spotify Icon System 线宽策略",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 2213,
+          "h": 2,
+          "top": 2211,
+          "w": 832,
+          "x": 304,
+          "y": 2211
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon06.png"
+      },
+      {
+        "alt": "Shore Icon 多重线宽说明",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 2620,
+          "h": 2,
+          "top": 2618,
+          "w": 832,
+          "x": 304,
+          "y": 2618
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon07.png"
+      },
+      {
+        "alt": "VectorS 线宽工具",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 2722,
+          "h": 2,
+          "top": 2720,
+          "w": 832,
+          "x": 304,
+          "y": 2720
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon08.png"
+      },
+      {
+        "alt": "Shore Icon 非严格网格",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 2936,
+          "h": 2,
+          "top": 2934,
+          "w": 832,
+          "x": 304,
+          "y": 2934
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon09.png"
+      },
+      {
+        "alt": "Non-zero 与 Even-odd 填充规则",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 3202,
+          "h": 2,
+          "top": 3200,
+          "w": 832,
+          "x": 304,
+          "y": 3200
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon10.png"
+      },
+      {
+        "alt": "VectorS GitHub 版本管理设想",
+        "cls": "block w-full h-auto cursor-zoom-in select-none border border-line bg-[rgba(var(--label-d),0.05)]",
+        "naturalHeight": 0,
+        "naturalWidth": 0,
+        "rect": {
+          "bottom": 5020,
+          "h": 2,
+          "top": 5018,
+          "w": 832,
+          "x": 304,
+          "y": 5018
+        },
+        "src": "https://mysite2026-blog-cyn6.vercel.app/blog/shore/icon11.png"
+      }
+    ],
+    "videos": []
+  },
+  "readyState": "complete",
+  "scrollables": [
+    {
+      "clientHeight": 900,
+      "cls": "w-full h-full overflow-y-auto overscroll-contain no-scrollbar",
+      "id": "",
+      "overflowY": "auto",
+      "rect": {
+        "bottom": 900,
+        "h": 900,
+        "top": 0,
+        "w": 1440,
+        "x": 0,
+        "y": 0
+      },
+      "scrollHeight": 5595,
+      "tag": "div"
+    }
+  ],
+  "text": "",
+  "title": "Shore Icon",
+  "url": "https://haoqi.design/shore_icon"
+}
