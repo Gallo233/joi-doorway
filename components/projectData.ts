@@ -1,7 +1,8 @@
 export type ProjectSection = {
   heading: string;
+  headingZh: string;
   body: string[];
-  code?: string;
+  bodyZh: string[];
 };
 
 export type ProjectFigure = {
@@ -12,237 +13,152 @@ export type ProjectFigure = {
 
 export type ProjectCase = {
   slug: string;
+  index: string;
   title: string;
   date: string;
-  years: string;
   kind: string;
+  role: string;
   repo: string;
   summary: string;
-  dimensions: string;
-  characterCount: string;
+  summaryZh: string;
+  question: string;
+  cover: string;
   figures: ProjectFigure[];
   sections: ProjectSection[];
+  nextSlug: string;
+  nextTitle: string;
 };
 
 export const projects: ProjectCase[] = [
   {
     slug: "joi",
-    title: "Joi",
-    date: "July 2026",
-    years: "2026",
-    kind: "Desktop companion",
+    index: "01",
+    title: "JOI — PRESENCE",
+    date: "MAY — JULY 2026",
+    kind: "WINDOWS-FIRST MULTIMODAL COMPANION",
+    role: "PRODUCT / DESIGN / DEVELOPMENT",
     repo: "https://github.com/Gallo233/Joi",
-    dimensions: "local agent / Windows shell",
-    characterCount: "planner, memory, tools",
     summary:
-      "Joi is the core desktop companion: a local multimodal agent with planner, memory, policy gates, tool registry, screen watching, Codex/browser/game/MCP adapters, and a character-fronted shell.",
+      "Joi explores what changes when an AI assistant gains continuity, boundaries, a character, and a visible way of acting inside a person's computer.",
+    summaryZh:
+      "Joi 探索的是：当 AI 助手拥有连续性、边界、人格，以及在人的电脑里清晰可见的行动方式时，我们与它的关系会发生什么变化。",
+    question: "How can an agent feel present without taking control away from the person beside it?",
+    cover: "/assets/joi-app-v3.png",
     figures: [
       {
         src: "/assets/joi-app-v3.png",
-        alt: "Joi App character reference",
-        caption: "Joi App keeps amber eyes and the desktop outfit, with no side braid.",
+        alt: "Joi character system showing front, side, back, expressions, and accessories",
+        caption: "Joi identity system / character continuity across product states",
       },
       {
-        src: "/assets/project-thumbs/joi-autopilot-thumb.png",
-        alt: "Local agent loop thumbnail",
-        caption: "The desktop line is designed as a practical local command surface.",
+        src: "/media/joi-live2d-preview.png",
+        alt: "Joi Live2D working reference",
+        caption: "Embodied interface study / Live2D working reference",
       },
     ],
     sections: [
       {
-        heading: "Role",
+        heading: "The Question",
+        headingZh: "问题",
         body: [
-          "Joi is not just a chat window. She is the home base for local work: watching context, choosing tools, planning steps, and asking for approval before risky actions.",
-          "The character layer matters because the product is meant to feel like a real working partner, not a detached operations dashboard.",
+          "Most assistants disappear between requests. Joi starts from the opposite premise: a useful companion should remember context, show intention, and remain interruptible while work is happening.",
+          "The character is not decoration. It is the visible edge of a system made from planning, memory, policy, tools, and review.",
+        ],
+        bodyZh: [
+          "大多数助手会在请求之间消失。Joi 从相反的前提出发：一个有用的伴侣应该记住上下文、表达意图，并在工作发生时随时可以被打断。",
+          "角色并不是装饰，而是规划、记忆、策略、工具与复核机制共同构成的系统边界。",
         ],
       },
       {
-        heading: "Architecture",
+        heading: "A Legible Agent",
+        headingZh: "可理解的智能体",
         body: [
-          "The current direction centers on a Windows-first shell with a policy gate, persistent memory, and adapter boundaries for Codex, browsers, games, and MCP tools.",
-          "The interface should stay warm and ordinary even when the internal capabilities are complex.",
+          "The Python core separates planning, policy gates, memory, events, and tool adapters. The Tauri and Vue shell translates that machinery into task cards, approvals, conversation, character states, and a developer audit view.",
+          "Computer Use actions preserve an observe, target, approve, act, and verify trail so automation remains inspectable instead of magical.",
         ],
-        code: "planner -> policy gate -> tool registry -> action adapter -> review\nmemory -> context -> character shell -> user approval",
+        bodyZh: [
+          "Python 核心把规划、策略网关、记忆、事件和工具适配器分开；Tauri 与 Vue 前端再把这些机制翻译为任务卡、审批、对话、角色状态与开发者审计视图。",
+          "Computer Use 操作保留观察、定位、确认、执行和验证记录，让自动化保持可检查，而不是神秘地发生。",
+        ],
+      },
+      {
+        heading: "Where It Goes",
+        headingZh: "下一步",
+        body: [
+          "The next milestone is not maximum autonomy. It is a convincing shared loop: Joi notices a context, proposes a small next step, waits for consent, acts, and checks what changed.",
+        ],
+        bodyZh: [
+          "下一阶段的目标不是最大化自主性，而是建立一个可信的共同循环：Joi 注意到上下文，提出一个小步骤，等待确认，执行，并检查发生了什么变化。",
+        ],
       },
     ],
+    nextSlug: "joi-map",
+    nextTitle: "JOI MAP — REACH",
   },
   {
     slug: "joi-map",
-    title: "Joi Map",
-    date: "July 2026",
-    years: "2026",
-    kind: "World-facing guide",
-    repo: "https://github.com/Gallo233/aiguide-ios",
-    dimensions: "SwiftUI / MapKit / voice",
-    characterCount: "location, vision, itinerary",
+    index: "02",
+    title: "JOI MAP — REACH",
+    date: "JUNE — JULY 2026",
+    kind: "WORLD-FACING AI GUIDE",
+    role: "PRODUCT / DESIGN / SWIFTUI",
+    repo: "https://github.com/Gallo233/joi-map-ios",
     summary:
-      "Joi Map turns Joi into an on-site guide: location-aware narration, nearby recommendations, photo recognition, itinerary planning, search, localization, voice, and map-style paths.",
+      "Joi Map extends a virtual personality toward real places, combining location, maps, visual recognition, narration, routes, and follow-up questions.",
+    summaryZh:
+      "Joi Map 把虚拟人格延伸到真实地点，把定位、地图、视觉识别、讲解、路线与追问连接成一个持续的现场体验。",
+    question: "How far can a personality travel before it changes the way we notice the world?",
+    cover: "/assets/joi-map-v3.png",
     figures: [
       {
         src: "/assets/joi-map-v3.png",
-        alt: "Joi Map character reference",
-        caption: "The side braid and coral ribbon are the Map-only identity marker.",
+        alt: "Joi Map character system with a map, camera, bag, and location details",
+        caption: "Joi Map identity / the same personality prepared for the field",
       },
       {
         src: "/assets/joi-map-main-ui.png",
-        alt: "Joi Map interface reference",
-        caption: "The map surface should feel like a companion moving with you through a place.",
+        alt: "Joi Map iOS interface showing a three-dimensional city map",
+        caption: "Working SwiftUI MVP / location, route, recognition, and narration",
       },
     ],
     sections: [
       {
-        heading: "Field Presence",
+        heading: "Beyond Location",
+        headingZh: "不只定位",
         body: [
-          "Joi Map is the version of Joi that steps toward the physical world. She does not just show locations; she explains where you are and why a place might matter.",
-          "The design language should feel sunny and useful, never like a sci-fi navigation cockpit.",
+          "A normal map answers where. Joi Map is interested in where, what, why, and what might be worth noticing next.",
+          "The MVP combines MapKit, location state, nearby cultural routes, photo recognition, narration, sources, correction, and follow-up questions.",
+        ],
+        bodyZh: [
+          "普通地图回答在哪里，Joi Map 更关心在哪里、这是什么、为什么值得注意，以及下一步还可以看见什么。",
+          "当前 MVP 把 MapKit、定位状态、附近文化路线、拍照识别、讲解、信源、纠错与追问整合到一起。",
         ],
       },
       {
-        heading: "Core Loop",
+        heading: "A Continuous Guide",
+        headingZh: "持续的导览",
         body: [
-          "Locate, understand, narrate, recommend, and remember. The iOS MVP explores how MapKit, camera input, voice, and itinerary states can become one companion flow.",
+          "The interaction is designed as one loop rather than a collection of AI buttons: locate, understand, narrate, recommend, remember, and continue the conversation.",
+          "Manual language switching currently supports Simplified Chinese, Traditional Chinese, English, Japanese, and Korean, while visual fallback keeps recognition useful when network services are unavailable.",
         ],
-      },
-    ],
-  },
-  {
-    slug: "doorway",
-    title: "Joi Doorway",
-    date: "July 2026",
-    years: "2026",
-    kind: "Personal site entrance",
-    repo: "https://github.com/Gallo233/joi-doorway",
-    dimensions: "Next.js / video / gesture",
-    characterCount: "phone, knock, peephole, handle",
-    summary:
-      "Joi Doorway is the ritual entrance for the personal site: tap Joi Map, hear three knocks, approach the peephole, watch the generated doorway video, then drag the original video handle pixels to enter.",
-    figures: [
-      {
-        src: "/assets/door-handle-final-frame.png",
-        alt: "Door handle final frame",
-        caption: "The handle interaction is cut from the final video frame so the seam stays invisible.",
-      },
-      {
-        src: "/assets/doorway-bg.png",
-        alt: "Door approach frame",
-        caption: "The front-door sequence keeps the experience warm and domestic.",
-      },
-    ],
-    sections: [
-      {
-        heading: "Interaction Contract",
-        body: [
-          "The entrance should feel like a small game performance rather than a portfolio preloader. Every transition has to earn the next one.",
-          "The important seam is the video-to-handle handoff: the user should feel that the filmed handle became interactive, not that a random 3D prop appeared.",
+        bodyZh: [
+          "交互不是一组 AI 按钮，而是一个连续循环：定位、理解、讲解、推荐、记住，并继续对话。",
+          "应用目前支持简中、繁中、英语、日语和韩语手动切换，本地 Vision 兜底则让识景在网络服务不可用时仍然可用。",
         ],
       },
       {
-        heading: "Current State",
+        heading: "The Boundary",
+        headingZh: "边界",
         body: [
-          "The first pass now runs inside a Next.js shell while preserving the original phone, peephole, video, and pixel-handle state machine.",
+          "The deeper design problem is deciding how close a virtual personality should stand to a real moment. The product should add attention and context without replacing the place itself.",
+        ],
+        bodyZh: [
+          "更深层的设计问题是：虚拟人格应该站得离真实时刻多近。产品应当增加注意力与上下文，而不是替代地点本身。",
         ],
       },
     ],
-  },
-  {
-    slug: "autopilot",
-    title: "Joi Autopilot",
-    date: "July 2026",
-    years: "2026",
-    kind: "Build loop control",
-    repo: "https://github.com/Gallo233/joi-autopilot-control-center",
-    dimensions: "Codex / worktrees / approval",
-    characterCount: "design, develop, test, review",
-    summary:
-      "Joi Autopilot is a local control center for design-to-develop-to-test-to-review loops, keeping the user in charge at the commit boundary.",
-    figures: [
-      {
-        src: "/assets/project-thumbs/joi-autopilot-thumb.png",
-        alt: "Joi Autopilot thumbnail",
-        caption: "A control center for running product work without losing human taste.",
-      },
-    ],
-    sections: [
-      {
-        heading: "Why It Exists",
-        body: [
-          "As the Joi ecosystem grows, building it also needs a companion. Autopilot is the tool for orchestrating local branches, agents, tests, reviews, and handoffs.",
-        ],
-      },
-      {
-        heading: "Boundary",
-        body: [
-          "Automation can draft, test, and compare, but commit-level approval should remain human. That boundary is part of the product philosophy.",
-        ],
-        code: "brief -> plan -> worktree -> implementation -> test -> review -> approval",
-      },
-    ],
-  },
-  {
-    slug: "quant-ai",
-    title: "quant-ai",
-    date: "July 2026",
-    years: "2026",
-    kind: "Market analysis assistant",
-    repo: "https://github.com/Gallo233/quant-ai",
-    dimensions: "FastAPI / Vue / LLM",
-    characterCount: "market data, indicators, backtests",
-    summary:
-      "quant-ai explores an analytical side of the ecosystem: market data, indicators, LLM commentary, strategy generation, and backtesting.",
-    figures: [
-      {
-        src: "/assets/project-thumbs/quant-ai-thumb.png",
-        alt: "quant-ai dashboard thumbnail",
-        caption: "A finance surface for turning signals into reviewable analysis.",
-      },
-    ],
-    sections: [
-      {
-        heading: "Product Shape",
-        body: [
-          "This project is less character-first and more tool-first, but it still belongs in All Joi because it explores how AI reasoning can sit beside structured data.",
-        ],
-      },
-      {
-        heading: "Loop",
-        body: [
-          "Pull market data, compute indicators, ask the model to explain context, generate strategy candidates, then backtest and compare.",
-        ],
-      },
-    ],
-  },
-  {
-    slug: "sitianjian",
-    title: "司天监夜话",
-    date: "July 2026",
-    years: "2026",
-    kind: "Story-world experiment",
-    repo: "https://github.com/Gallo233/sitianjian",
-    dimensions: "Godot / Dialogic / bilingual",
-    characterCount: "visual novel, time messages",
-    summary:
-      "司天监夜话 is a bilingual visual novel experiment around ancient-China time messages, divination, changing fate, and emotional story-world building.",
-    figures: [
-      {
-        src: "/assets/project-thumbs/sitianjian-thumb.png",
-        alt: "司天监夜话 thumbnail",
-        caption: "The story layer keeps Joi from becoming only a utility stack.",
-      },
-    ],
-    sections: [
-      {
-        heading: "Story Layer",
-        body: [
-          "All Joi needs a world, not only tools. This project explores tone, pacing, dialogue, and a time-message mechanic that can carry character emotion.",
-        ],
-      },
-      {
-        heading: "Why It Belongs Here",
-        body: [
-          "The same companion idea can appear as software, map guide, build assistant, or story presence. 司天监夜话 holds the mythic edge of that idea.",
-        ],
-      },
-    ],
+    nextSlug: "joi",
+    nextTitle: "JOI — PRESENCE",
   },
 ];
 

@@ -3,29 +3,22 @@ import { notFound } from "next/navigation";
 import { getProject, projects } from "../../components/projectData";
 
 type ProjectPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const sitePath = (path: string) => `${basePath}${path}`;
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: ProjectPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
   const project = getProject(slug);
-
-  if (!project) {
-    return {
-      title: "All Joi",
-    };
-  }
-
+  if (!project) return { title: "Gallo" };
   return {
-    title: `${project.title} - All Joi`,
+    title: project.title,
     description: project.summary,
   };
 }
@@ -33,107 +26,69 @@ export async function generateMetadata({
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
   const project = getProject(slug);
-
-  if (!project) {
-    notFound();
-  }
-
-  const characters = project.summary.length + project.sections.flatMap((section) => section.body).join("").length;
+  if (!project) notFound();
 
   return (
     <main className="project-page">
-      <div className="site-grid-overlay project-grid-overlay" aria-hidden="true" />
-      <header className="project-detail-hud" aria-label="All Joi project navigation">
-        <a className="brand" href="/?skipIntro=1" aria-label="All Joi home">
-          <span className="brand-mark">J</span>
-          <span>ALL JOI</span>
-        </a>
+      <header className="project-detail-nav">
+        <a className="wordmark" href={sitePath("/")}>GALLO</a>
         <nav aria-label="Project navigation">
-          <a href="/?skipIntro=1#work">WORK</a>
-          <a href="/?skipIntro=1#contact">CONTACT</a>
-          <a href={project.repo} target="_blank" rel="noopener noreferrer">
-            GITHUB
-          </a>
+          <a href={sitePath("/#work")}>WORK</a>
+          <a href={sitePath("/#about")}>ABOUT</a>
+          <a href={project.repo} target="_blank" rel="noreferrer">GITHUB</a>
         </nav>
       </header>
 
-      <article className="project-article">
-        <p className="project-kind">{project.kind}</p>
-        <h1>{project.title}</h1>
-        <div className="project-date-row">
-          <span>{project.date}</span>
-          <span>{project.years}</span>
-        </div>
-        <p className="project-summary">{project.summary}</p>
+      <article>
+        <section className="project-detail-hero">
+          <div className="project-detail-hero-top">
+            <p className="project-detail-kicker">{project.index} / {project.kind}</p>
+            <h1>{project.title}</h1>
+          </div>
 
-        <div className="project-figure-grid">
-          {project.figures.map((figure) => (
-            <figure key={figure.src}>
-              <img src={figure.src} alt={figure.alt} />
-              <figcaption>{figure.caption}</figcaption>
-            </figure>
-          ))}
-        </div>
+          <div className="project-detail-summary">
+            <p>{project.summary}</p>
+            <dl>
+              <div><dt>PERIOD</dt><dd>{project.date}</dd></div>
+              <div><dt>ROLE</dt><dd>{project.role}</dd></div>
+              <div><dt>QUESTION</dt><dd>{project.question}</dd></div>
+            </dl>
+          </div>
 
-        <aside className="project-metadata" aria-label="Project metadata">
-          <h2>Metadata</h2>
-          <dl>
-            <div>
-              <dt>Last Updated</dt>
-              <dd>{project.date}</dd>
-            </div>
-            <div>
-              <dt>Dimensions</dt>
-              <dd>{project.dimensions}</dd>
-            </div>
-            <div>
-              <dt>Characters</dt>
-              <dd>{characters}</dd>
-            </div>
-            <div>
-              <dt>Links</dt>
-              <dd>
-                <a href="/?skipIntro=1">Home</a>
-                <a href="/?skipIntro=1#work">Work</a>
-                <a href={project.repo} target="_blank" rel="noopener noreferrer">
-                  GitHub
-                </a>
-              </dd>
-            </div>
-          </dl>
-        </aside>
+          <figure className="project-detail-cover">
+            <img src={sitePath(project.cover)} alt={`${project.title} main visual`} />
+          </figure>
+        </section>
 
-        <nav className="project-toc" aria-label="Page table of contents">
+        <div className="project-detail-body">
           {project.sections.map((section) => (
-            <a key={section.heading} href={`#${slugify(section.heading)}`}>
-              {section.heading}
-            </a>
+            <section className="project-detail-section" key={section.heading}>
+              <div>
+                <p className="project-detail-kicker">{section.heading}</p>
+                <h2>{section.headingZh}</h2>
+              </div>
+              <div className="project-detail-section-copy">
+                {section.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                {section.bodyZh.map((paragraph) => <p lang="zh-CN" key={paragraph}>{paragraph}</p>)}
+              </div>
+            </section>
           ))}
-        </nav>
 
-        {project.sections.map((section) => (
-          <section className="project-copy-section" id={slugify(section.heading)} key={section.heading}>
-            <h2>{section.heading}</h2>
-            {section.body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+          <div className="project-detail-gallery">
+            {project.figures.map((figure) => (
+              <figure key={figure.src}>
+                <img src={sitePath(figure.src)} alt={figure.alt} />
+                <figcaption>{figure.caption}</figcaption>
+              </figure>
             ))}
-            {section.code ? (
-              <pre>
-                <code>{section.code}</code>
-              </pre>
-            ) : null}
-          </section>
-        ))}
-      </article>
+          </div>
 
-      <footer className="project-footer-hud" aria-hidden="true">
-        <span>GMT+8 CN</span>
-        <span>0720 X 0450 Y</span>
-      </footer>
+          <a className="project-next" href={sitePath(`/${project.nextSlug}`)}>
+            <span>NEXT PROJECT</span>
+            <strong>{project.nextTitle}</strong>
+          </a>
+        </div>
+      </article>
     </main>
   );
-}
-
-function slugify(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
