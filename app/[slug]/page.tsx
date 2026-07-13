@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProject, projects } from "../../components/projectData";
+import { JoiMapNativeDemo, JoiNativeDemo } from "../../components/NativeProjectDemos";
+import { Live2DRouteMount } from "../../components/Live2DRouteMount";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
@@ -30,6 +32,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <main className="project-page">
+      <Live2DRouteMount />
       <header className="project-detail-nav">
         <a className="wordmark" href={sitePath("/")}>GALLO</a>
         <nav aria-label="Project navigation">
@@ -55,9 +58,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </dl>
           </div>
 
-          <figure className="project-detail-cover">
-            <img src={sitePath(project.cover)} alt={`${project.title} main visual`} />
-          </figure>
+          <div className={`project-detail-live ${project.slug === "joi" ? "is-dark" : "is-light"}`}>
+            {project.slug === "joi" ? <JoiNativeDemo /> : <JoiMapNativeDemo />}
+          </div>
         </section>
 
         <div className="project-detail-body">
@@ -73,15 +76,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
             </section>
           ))}
-
-          <div className="project-detail-gallery">
-            {project.figures.map((figure) => (
-              <figure key={figure.src}>
-                <img src={sitePath(figure.src)} alt={figure.alt} />
-                <figcaption>{figure.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
 
           <a className="project-next" href={sitePath(`/${project.nextSlug}`)}>
             <span>NEXT PROJECT</span>

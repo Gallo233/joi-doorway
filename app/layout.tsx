@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "../redesign.css";
+import "../styles.css";
+import "../experience.css";
 
 export const metadata: Metadata = {
   title: {
@@ -9,11 +11,11 @@ export const metadata: Metadata = {
   },
   description:
     "Gallo designs how AI enters human life through Joi, Joi Map, and product experiments at the boundary of technology and people.",
-  metadataBase: new URL("https://gallo233.github.io/joi-doorway"),
+  metadataBase: new URL("https://gallo.design"),
   openGraph: {
     title: "Gallo — AI Product & Product Design",
     description: "I design how AI enters human life.",
-    images: ["/media/gallo-home-brief.png"],
+    images: [],
   },
 };
 
