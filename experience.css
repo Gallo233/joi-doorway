@@ -162,6 +162,7 @@ body[data-state="qteDragging"] .qte-door-plate { transform:translate(13vw,var(--
 
 .gallo-experience {
   isolation: isolate;
+  opacity: 1;
   color: var(--gallo-black);
   background: var(--gallo-white);
 }

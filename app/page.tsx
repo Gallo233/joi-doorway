@@ -1,78 +1,12 @@
 "use client";
 
 import Script from "next/script";
-import { JoiMapNativeDemo, JoiNativeDemo, WorldField } from "../components/NativeProjectDemos";
+import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemos";
 
 export default function Page() {
   return (
     <>
-      <div className="intro-root" id="introRoot" aria-live="off">
-        <button className="skip-intro" id="skipIntro" type="button" aria-label="跳过开场">
-          SKIP
-        </button>
-
-        <section className="phone-sequence-stage" aria-label="Open Joi Map">
-          <div className="phone-light" aria-hidden="true" />
-          <div className="phone-device native-phone-device" id="phoneDevice">
-            <div className="native-phone-shell">
-              <div className="native-phone-status" aria-hidden="true">
-                <span>09:40</span><span>5G · 100%</span>
-              </div>
-              <div className="native-phone-home">
-                <div className="phone-home-copy">
-                  <span>SUNDAY · JUL 13</span>
-                  <strong>22°</strong>
-                  <p>GUANGZHOU · CLEAR</p>
-                </div>
-                <button className="joi-map-app-hit" id="joiMapApp" type="button" aria-label="打开 Joi Map">
-                  <img src="/assets/joi-map-app-icon.png" alt="" />
-                  <span>Joi Map</span>
-                </button>
-                <p className="phone-opening-cue">TAP TO OPEN</p>
-              </div>
-              <div className="native-phone-map" aria-hidden="true">
-                <WorldField variant="intro" />
-                <div className="phone-map-search"><span>Joi Map</span><b>LISTENING</b></div>
-                <div className="phone-map-route">
-                  <span>Joi is outside</span>
-                  <strong>3 min · front door</strong>
-                </div>
-                <div className="phone-map-dock"><span>NEARBY</span><span>VISION</span><span>ROUTE</span></div>
-              </div>
-              <span className="tap-ripple" aria-hidden="true" />
-            </div>
-          </div>
-          <div className="knock-field" aria-hidden="true"><span /><span /><span /></div>
-        </section>
-
-        <section className="door-approach-stage" aria-label="Approach the peephole">
-          <img className="door-approach-bg" src="/assets/doorway-bg.png" alt="" aria-hidden="true" />
-          <div className="turn-vignette" aria-hidden="true" />
-          <div className="peephole-lock" aria-hidden="true" />
-          <div className="peephole-interaction" id="peepholeInteraction">
-            <button className="peephole-hit" id="peepholeHit" type="button" aria-label="向上滑开猫眼" />
-            <div className="peephole-lens" aria-hidden="true">
-              <div className="peephole-view">
-                <video src="/assets/peephole-joi.mp4" muted autoPlay loop playsInline preload="auto" />
-              </div>
-              <div className="peephole-shutter" />
-              <div className="peephole-sheen" />
-              <div className="peephole-pull"><span /></div>
-            </div>
-          </div>
-          <div className="peephole-tunnel" aria-hidden="true" />
-        </section>
-
-        <section className="qte-stage" aria-label="Press the handle to enter">
-          <img className="qte-door-plate" src="/assets/doorway-bg.png" alt="" aria-hidden="true" />
-          <div className="qte-vignette" aria-hidden="true" />
-          <div className="threshold-light" aria-hidden="true" />
-          <p className="handle-cue" aria-hidden="true">PRESS · HOLD · PULL DOWN</p>
-          <button className="handle-hotspot" id="handleHotspot" type="button" aria-label="按住门把手并向下拖动进入 Gallo 的个人站" />
-        </section>
-      </div>
-
-      <main className="site-home gallo-experience" id="siteHome" tabIndex={-1} aria-hidden="true">
+      <main className="site-home gallo-experience" id="siteHome" tabIndex={-1}>
         <canvas className="shader-canvas" id="shaderCanvas" aria-hidden="true" />
         <header className="gallo-hud" aria-label="Main navigation">
           <a className="gallo-wordmark magnetic" href="#top">GALLO</a>
@@ -81,10 +15,10 @@ export default function Page() {
             <a className="magnetic" href="#thoughts">THOUGHTS</a>
             <a className="magnetic" href="#about">ABOUT</a>
           </nav>
-          <button className="replay-button magnetic" id="replayIntro" type="button">DOOR ↺</button>
+          <a className="replay-button magnetic" href="https://github.com/Gallo233" target="_blank" rel="noreferrer">GITHUB ↗</a>
         </header>
 
-        <section className="gallo-hero" id="top" data-joi-narration="门打开了。欢迎来到 Gallo 的世界。">
+        <section className="gallo-hero" id="top" data-joi-narration="欢迎来到 Gallo 的世界。我们从这里开始。">
           <div className="gallo-hero-sticky">
             <p className="hero-index">AI PRODUCT · PRODUCT DESIGN / 2026</p>
             <h1 aria-label="I design how AI enters human life">
@@ -168,12 +102,12 @@ export default function Page() {
 
         <footer className="gallo-footer">
           <p>LET&apos;S MAKE TECHNOLOGY<br />PEOPLE CAN LIVE WITH.</p>
-          <button className="footer-door magnetic" id="footerReplayIntro" type="button">RETURN TO THE DOOR ↺</button>
+          <a className="footer-door magnetic" href="#top">BACK TO TOP ↑</a>
           <span>GALLO · GUANGZHOU · GMT+8</span>
         </footer>
       </main>
 
-      <Script src="/script.js" strategy="afterInteractive" />
+      <Script src="/main-site.js" strategy="afterInteractive" />
       <Script src="/live2d/joi-live2d.js" strategy="afterInteractive" />
     </>
   );
