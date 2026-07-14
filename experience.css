@@ -275,12 +275,59 @@ body[data-state="qteDragging"] .qte-door-plate { transform:translate(13vw,var(--
 .kinetic-bridge>div { display:flex; width:max-content; animation:bridgeMarquee 18s linear infinite; }
 .kinetic-bridge span { font-size:clamp(48px,7vw,110px); font-weight:830; letter-spacing:-.06em; white-space:nowrap; }
 
-.about-section { position:relative; z-index:4; min-height:130vh; padding:150px 4vw; background:var(--gallo-white); }
-.about-section h2 { margin:90px 0 0; font-size:clamp(64px,10vw,158px); line-height:.82; letter-spacing:-.075em; }
-.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:10vw; margin:120px 0 0 36vw; }
-.about-grid>p { margin:0; font-size:clamp(18px,1.8vw,28px); line-height:1.4; }
-.about-links { display:grid; align-content:start; }
-.about-links a { display:flex; justify-content:space-between; padding:16px 0; border-top:1px solid var(--gallo-black); font:700 11px/1 "Gallo Mono",monospace; letter-spacing:.1em; }
+.gallo-experience .about-section {
+  position:relative;
+  z-index:4;
+  display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(360px,.55fr);
+  grid-template-areas:
+    "tag tag"
+    "headline bio";
+  column-gap:clamp(64px,8vw,150px);
+  row-gap:clamp(64px,8vh,100px);
+  align-items:start;
+  min-height:max(100svh,820px);
+  padding:clamp(110px,13vh,150px) 6vw clamp(90px,12vh,140px);
+  background:var(--gallo-white);
+}
+.gallo-experience .about-section>.section-tag { grid-area:tag; margin:0; }
+.gallo-experience .about-section h2 {
+  grid-area:headline;
+  max-width:9ch;
+  margin:0;
+  font-size:clamp(64px,7.3vw,132px);
+  line-height:.86;
+  letter-spacing:-.07em;
+  text-wrap:balance;
+}
+.gallo-experience .about-grid {
+  grid-area:bio;
+  display:flex;
+  width:100%;
+  max-width:470px;
+  flex-direction:column;
+  gap:clamp(54px,7vh,82px);
+  margin:8px 0 0;
+}
+.gallo-experience .about-grid>p {
+  max-width:34ch;
+  margin:0;
+  font-size:clamp(20px,1.45vw,25px);
+  line-height:1.48;
+  letter-spacing:-.025em;
+  text-wrap:pretty;
+}
+.gallo-experience .about-links { display:grid; align-content:start; }
+.gallo-experience .about-links a {
+  display:flex;
+  min-height:48px;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 0;
+  border-top:1px solid var(--gallo-black);
+  font:700 11px/1 "Gallo Mono",monospace;
+  letter-spacing:.1em;
+}
 
 .gallo-footer { position:relative; z-index:4; min-height:100vh; display:flex; flex-direction:column; justify-content:space-between; padding:120px 4vw 34px; background:var(--gallo-black); color:var(--gallo-white); }
 .gallo-footer>p { margin:0; font-size:clamp(64px,10.5vw,168px); line-height:.82; letter-spacing:-.075em; font-weight:800; }
@@ -328,7 +375,30 @@ body[data-state="qteDragging"] .qte-door-plate { transform:translate(13vw,var(--
   .map-position-card { display:none; }
   .map-mode-nav { left:14px; right:14px; bottom:14px; }
   .map-mode-nav button { min-width:0; flex:1; padding:12px 9px; gap:5px; }
-  .about-grid { grid-template-columns:1fr; margin:80px 0 0 16vw; }
+  .gallo-experience .about-section {
+    grid-template-columns:1fr;
+    grid-template-areas:"tag" "headline" "bio";
+    gap:0;
+    min-height:auto;
+    padding-top:96px;
+    padding-bottom:96px;
+  }
+  .gallo-experience .about-section h2 {
+    max-width:10ch;
+    margin-top:58px;
+    font-size:clamp(54px,16vw,84px);
+    line-height:.88;
+  }
+  .gallo-experience .about-grid {
+    max-width:38rem;
+    gap:52px;
+    margin:72px 0 0;
+  }
+  .gallo-experience .about-grid>p {
+    max-width:32ch;
+    font-size:19px;
+    line-height:1.52;
+  }
   .gallo-footer { padding-left:18px; padding-right:18px; }
   .project-detail-live { min-height:620px; height:78vh; margin-top:30px; padding:10px; }
 }
