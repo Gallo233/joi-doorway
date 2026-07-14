@@ -52,6 +52,7 @@ export function Live2DGate() {
 
       const elapsed = performance.now() - openedAt.current;
       exitTimer.current = window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("joi-live2d-gate-exit"));
         setPhase("exiting");
         removeTimer.current = window.setTimeout(() => {
           setVisible(false);

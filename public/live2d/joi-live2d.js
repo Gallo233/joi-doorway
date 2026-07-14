@@ -134,9 +134,15 @@
       this.live2dParamCache = new Map();
       this.live2dParamStats = { attempted: 0, resolved: 0, missed: 0 };
       this.live2dLoading = null;
+      this.live2dArrivalParticles = [];
+      this.live2dArrivalFrame = 0;
+      this.live2dArrivalTimer = 0;
+      this.live2dArrivalPrepared = false;
+      this.live2dArrivalStarted = false;
       this.bodyObserver = null;
       this.boundPointerMove = this.handlePointerMove.bind(this);
       this.boundResize = this.handleResize.bind(this);
+      this.boundGateExit = this.playLive2DArrival.bind(this);
     }
 
     connectedCallback() {
@@ -144,6 +150,7 @@
       this.cacheParts();
       this.positionInitial();
       this.bind();
+      window.addEventListener("joi-live2d-gate-exit", this.boundGateExit);
       this.observeSiteState();
       this.connectCore();
       this.scheduleBlink();
@@ -154,8 +161,11 @@
     disconnectedCallback() {
       window.removeEventListener("pointermove", this.boundPointerMove);
       window.removeEventListener("resize", this.boundResize);
+      window.removeEventListener("joi-live2d-gate-exit", this.boundGateExit);
       window.clearTimeout(this.reconnectTimer);
       window.clearTimeout(this.blinkTimer);
+      window.clearTimeout(this.live2dArrivalTimer);
+      window.cancelAnimationFrame(this.live2dArrivalFrame);
       this.bodyObserver?.disconnect();
       this.socket?.close();
       if (this.live2dModel?.internalModel && this.live2dBeforeUpdate) {
@@ -191,6 +201,7 @@
 
           <button class="joi-live2d-model" data-model type="button" aria-label="拖拽 Joi">
             <canvas class="joi-live2d-canvas" data-live2d-canvas aria-hidden="true"></canvas>
+            <canvas class="joi-live2d-arrival-canvas" data-live2d-arrival-canvas aria-hidden="true"></canvas>
             <span class="joi-live2d-shadow"></span>
           </button>
         </aside>
@@ -291,6 +302,52 @@
           opacity: 1;
         }
 
+        .joi-live2d.is-reconstructing .joi-live2d-canvas {
+          opacity: var(--arrival-model-opacity, 0);
+          transition: none;
+        }
+
+        .joi-live2d-arrival-canvas {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          z-index: 3;
+          width: 100%;
+          height: var(--model-h);
+          opacity: 0;
+          pointer-events: none;
+          filter:
+            drop-shadow(0 0 7px rgba(228, 103, 62, 0.22))
+            drop-shadow(0 20px 20px rgba(42, 29, 25, 0.12));
+          transform: translateZ(0);
+          transform-origin: 50% 84%;
+          will-change: opacity;
+        }
+
+        .joi-live2d.is-reconstructing .joi-live2d-arrival-canvas {
+          opacity: 1;
+        }
+
+        .joi-live2d.is-reconstructing .joi-live2d-model,
+        .joi-live2d.is-reconstructing .joi-live2d-bubble,
+        .joi-live2d.is-reconstructing .joi-live2d-panel {
+          pointer-events: none;
+        }
+
+        .joi-live2d.is-reconstructing .joi-live2d-bubble,
+        .joi-live2d.is-reconstructing .joi-live2d-panel {
+          opacity: 0;
+          transform: translateY(7px) scale(0.97);
+        }
+
+        .joi-live2d.is-reconstructing .joi-live2d-shadow {
+          opacity: var(--arrival-model-opacity, 0);
+        }
+
+        .joi-live2d.has-arrived .joi-live2d-canvas {
+          animation: live2d-arrival-settle 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
         .joi-live2d.is-dragging .joi-live2d-canvas {
           transform-origin: 50% 84%;
           transform:
@@ -303,6 +360,17 @@
 
         .joi-live2d.is-settling .joi-live2d-canvas {
           transition: transform 340ms cubic-bezier(0.18, 0.9, 0.2, 1.04);
+        }
+
+        @keyframes live2d-arrival-settle {
+          0% {
+            transform: translateY(5px) scale(0.992);
+            filter: drop-shadow(0 12px 14px rgba(42, 29, 25, 0.12));
+          }
+          100% {
+            transform: translateY(0) scale(1);
+            filter: drop-shadow(0 20px 20px rgba(42, 29, 25, 0.18));
+          }
         }
 
         .joi-live2d-stage {
@@ -468,6 +536,7 @@
           background: rgba(46, 31, 28, 0.2);
           filter: blur(7px);
           pointer-events: none;
+          transition: opacity 360ms ease;
         }
 
         .joi-live2d-bubble {
@@ -488,6 +557,7 @@
           pointer-events: auto;
           cursor: pointer;
           backdrop-filter: blur(16px);
+          transition: opacity 320ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .joi-live2d-bubble span {
@@ -632,6 +702,11 @@
           50% { translate: 0 -4px; }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+          .joi-live2d.has-arrived .joi-live2d-canvas { animation: none; }
+          .joi-live2d-arrival-canvas { filter: none; }
+        }
+
         @media (max-width: 720px) {
           :host {
             --model-h: min(44vh, 352px);
@@ -668,6 +743,7 @@
       this.root = this.shadowRoot.querySelector(".joi-live2d");
       this.model = this.shadowRoot.querySelector("[data-model]");
       this.live2dCanvas = this.shadowRoot.querySelector("[data-live2d-canvas]");
+      this.live2dArrivalCanvas = this.shadowRoot.querySelector("[data-live2d-arrival-canvas]");
       this.bubble = this.shadowRoot.querySelector("[data-bubble]");
       this.bubbleText = this.shadowRoot.querySelector("[data-bubble-text]");
       this.statusText = this.shadowRoot.querySelector("[data-status]");
@@ -745,7 +821,7 @@
     }
 
     handlePointerMove(event) {
-      if (!this.state.visible || this.state.dragging) return;
+      if (!this.state.visible || this.state.dragging || this.root.classList.contains("is-reconstructing")) return;
       const centerX = this.state.x + this.state.width - 88;
       const centerY = this.state.y + 110;
       this.state.targetLookX = clamp((event.clientX - centerX) / 340, -1, 1);
@@ -898,6 +974,229 @@
       return dt;
     }
 
+    live2dArrivalNoise(seed) {
+      const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+      return value - Math.floor(value);
+    }
+
+    prepareLive2DArrival() {
+      const source = this.live2dCanvas;
+      const target = this.live2dArrivalCanvas;
+      if (!source || !target || !source.width || !source.height) return false;
+
+      target.width = source.width;
+      target.height = source.height;
+      target.style.width = source.style.width || "100%";
+      target.style.height = source.style.height || "var(--model-h)";
+
+      const capture = document.createElement("canvas");
+      capture.width = source.width;
+      capture.height = source.height;
+      const captureContext = capture.getContext("2d", { willReadFrequently: true });
+      if (!captureContext) return false;
+
+      let pixels;
+      try {
+        captureContext.drawImage(source, 0, 0, capture.width, capture.height);
+        pixels = captureContext.getImageData(0, 0, capture.width, capture.height).data;
+      } catch (error) {
+        console.warn("[Joi Live2D] Could not sample the rendered model for arrival particles:", error);
+        this.live2dArrivalParticles = [];
+        this.live2dArrivalPrepared = true;
+        return false;
+      }
+
+      const width = capture.width;
+      const height = capture.height;
+      const sampleStep = Math.max(4, Math.round(width / 72));
+      const candidates = [];
+
+      for (let y = Math.floor(sampleStep / 2); y < height; y += sampleStep) {
+        for (let x = Math.floor(sampleStep / 2); x < width; x += sampleStep) {
+          const pixelIndex = (y * width + x) * 4;
+          const alpha = pixels[pixelIndex + 3];
+          const density = this.live2dArrivalNoise(x * 0.73 + y * 1.91);
+          if (alpha < 34 || density < 0.32) continue;
+          candidates.push({
+            x,
+            y,
+            r: pixels[pixelIndex],
+            g: pixels[pixelIndex + 1],
+            b: pixels[pixelIndex + 2],
+            alpha: alpha / 255,
+          });
+        }
+      }
+
+      const maxParticles = window.matchMedia("(max-width: 720px)").matches ? 720 : 1100;
+      const selectionStep = Math.max(1, candidates.length / maxParticles);
+      const selected = [];
+      for (let index = 0; index < candidates.length && selected.length < maxParticles; index += selectionStep) {
+        selected.push(candidates[Math.min(candidates.length - 1, Math.floor(index))]);
+      }
+
+      const centerX = width * 0.52;
+      const centerY = height * 0.55;
+      const pixelRatio = width / Math.max(1, Number.parseFloat(source.style.width) || width);
+      this.live2dArrivalParticles = selected.map((particle, index) => {
+        const seed = particle.x * 1.37 + particle.y * 2.17 + index * 0.91;
+        const noiseA = this.live2dArrivalNoise(seed);
+        const noiseB = this.live2dArrivalNoise(seed + 19.7);
+        const noiseC = this.live2dArrivalNoise(seed + 43.1);
+        const noiseD = this.live2dArrivalNoise(seed + 71.9);
+        const baseAngle = Math.atan2(particle.y - centerY, particle.x - centerX);
+        const spread = width * (0.16 + noiseA * 0.42) + height * noiseB * 0.06;
+        const spiral = (noiseC - 0.5) * 1.9 + (1 - particle.y / height) * 0.5;
+        const accent = noiseD > 0.94;
+
+        return {
+          targetX: particle.x,
+          targetY: particle.y,
+          startX: particle.x + Math.cos(baseAngle + spiral) * spread + (noiseB - 0.5) * width * 0.2,
+          startY: particle.y + Math.sin(baseAngle + spiral) * spread - height * (0.04 + noiseC * 0.15),
+          delay: clamp(0.035 + (1 - particle.y / height) * 0.18 + noiseD * 0.2, 0.035, 0.38),
+          phase: noiseA * Math.PI * 2,
+          size: Math.max(1.15 * pixelRatio, sampleStep * (0.18 + noiseC * 0.2)),
+          alpha: clamp(particle.alpha * (0.68 + noiseB * 0.32), 0.18, 1),
+          color: accent ? "228, 103, 62" : `${particle.r}, ${particle.g}, ${particle.b}`,
+          accent,
+        };
+      });
+
+      this.live2dArrivalPrepared = true;
+      return this.live2dArrivalParticles.length >= 32;
+    }
+
+    armLive2DArrival() {
+      window.cancelAnimationFrame(this.live2dArrivalFrame);
+      window.clearTimeout(this.live2dArrivalTimer);
+      this.live2dArrivalStarted = false;
+      this.root.style.setProperty("--arrival-model-opacity", "0");
+      this.root.classList.remove("has-arrived");
+      this.root.classList.add("is-reconstructing");
+      this.prepareLive2DArrival();
+      this.live2dArrivalTimer = window.setTimeout(() => this.playLive2DArrival(), 1150);
+    }
+
+    playLive2DArrival() {
+      if (!this.root?.classList.contains("is-reconstructing") || this.live2dArrivalStarted) return;
+      this.live2dArrivalStarted = true;
+      window.clearTimeout(this.live2dArrivalTimer);
+
+      const canvas = this.live2dArrivalCanvas;
+      const context = canvas?.getContext("2d");
+      const particles = this.live2dArrivalParticles;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const duration = reducedMotion ? 420 : 1680;
+      const startedAt = frameNow();
+
+      const renderArrival = (now) => {
+        const progress = clamp((now - startedAt) / duration, 0, 1);
+        const width = canvas?.width || 0;
+        const height = canvas?.height || 0;
+        const particleFade = 1 - Math.pow(clamp((progress - 0.7) / 0.3, 0, 1), 2);
+        const revealProgress = clamp((progress - (particles.length ? 0.46 : 0.05)) / (particles.length ? 0.4 : 0.72), 0, 1);
+        const modelOpacity = 1 - Math.pow(1 - revealProgress, 3);
+        this.root.style.setProperty("--arrival-model-opacity", modelOpacity.toFixed(3));
+
+        if (context && width && height) {
+          context.clearRect(0, 0, width, height);
+
+          if (!reducedMotion && particles.length) {
+            for (const particle of particles) {
+              const localProgress = clamp((progress - particle.delay) / Math.max(0.08, 0.74 - particle.delay), 0, 1);
+              const eased = 1 - Math.pow(1 - localProgress, 3);
+              const remaining = 1 - eased;
+              const curl = Math.sin(particle.phase + localProgress * Math.PI * 2.2) * remaining * particle.size * 4.5;
+              const x = particle.startX + (particle.targetX - particle.startX) * eased + curl;
+              const y = particle.startY + (particle.targetY - particle.startY) * eased
+                + Math.cos(particle.phase + localProgress * Math.PI * 1.7) * remaining * particle.size * 2.8;
+              const preGlow = progress < particle.delay
+                ? clamp(progress / Math.max(0.01, particle.delay), 0, 1) * 0.12
+                : 0;
+              const opacity = clamp(preGlow + localProgress * 2.25, 0, 1) * particleFade * particle.alpha;
+              if (opacity <= 0.01) continue;
+
+              if (particle.accent && localProgress > 0 && localProgress < 0.82) {
+                context.strokeStyle = `rgba(${particle.color}, ${opacity * 0.24})`;
+                context.lineWidth = Math.max(1, particle.size * 0.34);
+                context.beginPath();
+                context.moveTo(x, y);
+                context.lineTo(x - (particle.targetX - particle.startX) * remaining * 0.08, y - particle.size * 3.2);
+                context.stroke();
+              }
+
+              context.fillStyle = `rgba(${particle.color}, ${opacity})`;
+              const size = particle.size * (0.72 + localProgress * 0.52);
+              context.fillRect(x - size * 0.5, y - size * 0.5, size, size);
+            }
+
+            const scanProgress = clamp((progress - 0.08) / 0.68, 0, 1);
+            if (scanProgress > 0 && scanProgress < 1) {
+              const scanY = height * (1 - scanProgress);
+              const scanGradient = context.createLinearGradient(0, 0, width, 0);
+              scanGradient.addColorStop(0, "rgba(228, 103, 62, 0)");
+              scanGradient.addColorStop(0.45, "rgba(228, 103, 62, 0.5)");
+              scanGradient.addColorStop(0.72, "rgba(255, 235, 218, 0.72)");
+              scanGradient.addColorStop(1, "rgba(228, 103, 62, 0)");
+              context.fillStyle = scanGradient;
+              context.fillRect(0, scanY, width, Math.max(1.5, width / 220));
+            }
+          }
+        }
+
+        if (progress < 1) {
+          this.live2dArrivalFrame = requestAnimationFrame(renderArrival);
+        } else {
+          this.finishLive2DArrival();
+        }
+      };
+
+      this.live2dArrivalFrame = requestAnimationFrame(renderArrival);
+    }
+
+    finishLive2DArrival() {
+      window.cancelAnimationFrame(this.live2dArrivalFrame);
+      window.clearTimeout(this.live2dArrivalTimer);
+      this.live2dArrivalFrame = 0;
+      this.live2dArrivalStarted = false;
+      this.live2dArrivalPrepared = false;
+      this.live2dArrivalParticles = [];
+      this.root.style.setProperty("--arrival-model-opacity", "1");
+      this.root.classList.remove("is-reconstructing");
+      this.root.classList.add("has-arrived");
+      this.playExpression("softSmile", 1300);
+      this.live2dArrivalCanvas?.getContext("2d")?.clearRect(
+        0,
+        0,
+        this.live2dArrivalCanvas.width,
+        this.live2dArrivalCanvas.height,
+      );
+      this.live2dArrivalTimer = window.setTimeout(() => this.root?.classList.remove("has-arrived"), 680);
+      window.dispatchEvent(new CustomEvent("joi-live2d-arrival-complete", {
+        detail: { modelUrl: LIVE2D_MODEL_URL },
+      }));
+    }
+
+    resetLive2DArrival() {
+      window.cancelAnimationFrame(this.live2dArrivalFrame);
+      window.clearTimeout(this.live2dArrivalTimer);
+      this.live2dArrivalFrame = 0;
+      this.live2dArrivalStarted = false;
+      this.live2dArrivalPrepared = false;
+      this.live2dArrivalParticles = [];
+      this.root?.style.removeProperty("--arrival-model-opacity");
+      this.root?.classList.remove("is-reconstructing", "has-arrived");
+      if (this.live2dArrivalCanvas) {
+        this.live2dArrivalCanvas.getContext("2d")?.clearRect(
+          0,
+          0,
+          this.live2dArrivalCanvas.width,
+          this.live2dArrivalCanvas.height,
+        );
+      }
+    }
+
     emitLive2DProgress(phase, label, progress) {
       this.dataset.live2dState = "loading";
       const detail = { phase, label, progress, modelUrl: LIVE2D_MODEL_URL };
@@ -913,6 +1212,7 @@
     }
 
     destroyLive2D() {
+      this.resetLive2DArrival();
       if (this.live2dModel?.internalModel && this.live2dBeforeUpdate) {
         this.live2dModel.internalModel.off?.("beforeModelUpdate", this.live2dBeforeUpdate);
       }
@@ -971,6 +1271,7 @@
             backgroundAlpha: 0,
             antialias: true,
             autoDensity: true,
+            preserveDrawingBuffer: true,
             resolution: Math.min(window.devicePixelRatio || 1, 2),
             preference: "webgl",
             width: 220,
@@ -1021,6 +1322,7 @@
           }
 
           this.root.classList.add("has-real-live2d");
+          this.armLive2DArrival();
           this.emitLive2DResult("ready", { phase: "ready", label: "Joi is ready", progress: 1 });
           this.say("Live2D 模型上线。", 1400);
         } catch (error) {
@@ -1542,13 +1844,15 @@
       this.root.style.setProperty("--look-y", this.state.lookY.toFixed(3));
       this.root.style.setProperty("--breath", this.state.breath.toFixed(3));
       if (this.live2dModel && this.live2dApp) {
-        const lastUpdate = this.lastLive2DUpdateAt || now;
-        const delta = clamp(now - lastUpdate, 8, 42);
-        this.lastLive2DUpdateAt = now;
-        this.live2dModel.update?.(delta);
-        this.applyLive2DParameters(now);
-        this.applyLive2DDisplayMotion(now);
-        this.live2dModel.internalModel?.coreModel?.update?.();
+        if (!this.root.classList.contains("is-reconstructing")) {
+          const lastUpdate = this.lastLive2DUpdateAt || now;
+          const delta = clamp(now - lastUpdate, 8, 42);
+          this.lastLive2DUpdateAt = now;
+          this.live2dModel.update?.(delta);
+          this.applyLive2DParameters(now);
+          this.applyLive2DDisplayMotion(now);
+          this.live2dModel.internalModel?.coreModel?.update?.();
+        }
         this.live2dApp.render?.();
       }
       requestAnimationFrame(() => this.animate());
