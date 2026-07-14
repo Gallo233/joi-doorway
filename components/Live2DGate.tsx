@@ -26,6 +26,8 @@ export function Live2DGate() {
   const exitTimer = useRef<number | null>(null);
   const removeTimer = useRef<number | null>(null);
   const readyHandled = useRef(false);
+  const live2dReady = useRef(false);
+  const prologueReady = useRef(false);
 
   useEffect(() => {
     openedAt.current = performance.now();
@@ -43,7 +45,7 @@ export function Live2DGate() {
       }
     };
 
-    const handleReady = () => {
+    const finishOpening = () => {
       if (readyHandled.current) return;
       readyHandled.current = true;
       clearExitTimers();
@@ -61,6 +63,24 @@ export function Live2DGate() {
       }, Math.max(0, MINIMUM_OPENING_MS - elapsed));
     };
 
+    const finishWhenReady = () => {
+      if (live2dReady.current && prologueReady.current) finishOpening();
+    };
+
+    const handleReady = () => {
+      live2dReady.current = true;
+      if (!prologueReady.current) {
+        setLabel("Preparing the particle field");
+        setProgress(0.98);
+      }
+      finishWhenReady();
+    };
+
+    const handlePrologueReady = () => {
+      prologueReady.current = true;
+      finishWhenReady();
+    };
+
     const handleError = (event: Event) => {
       clearExitTimers();
       readyHandled.current = false;
@@ -73,8 +93,11 @@ export function Live2DGate() {
     window.addEventListener("joi-live2d-progress", handleProgress);
     window.addEventListener("joi-live2d-ready", handleReady);
     window.addEventListener("joi-live2d-error", handleError);
+    window.addEventListener("joi-particle-prologue-ready", handlePrologueReady);
 
     const assistant = document.querySelector<RetryableLive2D>("joi-live2d-assistant");
+    const prologue = document.querySelector<HTMLElement>("[data-particle-prologue]");
+    prologueReady.current = !prologue || prologue.classList.contains("is-ready");
     if (assistant?.dataset.live2dState === "ready") handleReady();
     if (assistant?.dataset.live2dState === "error") handleError(new Event("error"));
 
@@ -83,6 +106,7 @@ export function Live2DGate() {
       window.removeEventListener("joi-live2d-progress", handleProgress);
       window.removeEventListener("joi-live2d-ready", handleReady);
       window.removeEventListener("joi-live2d-error", handleError);
+      window.removeEventListener("joi-particle-prologue-ready", handlePrologueReady);
     };
   }, []);
 
@@ -114,6 +138,7 @@ export function Live2DGate() {
     }
 
     readyHandled.current = false;
+    live2dReady.current = false;
     openedAt.current = performance.now();
     setLabel("Restarting the Live2D runtime");
     setProgress(0.06);

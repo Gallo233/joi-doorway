@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemos";
 import { Live2DGate } from "../components/Live2DGate";
+import { ParticlePrologue } from "../components/ParticlePrologue";
 
 const manifestoLines = [
   "AI becomes interesting",
@@ -36,6 +37,7 @@ export default function Page() {
   return (
     <>
       <Live2DGate />
+      <ParticlePrologue />
       <main className="site-home gallo-experience" id="siteHome" tabIndex={-1}>
         <canvas className="shader-canvas" id="shaderCanvas" aria-hidden="true" />
         <header className="gallo-hud" aria-label="Main navigation">
@@ -48,7 +50,7 @@ export default function Page() {
           <a className="replay-button magnetic" href="https://github.com/Gallo233" target="_blank" rel="noreferrer">GITHUB ↗</a>
         </header>
 
-        <section className="gallo-hero" id="top" data-joi-narration="欢迎来到 Gallo 的世界。我们从这里开始。">
+        <section className="gallo-hero" id="home" data-joi-narration="欢迎来到 Gallo 的世界。我们从这里开始。">
           <div className="gallo-hero-sticky">
             <p className="hero-index">AI PRODUCT · PRODUCT DESIGN / 2026</p>
             <h1 aria-label="I design how AI enters human life">
@@ -132,6 +134,7 @@ export default function Page() {
       </main>
 
       <Script src="/main-site.js" strategy="afterInteractive" />
+      <Script src="/particle-prologue.js" strategy="afterInteractive" />
       <Script
         src="/live2d/joi-live2d.js"
         strategy="afterInteractive"

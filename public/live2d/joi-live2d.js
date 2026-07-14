@@ -142,7 +142,9 @@
       this.bodyObserver = null;
       this.boundPointerMove = this.handlePointerMove.bind(this);
       this.boundResize = this.handleResize.bind(this);
-      this.boundGateExit = this.playLive2DArrival.bind(this);
+      this.boundGateExit = this.handleGateExit.bind(this);
+      this.boundPrologueExit = this.handleParticlePrologueExit.bind(this);
+      this.boundPrologueReturn = this.handleParticlePrologueReturn.bind(this);
     }
 
     connectedCallback() {
@@ -151,6 +153,8 @@
       this.positionInitial();
       this.bind();
       window.addEventListener("joi-live2d-gate-exit", this.boundGateExit);
+      window.addEventListener("joi-particle-prologue-exit", this.boundPrologueExit);
+      window.addEventListener("joi-particle-prologue-return", this.boundPrologueReturn);
       this.observeSiteState();
       this.connectCore();
       this.scheduleBlink();
@@ -162,6 +166,8 @@
       window.removeEventListener("pointermove", this.boundPointerMove);
       window.removeEventListener("resize", this.boundResize);
       window.removeEventListener("joi-live2d-gate-exit", this.boundGateExit);
+      window.removeEventListener("joi-particle-prologue-exit", this.boundPrologueExit);
+      window.removeEventListener("joi-particle-prologue-return", this.boundPrologueReturn);
       window.clearTimeout(this.reconnectTimer);
       window.clearTimeout(this.blinkTimer);
       window.clearTimeout(this.live2dArrivalTimer);
@@ -778,7 +784,9 @@
     }
 
     syncVisibility() {
-      const visible = document.body.dataset.state === "home" && this.dataset.live2dState === "ready";
+      const visible = document.body.dataset.state === "home"
+        && this.dataset.live2dState === "ready"
+        && !this.root.classList.contains("is-prologue-held");
       this.state.visible = visible;
       this.root.classList.toggle("is-hidden", !visible);
       if (visible && !this.state.positioned) {
@@ -1197,6 +1205,30 @@
       }
     }
 
+    handleGateExit() {
+      if (this.root?.classList.contains("is-prologue-held")) return;
+      this.playLive2DArrival();
+    }
+
+    handleParticlePrologueExit(event) {
+      if (this.dataset.live2dState !== "ready") return;
+      const delayMs = Math.max(0, Number(event?.detail?.delay) || 0);
+      window.clearTimeout(this.live2dArrivalTimer);
+      this.live2dArrivalTimer = window.setTimeout(() => {
+        this.root.classList.remove("is-prologue-held");
+        this.syncVisibility();
+        this.armLive2DArrival();
+        requestAnimationFrame(() => this.playLive2DArrival());
+      }, delayMs);
+    }
+
+    handleParticlePrologueReturn() {
+      window.clearTimeout(this.live2dArrivalTimer);
+      this.resetLive2DArrival();
+      this.root.classList.add("is-prologue-held");
+      this.syncVisibility();
+    }
+
     emitLive2DProgress(phase, label, progress) {
       this.dataset.live2dState = "loading";
       const detail = { phase, label, progress, modelUrl: LIVE2D_MODEL_URL };
@@ -1322,7 +1354,11 @@
           }
 
           this.root.classList.add("has-real-live2d");
-          this.armLive2DArrival();
+          if (document.querySelector("[data-particle-prologue]")) {
+            this.root.classList.add("is-prologue-held");
+          } else {
+            this.armLive2DArrival();
+          }
           this.emitLive2DResult("ready", { phase: "ready", label: "Joi is ready", progress: 1 });
           this.say("Live2D 模型上线。", 1400);
         } catch (error) {
