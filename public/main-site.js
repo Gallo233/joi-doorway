@@ -9,6 +9,10 @@
   const cards = Array.from(document.querySelectorAll("[data-joi-card]"));
   const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
   const narrationItems = Array.from(document.querySelectorAll("[data-joi-narration]"));
+  const characterReveals = Array.from(document.querySelectorAll("[data-character-reveal]"));
+  const filmstrip = document.querySelector("[data-filmstrip]");
+  const filmstripRows = Array.from(document.querySelectorAll("[data-filmstrip-row]"));
+  const stackCards = Array.from(document.querySelectorAll("[data-stack-card]"));
   let shaderController = null;
   let pointerFrame = 0;
   let scrollFrame = 0;
@@ -76,7 +80,62 @@
     const progress = clamp(window.scrollY / maxScroll);
     root.style.setProperty("--scroll-progress", progress.toFixed(4));
     shaderController?.setScroll(progress);
+    updateCharacterReveals();
+    updateFilmstrip();
+    updateProjectStack();
     revealVisible();
+  }
+
+  function updateCharacterReveals() {
+    characterReveals.forEach((element) => {
+      const characters = Array.from(element.querySelectorAll("[data-character]"));
+      if (!characters.length) return;
+      if (reduceMotion) {
+        characters.forEach((character) => {
+          character.style.opacity = "1";
+          character.style.transform = "none";
+        });
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const travel = window.innerHeight * 0.65 + rect.height * 0.35;
+      const revealProgress = clamp((window.innerHeight * 0.82 - rect.top) / Math.max(travel, 1));
+      characters.forEach((character, index) => {
+        const start = (index / Math.max(characters.length - 1, 1)) * 0.72;
+        const localProgress = clamp((revealProgress - start) / 0.22);
+        character.style.opacity = String(0.18 + localProgress * 0.82);
+        character.style.transform = `translate3d(0, ${(1 - localProgress) * 12}px, 0)`;
+      });
+    });
+  }
+
+  function updateFilmstrip() {
+    if (!filmstrip || !filmstripRows.length) return;
+    const rect = filmstrip.getBoundingClientRect();
+    const progress = clamp((window.innerHeight - rect.top) / Math.max(rect.height + window.innerHeight, 1));
+    const travel = progress * window.innerWidth * 0.46;
+    filmstripRows.forEach((row, index) => {
+      const movesRight = row.dataset.direction === "right";
+      const base = movesRight ? -window.innerWidth * 0.42 : -window.innerWidth * 0.08;
+      const x = base + (movesRight ? travel : -travel);
+      row.style.transform = `translate3d(${x}px, 0, 0)`;
+    });
+  }
+
+  function updateProjectStack() {
+    stackCards.forEach((card, index) => {
+      const sticky = card.querySelector(".native-project-sticky");
+      const nextCard = stackCards[index + 1];
+      if (!sticky || !nextCard || reduceMotion) {
+        sticky?.style.setProperty("--stack-scale", "1");
+        sticky?.style.setProperty("--stack-y", "0px");
+        return;
+      }
+      const nextTop = nextCard.getBoundingClientRect().top;
+      const approach = clamp((window.innerHeight - nextTop) / Math.max(window.innerHeight * 0.76, 1));
+      sticky.style.setProperty("--stack-scale", (1 - approach * 0.045).toFixed(4));
+      sticky.style.setProperty("--stack-y", `${(-approach * 12).toFixed(2)}px`);
+    });
   }
 
   function requestScrollUpdate() {
