@@ -1,7 +1,6 @@
 "use client";
 
 import Script from "next/script";
-import { BlurLine, FadingVideo } from "../components/CinematicEffects";
 import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemos";
 
 export default function Page() {
@@ -10,65 +9,41 @@ export default function Page() {
       <main className="site-home gallo-experience" id="siteHome" tabIndex={-1}>
         <canvas className="shader-canvas" id="shaderCanvas" aria-hidden="true" />
         <header className="gallo-hud" aria-label="Main navigation">
-          <a className="gallo-wordmark liquid-glass magnetic" href="#top" aria-label="Gallo, back to top">
-            <span>G</span><b>GALLO</b>
-          </a>
-          <nav className="liquid-glass">
+          <a className="gallo-wordmark magnetic" href="#top">GALLO</a>
+          <nav>
             <a className="magnetic" href="#work">WORK</a>
             <a className="magnetic" href="#thoughts">THOUGHTS</a>
             <a className="magnetic" href="#about">ABOUT</a>
           </nav>
-          <a className="replay-button liquid-glass-strong magnetic" href="mailto:liujialuo233@gmail.com">LET&apos;S TALK ↗</a>
+          <a className="replay-button magnetic" href="https://github.com/Gallo233" target="_blank" rel="noreferrer">GITHUB ↗</a>
         </header>
 
         <section className="gallo-hero" id="top" data-joi-narration="欢迎来到 Gallo 的世界。我们从这里开始。">
           <div className="gallo-hero-sticky">
-            <div className="hero-signal liquid-glass">
-              <span><i />NOW BUILDING</span>
-              <p>Joi — a personality moving from screen into world</p>
-            </div>
-            <p className="hero-index">AI PRODUCT · PRODUCT DESIGN / GUANGZHOU · 2026</p>
+            <p className="hero-index">AI PRODUCT · PRODUCT DESIGN / 2026</p>
             <h1 aria-label="I design how AI enters human life">
-              <BlurLine text="I DESIGN" delay={0.18} />
-              <BlurLine text="HOW AI ENTERS" className="hero-line-outline" delay={0.34} />
-              <BlurLine text="HUMAN LIFE." delay={0.58} />
+              <span>I DESIGN</span>
+              <span>HOW AI ENTERS</span>
+              <span>HUMAN LIFE.</span>
             </h1>
             <div className="hero-question">
               <span>TECHNOLOGY × PEOPLE</span>
               <p>Shall we see how far a personality can travel?</p>
             </div>
-            <div className="hero-actions">
-              <a className="hero-enter liquid-glass-strong magnetic" href="#work">ENTER THE WORK <span>↓</span></a>
-              <a className="hero-secondary magnetic" href="https://github.com/Gallo233" target="_blank" rel="noreferrer">VIEW GITHUB ↗</a>
-            </div>
-            <div className="hero-proof" aria-label="Portfolio summary">
-              <div className="liquid-glass"><span>02</span><p>Living product surfaces</p></div>
-              <div className="liquid-glass"><span>LOCAL → WORLD</span><p>One continuous personality</p></div>
-            </div>
+            <a className="hero-enter magnetic" href="#work">ENTER THE WORK <span>↓</span></a>
           </div>
         </section>
 
-        <section className="manifesto cinematic-capabilities" id="thoughts" data-joi-narration="一个人格不只是皮肤。它需要连续性、边界和被打断的能力。">
-          <FadingVideo className="capabilities-video" src="/assets/peephole-joi.mp4" poster="/media/joi-live2d-preview.png" />
-          <div className="capabilities-atmosphere" aria-hidden="true" />
-          <header className="capabilities-heading" data-reveal>
-            <p className="section-tag">01 / A LEGIBLE PRESENCE</p>
-            <h2>Presence,<br /><em>made legible.</em></h2>
-            <p>Joi is not a face placed over a system. The personality makes context, intention and boundaries easier to understand.</p>
-          </header>
-          <div className="capability-grid">
-            <article className="capability-card liquid-glass" data-reveal>
-              <div className="capability-card-top"><span className="capability-icon">◉</span><div><i>OBSERVE</i><i>MEMORY</i></div></div>
-              <div><span className="capability-number">01</span><h3>Context</h3><p>Notice the moment, remember what matters, and keep the person—not the data—as the center of attention.</p></div>
-            </article>
-            <article className="capability-card liquid-glass" data-reveal>
-              <div className="capability-card-top"><span className="capability-icon">↳</span><div><i>PLAN</i><i>APPROVAL</i></div></div>
-              <div><span className="capability-number">02</span><h3>Boundaries</h3><p>Show the next step before taking it. Every meaningful action stays visible, interruptible and reversible.</p></div>
-            </article>
-            <article className="capability-card liquid-glass" data-reveal>
-              <div className="capability-card-top"><span className="capability-icon">∞</span><div><i>CHARACTER</i><i>VOICE</i></div></div>
-              <div><span className="capability-number">03</span><h3>Continuity</h3><p>Carry one recognizable personality from a local desktop companion into maps, places and shared experience.</p></div>
-            </article>
+        <section className="manifesto" id="thoughts" data-joi-narration="一个人格不只是皮肤。它需要连续性、边界和被打断的能力。">
+          <p className="section-tag">01 / THOUGHT</p>
+          <div className="manifesto-copy" data-reveal>
+            <span>AI becomes interesting</span>
+            <span>when it stops being</span>
+            <span>only a feature.</span>
+          </div>
+          <div className="manifesto-note">
+            <p>有思想深度，有好奇心，愿意拥抱新事物。</p>
+            <p>My long-term subject is the changing boundary between technology and people.</p>
           </div>
         </section>
 
