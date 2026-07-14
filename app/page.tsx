@@ -2,6 +2,7 @@
 
 import Script from "next/script";
 import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemos";
+import { Live2DGate } from "../components/Live2DGate";
 
 const manifestoLines = [
   "AI becomes interesting",
@@ -34,6 +35,7 @@ function CharacterManifesto() {
 export default function Page() {
   return (
     <>
+      <Live2DGate />
       <main className="site-home gallo-experience" id="siteHome" tabIndex={-1}>
         <canvas className="shader-canvas" id="shaderCanvas" aria-hidden="true" />
         <header className="gallo-hud" aria-label="Main navigation">
@@ -130,7 +132,13 @@ export default function Page() {
       </main>
 
       <Script src="/main-site.js" strategy="afterInteractive" />
-      <Script src="/live2d/joi-live2d.js" strategy="afterInteractive" />
+      <Script
+        src="/live2d/joi-live2d.js"
+        strategy="afterInteractive"
+        onError={() => window.dispatchEvent(new CustomEvent("joi-live2d-error", {
+          detail: { label: "The Live2D controller could not be loaded" },
+        }))}
+      />
     </>
   );
 }

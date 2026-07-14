@@ -1,5 +1,4 @@
 (function () {
-  const ASSET_BASE = "/live2d/assets/";
   const LIVE2D_MODEL_URL = "/live2d/joi/joi.model3.json";
   const RUNTIME_SCRIPTS = [
     "/vendor/live2d/live2dcubismcore.min.js",
@@ -15,12 +14,13 @@
     if (loadedScripts.has(src)) return loadedScripts.get(src);
     const promise = new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[data-joi-runtime="${src}"]`);
-      if (existing) {
+      if (existing && existing.dataset.failed !== "true") {
         existing.addEventListener("load", resolve, { once: true });
-        existing.addEventListener("error", reject, { once: true });
+        existing.addEventListener("error", () => reject(new Error(`Failed to load ${src}`)), { once: true });
         if (existing.dataset.loaded === "true") resolve();
         return;
       }
+      existing?.remove();
 
       const script = document.createElement("script");
       script.src = src;
@@ -31,10 +31,14 @@
         script.dataset.loaded = "true";
         resolve();
       }, { once: true });
-      script.addEventListener("error", () => reject(new Error(`Failed to load ${src}`)), { once: true });
+      script.addEventListener("error", () => {
+        script.dataset.failed = "true";
+        reject(new Error(`Failed to load ${src}`));
+      }, { once: true });
       document.head.append(script);
     });
     loadedScripts.set(src, promise);
+    promise.catch(() => loadedScripts.delete(src));
     return promise;
   }
 
@@ -129,6 +133,7 @@
       this.lastLive2DUpdateAt = 0;
       this.live2dParamCache = new Map();
       this.live2dParamStats = { attempted: 0, resolved: 0, missed: 0 };
+      this.live2dLoading = null;
       this.bodyObserver = null;
       this.boundPointerMove = this.handlePointerMove.bind(this);
       this.boundResize = this.handleResize.bind(this);
@@ -187,21 +192,6 @@
           <button class="joi-live2d-model" data-model type="button" aria-label="拖拽 Joi">
             <canvas class="joi-live2d-canvas" data-live2d-canvas aria-hidden="true"></canvas>
             <span class="joi-live2d-shadow"></span>
-            <span class="joi-live2d-stage" data-fallback-stage>
-              <span class="joi-live2d-body">
-                <img src="${ASSET_BASE}joi-live2d-body.png" alt="" draggable="false" />
-              </span>
-              <span class="joi-live2d-head" data-head>
-                <img class="head-base" src="${ASSET_BASE}joi-live2d-head.png" alt="" draggable="false" />
-                <img class="mouth-open" src="${ASSET_BASE}joi-live2d-mouth-open.png" alt="" draggable="false" />
-                <img class="blink-mask" src="${ASSET_BASE}joi-live2d-blink.png" alt="" draggable="false" />
-                <img class="hair-front" src="${ASSET_BASE}joi-live2d-hair-front.png" alt="" draggable="false" />
-                <img class="ribbon" src="${ASSET_BASE}joi-live2d-ribbon.png" alt="" draggable="false" />
-              </span>
-              <span class="joi-live2d-face-card" data-face-card>
-                <img src="${ASSET_BASE}joi-live2d-face-wink.png" alt="" draggable="false" />
-              </span>
-            </span>
           </button>
         </aside>
       `;
@@ -299,11 +289,6 @@
 
         .joi-live2d.has-real-live2d .joi-live2d-canvas {
           opacity: 1;
-        }
-
-        .joi-live2d.has-real-live2d .joi-live2d-stage {
-          opacity: 0;
-          visibility: hidden;
         }
 
         .joi-live2d.is-dragging .joi-live2d-canvas {
@@ -683,7 +668,6 @@
       this.root = this.shadowRoot.querySelector(".joi-live2d");
       this.model = this.shadowRoot.querySelector("[data-model]");
       this.live2dCanvas = this.shadowRoot.querySelector("[data-live2d-canvas]");
-      this.fallbackStage = this.shadowRoot.querySelector("[data-fallback-stage]");
       this.bubble = this.shadowRoot.querySelector("[data-bubble]");
       this.bubbleText = this.shadowRoot.querySelector("[data-bubble-text]");
       this.statusText = this.shadowRoot.querySelector("[data-status]");
@@ -717,15 +701,19 @@
       });
     }
 
+    syncVisibility() {
+      const visible = document.body.dataset.state === "home" && this.dataset.live2dState === "ready";
+      this.state.visible = visible;
+      this.root.classList.toggle("is-hidden", !visible);
+      if (visible && !this.state.positioned) {
+        this.positionInitial();
+        this.updatePosition();
+      }
+    }
+
     observeSiteState() {
       const sync = () => {
-        const visible = document.body.dataset.state === "home";
-        this.state.visible = visible;
-        this.root.classList.toggle("is-hidden", !visible);
-        if (visible && !this.state.positioned) {
-          this.positionInitial();
-          this.updatePosition();
-        }
+        this.syncVisibility();
       };
       this.bodyObserver = new MutationObserver(sync);
       this.bodyObserver.observe(document.body, { attributes: true, attributeFilter: ["data-state"] });
@@ -910,69 +898,142 @@
       return dt;
     }
 
-    async initLive2D() {
-      if (!this.live2dCanvas || !supportsWebGL()) return;
-      try {
-        await loadScript(RUNTIME_SCRIPTS[0]);
-        await waitForCubismCoreReady();
-        for (const script of RUNTIME_SCRIPTS.slice(1)) {
-          await loadScript(script);
-        }
-        if (!this.isConnected) return;
+    emitLive2DProgress(phase, label, progress) {
+      this.dataset.live2dState = "loading";
+      const detail = { phase, label, progress, modelUrl: LIVE2D_MODEL_URL };
+      window.dispatchEvent(new CustomEvent("joi-live2d-progress", { detail }));
+    }
 
-        const PIXI = window.PIXI;
-        const live2d = PIXI?.live2d;
-        if (!PIXI?.Application || !live2d?.Live2DModel) {
-          throw new Error("Live2D runtime was not registered");
-        }
+    emitLive2DResult(type, detail = {}) {
+      this.dataset.live2dState = type;
+      window.dispatchEvent(new CustomEvent(`joi-live2d-${type}`, {
+        detail: { modelUrl: LIVE2D_MODEL_URL, ...detail },
+      }));
+      this.syncVisibility();
+    }
 
-        if (live2d.configureCubismSDK && !JoiLive2DAssistant.cubismConfigured) {
-          live2d.configureCubismSDK({ memorySizeMB: 32 });
-          JoiLive2DAssistant.cubismConfigured = true;
-        }
-        if (PIXI.extensions && live2d.Live2DPlugin && !JoiLive2DAssistant.live2DPluginAdded) {
-          PIXI.extensions.add(live2d.Live2DPlugin);
-          JoiLive2DAssistant.live2DPluginAdded = true;
-        }
-
-        const app = new PIXI.Application();
-        await app.init({
-          canvas: this.live2dCanvas,
-          autoStart: false,
-          backgroundAlpha: 0,
-          antialias: true,
-          autoDensity: true,
-          resolution: Math.min(window.devicePixelRatio || 1, 2),
-          preference: "webgl",
-          width: 220,
-          height: Math.round(this.state.height),
-        });
-
-        const model = await live2d.Live2DModel.from(LIVE2D_MODEL_URL, {
-          autoUpdate: false,
-          autoFocus: false,
-          autoHitTest: false,
-          motionPreload: live2d.MotionPreloadStrategy?.NONE,
-          textureOptions: { lod: "single-auto" },
-        });
-
-        this.live2dApp = app;
-        this.live2dModel = model;
-        this.live2dBeforeUpdate = null;
-        model.anchor?.set?.(0.5, 0.5);
-        app.stage.addChild(model);
-        this.fitLive2DModel();
-        app.stop?.();
-        app.ticker?.stop?.();
-        this.lastLive2DUpdateAt = frameNow();
-        model.update?.(16);
-        app.render?.();
-        this.root.classList.add("has-real-live2d");
-        this.say("Live2D 模型上线。", 1400);
-      } catch (error) {
-        console.warn("[Joi Live2D] Falling back to PNG assistant:", error);
-        this.root.classList.remove("has-real-live2d");
+    destroyLive2D() {
+      if (this.live2dModel?.internalModel && this.live2dBeforeUpdate) {
+        this.live2dModel.internalModel.off?.("beforeModelUpdate", this.live2dBeforeUpdate);
       }
+      this.live2dModel?.destroy?.({ children: true, texture: false, textureSource: false });
+      this.live2dApp?.destroy?.(false);
+      this.live2dApp = null;
+      this.live2dModel = null;
+      this.live2dFit = null;
+      this.live2dBeforeUpdate = null;
+      this.root?.classList.remove("has-real-live2d");
+    }
+
+    retryLive2D() {
+      if (this.live2dLoading) return this.live2dLoading;
+      this.destroyLive2D();
+      return this.initLive2D();
+    }
+
+    async initLive2D() {
+      if (this.live2dLoading) return this.live2dLoading;
+
+      this.live2dLoading = (async () => {
+        try {
+          if (!this.live2dCanvas) throw new Error("Live2D canvas is unavailable");
+          if (!supportsWebGL()) throw new Error("WebGL is unavailable in this browser");
+
+          this.emitLive2DProgress("runtime", "Loading Cubism Core", 0.12);
+          await loadScript(RUNTIME_SCRIPTS[0]);
+          await waitForCubismCoreReady();
+          this.emitLive2DProgress("runtime", "Preparing motion runtime", 0.38);
+          for (const script of RUNTIME_SCRIPTS.slice(1)) {
+            await loadScript(script);
+          }
+          if (!this.isConnected) return;
+
+          const PIXI = window.PIXI;
+          const live2d = PIXI?.live2d;
+          if (!PIXI?.Application || !live2d?.Live2DModel) {
+            throw new Error("Live2D runtime was not registered");
+          }
+
+          if (live2d.configureCubismSDK && !JoiLive2DAssistant.cubismConfigured) {
+            live2d.configureCubismSDK({ memorySizeMB: 32 });
+            JoiLive2DAssistant.cubismConfigured = true;
+          }
+          if (PIXI.extensions && live2d.Live2DPlugin && !JoiLive2DAssistant.live2DPluginAdded) {
+            PIXI.extensions.add(live2d.Live2DPlugin);
+            JoiLive2DAssistant.live2DPluginAdded = true;
+          }
+
+          this.emitLive2DProgress("renderer", "Opening the Live2D stage", 0.56);
+          const app = new PIXI.Application();
+          await app.init({
+            canvas: this.live2dCanvas,
+            autoStart: false,
+            backgroundAlpha: 0,
+            antialias: true,
+            autoDensity: true,
+            resolution: Math.min(window.devicePixelRatio || 1, 2),
+            preference: "webgl",
+            width: 220,
+            height: Math.round(this.state.height),
+          });
+          this.live2dApp = app;
+
+          this.emitLive2DProgress("model", "Loading Joi model and textures", 0.7);
+          const model = await live2d.Live2DModel.from(LIVE2D_MODEL_URL, {
+            autoUpdate: false,
+            autoFocus: false,
+            autoHitTest: false,
+            motionPreload: live2d.MotionPreloadStrategy?.NONE,
+            textureOptions: { lod: "single-auto" },
+          });
+
+          this.live2dModel = model;
+          this.live2dBeforeUpdate = null;
+          model.anchor?.set?.(0.5, 0.5);
+          app.stage.addChild(model);
+          this.fitLive2DModel();
+          app.stop?.();
+          app.ticker?.stop?.();
+          this.lastLive2DUpdateAt = frameNow();
+
+          const renderFrame = () => {
+            model.update?.(16);
+            if (typeof app.render !== "function") {
+              throw new Error("Live2D renderer cannot produce a frame");
+            }
+            app.render();
+          };
+
+          renderFrame();
+          this.emitLive2DProgress("frame", "Rendering Joi's first frame", 0.9);
+          await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          renderFrame();
+
+          const bounds = model.getLocalBounds?.();
+          const hasModel = !!model.internalModel?.coreModel;
+          const hasGeometry = Math.abs(bounds?.width || model.width || 0) > 0
+            && Math.abs(bounds?.height || model.height || 0) > 0;
+          const hasFrame = this.live2dCanvas.width > 0 && this.live2dCanvas.height > 0;
+          const webgl = app.renderer?.gl || app.renderer?.context?.gl;
+          const hasWebGLContext = !webgl?.isContextLost?.();
+          if (!hasModel || !hasGeometry || !hasFrame || !hasWebGLContext) {
+            throw new Error("Live2D model did not produce a valid first frame");
+          }
+
+          this.root.classList.add("has-real-live2d");
+          this.emitLive2DResult("ready", { phase: "ready", label: "Joi is ready", progress: 1 });
+          this.say("Live2D 模型上线。", 1400);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown Live2D loading error";
+          console.error("[Joi Live2D] Model loading failed:", error);
+          this.destroyLive2D();
+          this.emitLive2DResult("error", { phase: "error", label: message, progress: 0 });
+        }
+      })().finally(() => {
+        this.live2dLoading = null;
+      });
+
+      return this.live2dLoading;
     }
 
     fitLive2DModel() {
