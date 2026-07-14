@@ -9,23 +9,6 @@ const manifestoLines = [
   "only a feature.",
 ];
 
-const filmstripRows = [
-  [
-    { src: "/assets/joi-app-v3.png", label: "Joi identity / one character, many states" },
-    { src: "/media/joi-live2d-preview.png", label: "Embodied interface / presence in motion" },
-    { src: "/assets/joi-map-v3.png", label: "Field identity / the same personality outside" },
-    { src: "/assets/joi-map-main-ui.png", label: "World surface / map, vision and narration" },
-    { src: "/assets/joi-peephole-closeup.png", label: "First contact / an arrival with intention" },
-  ],
-  [
-    { src: "/assets/door-handle-final-frame.png", label: "Threshold / interaction before interface" },
-    { src: "/assets/iphone-home-joi-map.png", label: "Hand-off / from phone into place" },
-    { src: "/assets/doorway-bg.png", label: "Environment / a world around the product" },
-    { src: "/media/gallo-home-brief.png", label: "System view / product story as one surface" },
-    { src: "/assets/joi-map-app-icon.png", label: "Signal / a recognizable point of entry" },
-  ],
-];
-
 function CharacterManifesto() {
   return (
     <div
@@ -45,32 +28,6 @@ function CharacterManifesto() {
         </span>
       ))}
     </div>
-  );
-}
-
-function ProcessFilmstrip() {
-  return (
-    <section className="process-filmstrip" data-filmstrip aria-labelledby="filmstripTitle">
-      <header className="filmstrip-heading">
-        <p className="section-tag">PROCESS / SURFACES IN MOTION</p>
-        <h2 id="filmstripTitle">One personality.<br />Many points of contact.</h2>
-        <p>Identity, interface, place and interaction are designed as one continuous system—not separate portfolio images.</p>
-      </header>
-      <div className="filmstrip-rows">
-        {filmstripRows.map((row, rowIndex) => (
-          <div className="filmstrip-viewport" key={rowIndex}>
-            <div className="filmstrip-track" data-filmstrip-row data-direction={rowIndex === 0 ? "right" : "left"}>
-              {[0, 1, 2].flatMap((copyIndex) => row.map((item, itemIndex) => (
-                <figure className="filmstrip-frame" aria-hidden={copyIndex > 0} key={`${copyIndex}-${item.src}`}>
-                  <img src={item.src} alt={copyIndex === 0 ? item.label : ""} loading="lazy" />
-                  <figcaption><span>{String(itemIndex + 1).padStart(2, "0")}</span>{item.label}</figcaption>
-                </figure>
-              )))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -120,8 +77,6 @@ export default function Page() {
           <p>What happens when a virtual personality becomes a presence—and then begins to reach the physical world?</p>
         </section>
 
-        <ProcessFilmstrip />
-
         <section className="project-stack" aria-label="Joi projects from presence to reach">
           <article className="native-project native-project-dark" data-stack-card data-joi-card="joi" data-accent="0.18" data-joi-narration="这是 Joi。她先让自己的意图和行动变得可见。">
             <div className="native-project-sticky">
@@ -137,8 +92,6 @@ export default function Page() {
               </footer>
             </div>
           </article>
-
-          <div className="stack-handoff" aria-hidden="true"><span>PRESENCE</span><i>becomes</i><span>REACH</span></div>
 
           <article className="native-project native-project-light" data-stack-card data-joi-card="map" data-accent="0.82" data-joi-narration="这是 Joi Map。人格开始学习地点、视野与真实世界的节奏。">
             <div className="native-project-sticky">

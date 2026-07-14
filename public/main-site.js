@@ -10,8 +10,6 @@
   const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
   const narrationItems = Array.from(document.querySelectorAll("[data-joi-narration]"));
   const characterReveals = Array.from(document.querySelectorAll("[data-character-reveal]"));
-  const filmstrip = document.querySelector("[data-filmstrip]");
-  const filmstripRows = Array.from(document.querySelectorAll("[data-filmstrip-row]"));
   const stackCards = Array.from(document.querySelectorAll("[data-stack-card]"));
   let shaderController = null;
   let pointerFrame = 0;
@@ -81,7 +79,6 @@
     root.style.setProperty("--scroll-progress", progress.toFixed(4));
     shaderController?.setScroll(progress);
     updateCharacterReveals();
-    updateFilmstrip();
     updateProjectStack();
     revealVisible();
   }
@@ -109,19 +106,6 @@
     });
   }
 
-  function updateFilmstrip() {
-    if (!filmstrip || !filmstripRows.length) return;
-    const rect = filmstrip.getBoundingClientRect();
-    const progress = clamp((window.innerHeight - rect.top) / Math.max(rect.height + window.innerHeight, 1));
-    const travel = progress * window.innerWidth * 0.46;
-    filmstripRows.forEach((row, index) => {
-      const movesRight = row.dataset.direction === "right";
-      const base = movesRight ? -window.innerWidth * 0.42 : -window.innerWidth * 0.08;
-      const x = base + (movesRight ? travel : -travel);
-      row.style.transform = `translate3d(${x}px, 0, 0)`;
-    });
-  }
-
   function updateProjectStack() {
     stackCards.forEach((card, index) => {
       const sticky = card.querySelector(".native-project-sticky");
@@ -132,9 +116,12 @@
         return;
       }
       const nextTop = nextCard.getBoundingClientRect().top;
-      const approach = clamp((window.innerHeight - nextTop) / Math.max(window.innerHeight * 0.76, 1));
-      sticky.style.setProperty("--stack-scale", (1 - approach * 0.045).toFixed(4));
-      sticky.style.setProperty("--stack-y", `${(-approach * 12).toFixed(2)}px`);
+      const start = window.innerHeight * 0.92;
+      const end = Math.max(24, window.innerHeight * 0.16);
+      const rawProgress = clamp((start - nextTop) / Math.max(start - end, 1));
+      const approach = rawProgress * rawProgress * (3 - 2 * rawProgress);
+      sticky.style.setProperty("--stack-scale", (1 - approach * 0.03).toFixed(4));
+      sticky.style.setProperty("--stack-y", `${(-approach * 8).toFixed(2)}px`);
     });
   }
 
