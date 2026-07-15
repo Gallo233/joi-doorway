@@ -804,6 +804,36 @@ body[data-state="qteDragging"] .qte-door-plate { transform:translate(13vw,var(--
 
 .gallo-footer { position:relative; z-index:4; min-height:100vh; display:flex; flex-direction:column; justify-content:space-between; padding:120px 4vw 34px; background:var(--gallo-black); color:var(--gallo-white); }
 .gallo-footer>p { margin:0; font-size:clamp(64px,10.5vw,168px); line-height:.82; letter-spacing:-.075em; font-weight:800; }
+.scramble-text-visual,
+.scramble-line { display:block; }
+.scramble-word { display:inline-block; white-space:nowrap; }
+.scramble-space { white-space:pre; }
+.scramble-character {
+  position:relative;
+  display:inline-block;
+  vertical-align:top;
+}
+.scramble-character-size { visibility:hidden; }
+.scramble-character-display {
+  position:absolute;
+  inset:0 auto auto 0;
+  min-width:100%;
+  color:currentColor;
+  transition:opacity 90ms linear,color 90ms linear,transform 150ms var(--gallo-ease);
+}
+.scramble-text.is-mounted .scramble-character.is-pending .scramble-character-display {
+  opacity:0;
+  transform:translateY(.08em);
+}
+.scramble-text .scramble-character.is-scrambling .scramble-character-display {
+  color:rgba(244,243,238,.43);
+  opacity:1;
+  transform:none;
+}
+.scramble-text .scramble-character.is-locked .scramble-character-display {
+  opacity:1;
+  transform:none;
+}
 .footer-door { align-self:flex-start; padding:15px 22px; border:1px solid currentColor; background:transparent; color:inherit; font:700 10px/1 "Gallo Mono",monospace; letter-spacing:.1em; cursor:pointer; }
 .gallo-footer>span { align-self:flex-end; font:600 9px/1 "Gallo Mono",monospace; letter-spacing:.12em; opacity:.46; }
 
@@ -878,6 +908,7 @@ body[data-state="qteDragging"] .qte-door-plate { transform:translate(13vw,var(--
     line-height:1.52;
   }
   .gallo-footer { padding-left:18px; padding-right:18px; }
+  .gallo-footer>p { font-size:clamp(44px,13.5vw,64px); }
   .project-detail-live { min-height:620px; height:78vh; margin-top:30px; padding:10px; }
 }
 

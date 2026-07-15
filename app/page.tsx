@@ -4,6 +4,7 @@ import Script from "next/script";
 import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemos";
 import { Live2DGate } from "../components/Live2DGate";
 import { ParticlePrologue } from "../components/ParticlePrologue";
+import { ScrambleText } from "../components/ScrambleText";
 
 const manifestoLines = [
   "AI becomes interesting",
@@ -127,7 +128,10 @@ export default function Page() {
         </section>
 
         <footer className="gallo-footer">
-          <p>LET&apos;S MAKE TECHNOLOGY<br />PEOPLE CAN LIVE WITH.</p>
+          <ScrambleText
+            className="footer-scramble"
+            lines={["LET'S MAKE TECHNOLOGY", "PEOPLE CAN LIVE WITH."]}
+          />
           <a className="footer-door magnetic" href="#top">BACK TO TOP ↑</a>
           <span>GALLO · GUANGZHOU · GMT+8</span>
         </footer>
