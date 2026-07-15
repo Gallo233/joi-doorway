@@ -246,6 +246,7 @@
       uOpacity: { value: 1 },
       uPointScale: { value: renderer.getPixelRatio() },
       uShapeMode: { value: 0 },
+      uMusicPulse: { value: 0 },
       uLook: { value: new THREE.Vector2(0, 0) },
       uBurstTime: { value: -20 },
       uRipple0: { value: new THREE.Vector3(0, 0, -20) },
@@ -272,6 +273,7 @@
         uniform float uOpacity;
         uniform float uPointScale;
         uniform float uShapeMode;
+        uniform float uMusicPulse;
         uniform float uBurstTime;
         uniform vec2 uLook;
         uniform vec3 uRipple0;
@@ -305,6 +307,14 @@
           transformed += normalize(transformed + vec3(0.001))
             * sin(uTime * 0.72 + aSeed * 5.7) * 0.018 * planetary;
 
+          float musicEnergy = uMusicPulse * mix(0.64, 1.0, fract(aSeed * 17.31));
+          vec2 beatDirection = vec2(
+            sin(aSeed * 12.13 + uTime * 8.0),
+            cos(aSeed * 9.37 - uTime * 7.0)
+          );
+          transformed.xy += beatDirection * musicEnergy * 0.026;
+          transformed.z += sin(aSeed * 15.71 + uTime * 9.2) * musicEnergy * 0.04;
+
           float burstAge = uTime - uBurstTime;
           if (burstAge > 0.0 && burstAge < 0.92) {
             float burst = sin((burstAge / 0.92) * 3.14159265);
@@ -327,8 +337,10 @@
           vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
           gl_Position = projectionMatrix * mvPosition;
           float depthScale = clamp(1.0 + transformed.z * 0.05, 0.72, 1.35);
-          gl_PointSize = max(1.0, aSize * uPointScale * depthScale * mix(1.0, 1.35, faceMode));
-          vOpacity = uOpacity * mix(0.62, 1.0, fract(aSeed * 7.13));
+          gl_PointSize = max(1.0, aSize * uPointScale * depthScale * mix(1.0, 1.35, faceMode)
+            * (1.0 + uMusicPulse * 0.12));
+          vOpacity = uOpacity * mix(0.62, 1.0, fract(aSeed * 7.13))
+            * (1.0 + uMusicPulse * 0.07);
           vPixelMode = faceMode;
         }
       `,
@@ -721,6 +733,7 @@
     let pointerY = 0;
     let lookX = 0;
     let lookY = 0;
+    let musicPulse = 0;
     let exitStartedAt = 0;
     let exitTriggered = false;
     let hasExited = false;
@@ -768,9 +781,6 @@
       const nextForm = (currentForm + 1) % 4;
       updateForm(nextForm);
       morphTo(nextForm, { burst: true, duration: nextForm === 3 ? 1.48 : 1.32 });
-      window.dispatchEvent(new CustomEvent("joi-particle-form-change", {
-        detail: { form: nextForm },
-      }));
       if (nextForm === 0) section.classList.add("has-completed-cycle");
     }
 
@@ -839,6 +849,12 @@
       });
     }
 
+    function handleMusicPulse(event) {
+      if (reduceMotion) return;
+      const strength = clamp(Number(event.detail?.strength) || 0);
+      musicPulse = Math.max(musicPulse, strength);
+    }
+
     function handleResize() {
       resizeRenderer();
       const activeForm = currentForm;
@@ -852,6 +868,7 @@
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
     window.addEventListener("joi-live2d-ready", handleLive2DReady);
+    window.addEventListener("joi-music-pulse", handleMusicPulse);
 
     const assistant = document.querySelector("joi-live2d-assistant");
     if (assistant?.dataset.live2dState === "ready") handleLive2DReady();
@@ -865,6 +882,7 @@
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("joi-live2d-ready", handleLive2DReady);
+      window.removeEventListener("joi-music-pulse", handleMusicPulse);
       geometry.dispose();
       material.dispose();
       ambientGeometry.dispose();
@@ -880,6 +898,9 @@
       const delta = Math.min(0.05, Math.max(0.001, (now - lastFrameAt) / 1000));
       lastFrameAt = now;
       uniforms.uTime.value += delta;
+      musicPulse *= Math.exp(-6.4 * delta);
+      uniforms.uMusicPulse.value += (musicPulse - uniforms.uMusicPulse.value)
+        * (1 - Math.exp(-22 * delta));
 
       if (transitionActive) {
         const progress = clamp((uniforms.uTime.value - transitionStartedAt) / transitionDuration);
@@ -903,7 +924,8 @@
         const exitAge = uniforms.uTime.value - exitStartedAt;
         uniforms.uOpacity.value = 1 - ease(clamp((exitAge - 0.86) / 0.62));
       }
-      ambientMaterial.opacity = 0.48 * uniforms.uOpacity.value;
+      ambientMaterial.opacity = 0.48 * uniforms.uOpacity.value
+        * (1 + uniforms.uMusicPulse.value * 0.06);
 
       renderer.render(scene, camera);
       if (!readyDispatched) {

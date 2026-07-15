@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 type AudioEngine = {
   context: AudioContext;
   playHandoff: () => void;
-  playMorph: (form: number) => void;
   playSwipe: (direction: number) => void;
   setEnabled: (enabled: boolean) => void;
   stop: () => void;
@@ -85,11 +84,25 @@ function createAudioEngine(): AudioEngine | null {
   ];
   let chordIndex = 0;
   let chordTimer: number | null = null;
+  const pulseTimers = new Set<number>();
   let enabled = false;
 
   function connectWithSpace(node: AudioNode, destination: AudioNode) {
     node.connect(destination);
     node.connect(reverb);
+  }
+
+  function scheduleMusicPulse(pulseAt: number, strength: number) {
+    const delay = Math.max(0, (pulseAt - context.currentTime) * 1000);
+    let timer = 0;
+    timer = window.setTimeout(() => {
+      pulseTimers.delete(timer);
+      if (!enabled || context.state !== "running") return;
+      window.dispatchEvent(new CustomEvent("joi-music-pulse", {
+        detail: { strength },
+      }));
+    }, delay);
+    pulseTimers.add(timer);
   }
 
   function schedulePad() {
@@ -143,6 +156,13 @@ function createAudioEngine(): AudioEngine | null {
       oscillator.stop(noteAt + 0.46);
     });
 
+    [0, 1, 2, 3].forEach((beat) => {
+      scheduleMusicPulse(
+        startedAt + beat * beatDuration,
+        beat % 2 === 0 ? 0.44 : 0.26,
+      );
+    });
+
     phrase.melody.forEach((frequency, beat) => {
       const noteAt = startedAt + beat * beatDuration + beatDuration * 0.12;
       const oscillator = context.createOscillator();
@@ -178,6 +198,8 @@ function createAudioEngine(): AudioEngine | null {
     if (chordTimer === null) return;
     window.clearInterval(chordTimer);
     chordTimer = null;
+    pulseTimers.forEach((timer) => window.clearTimeout(timer));
+    pulseTimers.clear();
   }
 
   function playTone(
@@ -208,28 +230,6 @@ function createAudioEngine(): AudioEngine | null {
     connectWithSpace(gain, effects);
     oscillator.start(startedAt);
     oscillator.stop(startedAt + duration + 0.04);
-  }
-
-  function playImpact(frequency: number) {
-    if (!enabled || context.state !== "running") return;
-    const startedAt = context.currentTime;
-    const oscillator = context.createOscillator();
-    const filter = context.createBiquadFilter();
-    const gain = context.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.setValueAtTime(frequency * 1.55, startedAt);
-    oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.72, startedAt + 0.27);
-    filter.type = "lowpass";
-    filter.frequency.value = 390;
-    filter.Q.value = 0.62;
-    gain.gain.setValueAtTime(0.0001, startedAt);
-    gain.gain.exponentialRampToValueAtTime(0.052, startedAt + 0.014);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startedAt + 0.34);
-    oscillator.connect(filter);
-    filter.connect(gain);
-    gain.connect(effects);
-    oscillator.start(startedAt);
-    oscillator.stop(startedAt + 0.38);
   }
 
   function playNoiseSweep(direction = 1, volume = 0.023, duration = 0.42) {
@@ -274,12 +274,6 @@ function createAudioEngine(): AudioEngine | null {
       master.gain.exponentialRampToValueAtTime(nextEnabled ? 0.78 : 0.0001, now + (nextEnabled ? 0.12 : 0.45));
       if (nextEnabled) startPads();
       else stopPads();
-    },
-    playMorph(form) {
-      const notes = [82.41, 92.5, 103.83, 116.54];
-      const root = notes[Math.max(0, Math.min(notes.length - 1, form))];
-      playImpact(root);
-      playTone(root * 1.34, 0.46, 0.014, -2, 0.055, 620);
     },
     playSwipe(direction) {
       playNoiseSweep(direction, 0.018, 0.36);
@@ -329,11 +323,6 @@ export function SiteAudio() {
       void ensureEngine();
     };
 
-    const handleMorph = (event: Event) => {
-      const form = Number((event as CustomEvent<{ form?: number }>).detail?.form || 0);
-      void ensureEngine().then((engine) => engine?.playMorph(form));
-    };
-
     const handleHandoff = () => {
       void ensureEngine().then((engine) => engine?.playHandoff());
     };
@@ -372,7 +361,6 @@ export function SiteAudio() {
     window.addEventListener("wheel", handleWheel, { passive: true });
     window.addEventListener("pointerdown", rememberTouch, { passive: true });
     window.addEventListener("pointermove", handleTouchMove, { passive: true });
-    window.addEventListener("joi-particle-form-change", handleMorph);
     window.addEventListener("joi-particle-prologue-exit", handleHandoff);
 
     return () => {
@@ -381,7 +369,6 @@ export function SiteAudio() {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("pointerdown", rememberTouch);
       window.removeEventListener("pointermove", handleTouchMove);
-      window.removeEventListener("joi-particle-form-change", handleMorph);
       window.removeEventListener("joi-particle-prologue-exit", handleHandoff);
       engineRef.current?.stop();
       engineRef.current = null;
@@ -404,7 +391,6 @@ export function SiteAudio() {
     if (!engine) return;
     if (engine.context.state === "suspended") await engine.context.resume();
     engine.setEnabled(true);
-    engine.playMorph(0);
   };
 
   return (
