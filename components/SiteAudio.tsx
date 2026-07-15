@@ -32,21 +32,21 @@ function createAudioEngine(): AudioEngine | null {
   const compressor = context.createDynamicsCompressor();
 
   master.gain.value = 0.0001;
-  ambience.gain.value = 0.26;
+  ambience.gain.value = 0.32;
   effects.gain.value = 0.72;
-  reverbReturn.gain.value = 0.13;
+  reverbReturn.gain.value = 0.075;
   compressor.threshold.value = -22;
   compressor.knee.value = 18;
   compressor.ratio.value = 3;
   compressor.attack.value = 0.025;
   compressor.release.value = 0.42;
 
-  const impulseLength = Math.floor(context.sampleRate * 2.6);
+  const impulseLength = Math.floor(context.sampleRate * 1.25);
   const impulse = context.createBuffer(2, impulseLength, context.sampleRate);
   for (let channel = 0; channel < impulse.numberOfChannels; channel += 1) {
     const data = impulse.getChannelData(channel);
     for (let index = 0; index < data.length; index += 1) {
-      const decay = Math.pow(1 - index / data.length, 3.2);
+      const decay = Math.pow(1 - index / data.length, 4.6);
       data[index] = (Math.random() * 2 - 1) * decay;
     }
   }
@@ -59,11 +59,29 @@ function createAudioEngine(): AudioEngine | null {
   master.connect(compressor);
   compressor.connect(context.destination);
 
+  const beatDuration = 60 / 82;
+  const barDuration = beatDuration * 4;
   const progression = [
-    [130.81, 196, 246.94, 329.63],
-    [110, 164.81, 196, 261.63],
-    [87.31, 130.81, 196, 220],
-    [98, 146.83, 220, 246.94],
+    {
+      bass: 65.41,
+      chord: [130.81, 164.81, 196, 246.94],
+      melody: [329.63, 392, 329.63, 261.63],
+    },
+    {
+      bass: 55,
+      chord: [110, 130.81, 164.81, 196],
+      melody: [261.63, 329.63, 392, 329.63],
+    },
+    {
+      bass: 43.65,
+      chord: [87.31, 130.81, 164.81, 220],
+      melody: [261.63, 349.23, 329.63, 261.63],
+    },
+    {
+      bass: 49,
+      chord: [98, 123.47, 146.83, 164.81],
+      melody: [293.66, 329.63, 392, 329.63],
+    },
   ];
   let chordIndex = 0;
   let chordTimer: number | null = null;
@@ -76,45 +94,84 @@ function createAudioEngine(): AudioEngine | null {
 
   function schedulePad() {
     if (!enabled || context.state === "closed") return;
-    const startedAt = context.currentTime + 0.04;
-    const frequencies = progression[chordIndex % progression.length];
+    const startedAt = context.currentTime + 0.06;
+    const phrase = progression[chordIndex % progression.length];
     chordIndex += 1;
 
-    frequencies.forEach((frequency, noteIndex) => {
-      [-4.5, 4.5].forEach((detune, voiceIndex) => {
-        const oscillator = context.createOscillator();
-        const filter = context.createBiquadFilter();
-        const gain = context.createGain();
-        const panner = context.createStereoPanner();
-        const peak = voiceIndex === 0 ? 0.0105 : 0.006;
+    phrase.chord.forEach((frequency, noteIndex) => {
+      const oscillator = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      const panner = context.createStereoPanner();
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+      oscillator.detune.value = noteIndex % 2 === 0 ? -2.5 : 2.5;
+      filter.type = "lowpass";
+      filter.frequency.value = 600 + noteIndex * 85;
+      filter.Q.value = 0.45;
+      panner.pan.value = (noteIndex - 1.5) * 0.16;
+      gain.gain.setValueAtTime(0.0001, startedAt);
+      gain.gain.exponentialRampToValueAtTime(0.0085, startedAt + 0.42);
+      gain.gain.exponentialRampToValueAtTime(0.006, startedAt + barDuration * 0.72);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startedAt + barDuration + 0.38);
+      oscillator.connect(filter);
+      filter.connect(gain);
+      gain.connect(panner);
+      connectWithSpace(panner, ambience);
+      oscillator.start(startedAt);
+      oscillator.stop(startedAt + barDuration + 0.44);
+    });
 
-        oscillator.type = voiceIndex === 0 ? "sine" : "triangle";
-        oscillator.frequency.value = frequency;
-        oscillator.detune.value = detune;
-        filter.type = "lowpass";
-        filter.frequency.value = 720 + noteIndex * 95;
-        filter.Q.value = 0.55;
-        panner.pan.value = (noteIndex - 1.5) * 0.18 + (voiceIndex ? 0.05 : -0.05);
+    [0, 2].forEach((beat) => {
+      const noteAt = startedAt + beat * beatDuration;
+      const oscillator = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(phrase.bass * 1.08, noteAt);
+      oscillator.frequency.exponentialRampToValueAtTime(phrase.bass, noteAt + 0.18);
+      filter.type = "lowpass";
+      filter.frequency.value = 230;
+      filter.Q.value = 0.5;
+      gain.gain.setValueAtTime(0.0001, noteAt);
+      gain.gain.exponentialRampToValueAtTime(0.024, noteAt + 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, noteAt + 0.42);
+      oscillator.connect(filter);
+      filter.connect(gain);
+      gain.connect(ambience);
+      oscillator.start(noteAt);
+      oscillator.stop(noteAt + 0.46);
+    });
 
-        gain.gain.setValueAtTime(0.0001, startedAt);
-        gain.gain.exponentialRampToValueAtTime(peak, startedAt + 2.4);
-        gain.gain.exponentialRampToValueAtTime(peak * 0.62, startedAt + 6.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startedAt + 9.6);
-
-        oscillator.connect(filter);
-        filter.connect(gain);
-        gain.connect(panner);
-        connectWithSpace(panner, ambience);
-        oscillator.start(startedAt);
-        oscillator.stop(startedAt + 9.75);
-      });
+    phrase.melody.forEach((frequency, beat) => {
+      const noteAt = startedAt + beat * beatDuration + beatDuration * 0.12;
+      const oscillator = context.createOscillator();
+      const filter = context.createBiquadFilter();
+      const gain = context.createGain();
+      const panner = context.createStereoPanner();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, noteAt);
+      oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.995, noteAt + 0.42);
+      filter.type = "lowpass";
+      filter.frequency.value = 1050;
+      filter.Q.value = 0.55;
+      panner.pan.value = beat % 2 === 0 ? -0.12 : 0.12;
+      gain.gain.setValueAtTime(0.0001, noteAt);
+      gain.gain.exponentialRampToValueAtTime(0.0115, noteAt + 0.024);
+      gain.gain.exponentialRampToValueAtTime(0.0001, noteAt + 0.48);
+      oscillator.connect(filter);
+      filter.connect(gain);
+      gain.connect(panner);
+      connectWithSpace(panner, ambience);
+      oscillator.start(noteAt);
+      oscillator.stop(noteAt + 0.52);
     });
   }
 
   function startPads() {
     if (chordTimer !== null) return;
     schedulePad();
-    chordTimer = window.setInterval(schedulePad, 7200);
+    chordTimer = window.setInterval(schedulePad, Math.round(barDuration * 1000));
   }
 
   function stopPads() {
@@ -129,17 +186,19 @@ function createAudioEngine(): AudioEngine | null {
     volume: number,
     detune = 0,
     delay = 0,
+    cutoff = 1100,
+    oscillatorType: OscillatorType = "sine",
   ) {
     if (!enabled || context.state !== "running") return;
     const startedAt = context.currentTime + delay;
     const oscillator = context.createOscillator();
     const filter = context.createBiquadFilter();
     const gain = context.createGain();
-    oscillator.type = "sine";
+    oscillator.type = oscillatorType;
     oscillator.frequency.setValueAtTime(frequency, startedAt);
     oscillator.detune.value = detune;
     filter.type = "lowpass";
-    filter.frequency.value = 1800;
+    filter.frequency.value = cutoff;
     filter.Q.value = 0.7;
     gain.gain.setValueAtTime(0.0001, startedAt);
     gain.gain.exponentialRampToValueAtTime(volume, startedAt + 0.025);
@@ -149,6 +208,28 @@ function createAudioEngine(): AudioEngine | null {
     connectWithSpace(gain, effects);
     oscillator.start(startedAt);
     oscillator.stop(startedAt + duration + 0.04);
+  }
+
+  function playImpact(frequency: number) {
+    if (!enabled || context.state !== "running") return;
+    const startedAt = context.currentTime;
+    const oscillator = context.createOscillator();
+    const filter = context.createBiquadFilter();
+    const gain = context.createGain();
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(frequency * 1.55, startedAt);
+    oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.72, startedAt + 0.27);
+    filter.type = "lowpass";
+    filter.frequency.value = 390;
+    filter.Q.value = 0.62;
+    gain.gain.setValueAtTime(0.0001, startedAt);
+    gain.gain.exponentialRampToValueAtTime(0.052, startedAt + 0.014);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startedAt + 0.34);
+    oscillator.connect(filter);
+    filter.connect(gain);
+    gain.connect(effects);
+    oscillator.start(startedAt);
+    oscillator.stop(startedAt + 0.38);
   }
 
   function playNoiseSweep(direction = 1, volume = 0.023, duration = 0.42) {
@@ -168,9 +249,9 @@ function createAudioEngine(): AudioEngine | null {
     source.buffer = buffer;
     filter.type = "bandpass";
     filter.Q.value = 0.75;
-    filter.frequency.setValueAtTime(direction > 0 ? 420 : 1480, startedAt);
+    filter.frequency.setValueAtTime(direction > 0 ? 320 : 1050, startedAt);
     filter.frequency.exponentialRampToValueAtTime(
-      direction > 0 ? 1480 : 420,
+      direction > 0 ? 1050 : 320,
       startedAt + duration,
     );
     gain.gain.setValueAtTime(0.0001, startedAt);
@@ -195,20 +276,19 @@ function createAudioEngine(): AudioEngine | null {
       else stopPads();
     },
     playMorph(form) {
-      const notes = [329.63, 392, 493.88, 659.25];
+      const notes = [82.41, 92.5, 103.83, 116.54];
       const root = notes[Math.max(0, Math.min(notes.length - 1, form))];
-      playNoiseSweep(1, 0.012, 0.26);
-      playTone(root, 0.58, 0.035, -3);
-      playTone(root * 1.5, 0.82, 0.018, 3, 0.075);
+      playImpact(root);
+      playTone(root * 1.34, 0.46, 0.014, -2, 0.055, 620);
     },
     playSwipe(direction) {
       playNoiseSweep(direction, 0.018, 0.36);
     },
     playHandoff() {
-      playNoiseSweep(1, 0.025, 0.8);
-      playTone(293.66, 1.15, 0.028, -4, 0.04);
-      playTone(440, 1.3, 0.02, 2, 0.2);
-      playTone(659.25, 1.5, 0.014, 4, 0.38);
+      playNoiseSweep(1, 0.018, 0.68);
+      playTone(164.81, 0.9, 0.024, -3, 0.04, 620);
+      playTone(220, 1.05, 0.016, 2, 0.18, 760);
+      playTone(293.66, 1.2, 0.011, 3, 0.34, 900);
     },
     stop() {
       stopPads();
