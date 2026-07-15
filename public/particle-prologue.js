@@ -195,7 +195,11 @@
     if (disposed || !section.isConnected) return;
 
     const isMobile = window.matchMedia("(max-width: 720px)").matches;
-    const particleCount = reduceMotion ? 1500 : (isMobile ? 3600 : 7200);
+    const viewportArea = Math.max(1, window.innerWidth * window.innerHeight);
+    const densityScale = clamp(Math.sqrt(viewportArea / (1440 * 900)), 0.72, 1.28);
+    const particleCount = Math.round(
+      (reduceMotion ? 2600 : (isMobile ? 7800 : 15000)) * densityScale,
+    );
     const viewHeight = 10;
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -224,7 +228,7 @@
     const random = seededRandom(233);
 
     for (let index = 0; index < particleCount; index += 1) {
-      pointSizes[index] = 0.74 + random() * 1.45;
+      pointSizes[index] = 0.62 + random() * 1.28;
       seeds[index] = random() * 1000;
     }
 
@@ -353,7 +357,7 @@
     scene.add(particleGroup);
 
     const ambientGeometry = new THREE.BufferGeometry();
-    const ambientCount = isMobile ? 180 : 420;
+    const ambientCount = Math.round((isMobile ? 360 : 760) * densityScale);
     const ambientPositions = new Float32Array(ambientCount * 3);
     const ambientColors = new Float32Array(ambientCount * 3);
     const ambientRandom = seededRandom(811);
@@ -397,18 +401,45 @@
       return JOI_PALETTE[paletteIndex];
     }
 
+    function getResponsiveShapeLayout() {
+      const worldWidth = camera.right - camera.left;
+      const worldHeight = camera.top - camera.bottom;
+      const shortWorld = Math.min(worldWidth, worldHeight);
+      const aspect = Math.max(0.1, stage.clientWidth / Math.max(1, stage.clientHeight));
+      const portrait = aspect < 0.82;
+
+      return {
+        worldWidth,
+        worldHeight,
+        shortWorld,
+        portrait,
+        nebulaScale: clamp(shortWorld / 7.05, 0.64, 1.46),
+        textMaxWidth: portrait
+          ? worldWidth * 0.86
+          : Math.min(worldWidth * 0.64, shortWorld * 1.18),
+        textMaxHeight: portrait
+          ? Math.min(worldHeight * 0.42, shortWorld * 0.9)
+          : shortWorld * 0.54,
+        faceMaxWidth: portrait ? worldWidth * 0.84 : shortWorld * 0.56,
+        faceMaxHeight: portrait
+          ? Math.min(worldHeight * 0.58, shortWorld * 1.18)
+          : shortWorld * 0.66,
+      };
+    }
+
     function createNebulaShape() {
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
       const eyes = new Float32Array(particleCount);
       const shapeRandom = seededRandom(1907);
+      const { nebulaScale } = getResponsiveShapeLayout();
       for (let index = 0; index < particleCount; index += 1) {
         const offset = index * 3;
         const ratio = index / particleCount;
         let x;
         let y;
         let z;
-        if (ratio < 0.74) {
+        if (ratio < 0.78) {
           const u = shapeRandom();
           const v = shapeRandom();
           const theta = Math.acos(1 - 2 * u);
@@ -419,7 +450,7 @@
           z = Math.sin(theta) * Math.sin(phi) * shell;
           x *= 1.07;
           y *= 0.96;
-        } else if (ratio < 0.94) {
+        } else if (ratio < 0.96) {
           const angle = shapeRandom() * Math.PI * 2;
           const radius = 2.42 + shapeRandom() * 1.12;
           x = Math.cos(angle) * radius;
@@ -435,11 +466,12 @@
           y = (shapeRandom() - 0.5) * 7.2;
           z = -1.5 - shapeRandom() * 3;
         }
-        positions[offset] = x;
-        positions[offset + 1] = y;
-        positions[offset + 2] = z;
+        const belongsToCore = ratio < 0.96;
+        positions[offset] = belongsToCore ? x * nebulaScale : x;
+        positions[offset + 1] = belongsToCore ? y * nebulaScale : y;
+        positions[offset + 2] = belongsToCore ? z * nebulaScale : z;
         const color = colorFor(index, shapeRandom());
-        const brightness = ratio < 0.94 ? 0.72 + shapeRandom() * 0.34 : 0.2 + shapeRandom() * 0.2;
+        const brightness = ratio < 0.96 ? 0.72 + shapeRandom() * 0.34 : 0.2 + shapeRandom() * 0.2;
         colors[offset] = color[0] * brightness;
         colors[offset + 1] = color[1] * brightness;
         colors[offset + 2] = color[2] * brightness;
@@ -452,6 +484,10 @@
       const image = context.getImageData(0, 0, surface.width, surface.height);
       const pixels = [];
       const step = options.step || 5;
+      let minX = surface.width;
+      let minY = surface.height;
+      let maxX = 0;
+      let maxY = 0;
       for (let y = Math.floor(step / 2); y < surface.height; y += step) {
         for (let x = Math.floor(step / 2); x < surface.width; x += step) {
           const pixelIndex = (y * surface.width + x) * 4;
@@ -463,7 +499,19 @@
             g: image.data[pixelIndex + 1] / 255,
             b: image.data[pixelIndex + 2] / 255,
           });
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
         }
+      }
+
+      if (pixels.length === 0) {
+        const x = surface.width * 0.5;
+        const y = surface.height * 0.5;
+        pixels.push({ x, y, r: 1, g: 1, b: 1 });
+        minX = maxX = x;
+        minY = maxY = y;
       }
 
       const positions = new Float32Array(particleCount * 3);
@@ -472,6 +520,16 @@
       const shapeRandom = seededRandom(options.seed || 123);
       const width = options.worldWidth || Math.min(8.4, (camera.right - camera.left) * 0.76);
       const height = options.worldHeight || 3.2;
+      const contentWidth = Math.max(step, maxX - minX + step);
+      const contentHeight = Math.max(step, maxY - minY + step);
+      const contentCenterX = (minX + maxX) * 0.5;
+      const contentCenterY = (minY + maxY) * 0.5;
+      const fittedScale = options.fitContent
+        ? Math.min(
+          (options.maxWorldWidth || width) / contentWidth,
+          (options.maxWorldHeight || height) / contentHeight,
+        )
+        : 0;
       const eyeCenters = options.eyeCenters || [];
 
       for (let index = 0; index < particleCount; index += 1) {
@@ -480,8 +538,12 @@
         const jitter = step * 0.72;
         const pixelX = pixel.x + (shapeRandom() - 0.5) * jitter;
         const pixelY = pixel.y + (shapeRandom() - 0.5) * jitter;
-        positions[offset] = (pixelX / surface.width - 0.5) * width;
-        positions[offset + 1] = (0.5 - pixelY / surface.height) * height + (options.offsetY || 0);
+        positions[offset] = options.fitContent
+          ? (pixelX - contentCenterX) * fittedScale
+          : (pixelX / surface.width - 0.5) * width;
+        positions[offset + 1] = options.fitContent
+          ? (contentCenterY - pixelY) * fittedScale + (options.offsetY || 0)
+          : (0.5 - pixelY / surface.height) * height + (options.offsetY || 0);
         positions[offset + 2] = (shapeRandom() - 0.5) * (options.depth || 0.2);
 
         if (options.usePixelColor) {
@@ -525,12 +587,14 @@
     let modelShapeReady = false;
 
     function buildShapes() {
+      const layout = getResponsiveShapeLayout();
       const faceCanvas = createJoiFaceCanvas();
       const face = createCanvasShape(faceCanvas, {
         seed: 992,
         step: 4,
-        worldWidth: Math.min(5.25, (camera.right - camera.left) * 0.62),
-        worldHeight: 5.25,
+        fitContent: true,
+        maxWorldWidth: layout.faceMaxWidth,
+        maxWorldHeight: layout.faceMaxHeight,
         offsetY: -0.1,
         depth: 0.14,
         usePixelColor: true,
@@ -542,8 +606,22 @@
       });
       shapes = [
         createNebulaShape(),
-        createCanvasShape(createTextCanvas("Joi"), { seed: 414, step: 5, worldHeight: 3.2, mode: 1 }),
-        createCanvasShape(createTextCanvas("Gallo"), { seed: 815, step: 5, worldHeight: 3.15, mode: 2 }),
+        createCanvasShape(createTextCanvas("Joi"), {
+          seed: 414,
+          step: 4,
+          fitContent: true,
+          maxWorldWidth: layout.textMaxWidth,
+          maxWorldHeight: layout.textMaxHeight,
+          mode: 1,
+        }),
+        createCanvasShape(createTextCanvas("Gallo"), {
+          seed: 815,
+          step: 4,
+          fitContent: true,
+          maxWorldWidth: layout.textMaxWidth,
+          maxWorldHeight: layout.textMaxHeight,
+          mode: 2,
+        }),
         face,
         createFallbackModelShape(face),
       ];
