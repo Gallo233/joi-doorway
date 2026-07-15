@@ -768,6 +768,9 @@
       const nextForm = (currentForm + 1) % 4;
       updateForm(nextForm);
       morphTo(nextForm, { burst: true, duration: nextForm === 3 ? 1.48 : 1.32 });
+      window.dispatchEvent(new CustomEvent("joi-particle-form-change", {
+        detail: { form: nextForm },
+      }));
       if (nextForm === 0) section.classList.add("has-completed-cycle");
     }
 

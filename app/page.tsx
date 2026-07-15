@@ -5,6 +5,7 @@ import { JoiMapNativeDemo, JoiNativeDemo } from "../components/NativeProjectDemo
 import { Live2DGate } from "../components/Live2DGate";
 import { ParticlePrologue } from "../components/ParticlePrologue";
 import { ScrambleText } from "../components/ScrambleText";
+import { SiteAudio } from "../components/SiteAudio";
 
 const manifestoLines = [
   "AI becomes interesting",
@@ -38,6 +39,7 @@ export default function Page() {
   return (
     <>
       <Live2DGate />
+      <SiteAudio />
       <ParticlePrologue />
       <main className="site-home gallo-experience" id="siteHome" tabIndex={-1}>
         <canvas className="shader-canvas" id="shaderCanvas" aria-hidden="true" />
