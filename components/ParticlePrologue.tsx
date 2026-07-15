@@ -13,8 +13,16 @@ export function ParticlePrologue() {
         <div className="particle-prologue-ui">
           <header>
             <strong>GALLO / JOI</strong>
-            <span data-particle-form>FORM 00 / NEBULA</span>
+            <div className="particle-prologue-form-status">
+              <span data-particle-form>FORM 00 / NEBULA</span>
+              <span className="particle-prologue-progress" data-particle-progress>01 / 04</span>
+            </div>
           </header>
+
+          <div className="particle-prologue-intro">
+            <span>AI PRODUCT BUILDER × PRODUCT DESIGNER</span>
+            <p>Designing how AI enters human life.</p>
+          </div>
 
           <div className="particle-prologue-coordinates" aria-hidden="true">
             <span>PERSONALITY FIELD</span>
@@ -39,6 +47,13 @@ export function ParticlePrologue() {
           type="button"
           aria-label="Change particle form"
         />
+        <button
+          className="particle-prologue-skip"
+          data-particle-skip
+          type="button"
+        >
+          SKIP INTRO <span aria-hidden="true">↓</span>
+        </button>
         <p className="sr-only" data-particle-announcement aria-live="polite">
           Joi particle field. Move to disturb it, click to change its form.
         </p>

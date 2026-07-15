@@ -22,6 +22,10 @@ export type ProjectCase = {
   summary: string;
   summaryZh: string;
   question: string;
+  caseFrame: {
+    decision: string;
+    outcome: string;
+  };
   cover: string;
   figures: ProjectFigure[];
   sections: ProjectSection[];
@@ -43,6 +47,12 @@ export const projects: ProjectCase[] = [
     summaryZh:
       "Joi 探索的是：当 AI 助手拥有连续性、边界、人格，以及在人的电脑里清晰可见的行动方式时，我们与它的关系会发生什么变化。",
     question: "How can an agent feel present without taking control away from the person beside it?",
+    caseFrame: {
+      decision:
+        "Separate planning, policy, memory, events, and tools—then expose actions as inspectable, interruptible states.",
+      outcome:
+        "A working Windows-first companion prototype with approvals, character states, memory, and an observe → act → verify trail.",
+    },
     cover: "/assets/joi-app-v3.png",
     figures: [
       {
@@ -108,6 +118,12 @@ export const projects: ProjectCase[] = [
     summaryZh:
       "Joi Map 把虚拟人格延伸到真实地点，把定位、地图、视觉识别、讲解、路线与追问连接成一个持续的现场体验。",
     question: "How far can a personality travel before it changes the way we notice the world?",
+    caseFrame: {
+      decision:
+        "Treat locate → understand → narrate → recommend → remember as one continuous guide loop.",
+      outcome:
+        "A working SwiftUI MVP connecting MapKit, multilingual interaction, visual recognition, narration, routes, sources, and correction.",
+    },
     cover: "/assets/joi-map-v3.png",
     figures: [
       {

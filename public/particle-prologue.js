@@ -7,7 +7,9 @@
   const stage = section.querySelector("[data-particle-stage]");
   const canvas = section.querySelector("[data-particle-canvas]");
   const trigger = section.querySelector("[data-particle-trigger]");
+  const skip = section.querySelector("[data-particle-skip]");
   const formLabel = section.querySelector("[data-particle-form]");
+  const formProgress = section.querySelector("[data-particle-progress]");
   const announcement = section.querySelector("[data-particle-announcement]");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
@@ -772,6 +774,7 @@
     function updateForm(form) {
       currentForm = form;
       formLabel.textContent = FORM_LABELS[form];
+      if (formProgress) formProgress.textContent = `${String(form + 1).padStart(2, "0")} / 04`;
       announcement.textContent = FORM_ANNOUNCEMENTS[form];
       section.dataset.particleFormIndex = String(form);
     }
@@ -822,6 +825,17 @@
       }));
     }
 
+    function skipPrologue(event) {
+      event.stopPropagation();
+      const home = document.querySelector("#siteHome");
+      triggerExit();
+      home?.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+      home?.focus({ preventScroll: true });
+    }
+
     function resetPrologue() {
       if (!hasExited || !exitTriggered) return;
       exitTriggered = false;
@@ -864,6 +878,7 @@
     }
 
     trigger.addEventListener("click", handleClick);
+    skip?.addEventListener("click", skipPrologue);
     stage.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
@@ -878,6 +893,7 @@
       disposed = true;
       cancelAnimationFrame(animationFrame);
       trigger.removeEventListener("click", handleClick);
+      skip?.removeEventListener("click", skipPrologue);
       stage.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);

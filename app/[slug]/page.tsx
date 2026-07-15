@@ -50,13 +50,35 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
 
           <div className="project-detail-summary">
-            <p>{project.summary}</p>
+            <div className="project-detail-summary-copy">
+              <p>{project.summary}</p>
+              <p lang="zh-CN">{project.summaryZh}</p>
+            </div>
             <dl>
               <div><dt>PERIOD</dt><dd>{project.date}</dd></div>
               <div><dt>ROLE</dt><dd>{project.role}</dd></div>
-              <div><dt>QUESTION</dt><dd>{project.question}</dd></div>
+              <div><dt>TYPE</dt><dd>{project.kind}</dd></div>
             </dl>
           </div>
+
+          <section className="project-case-frame" aria-label="Case study overview">
+            <div>
+              <span>01 / PROBLEM</span>
+              <p>{project.question}</p>
+            </div>
+            <div>
+              <span>02 / RESPONSIBILITY</span>
+              <p>{project.role}</p>
+            </div>
+            <div>
+              <span>03 / KEY DECISION</span>
+              <p>{project.caseFrame.decision}</p>
+            </div>
+            <div>
+              <span>04 / OUTCOME</span>
+              <p>{project.caseFrame.outcome}</p>
+            </div>
+          </section>
 
           <div className={`project-detail-live ${project.slug === "joi" ? "is-dark" : "is-light"}`}>
             {project.slug === "joi" ? <JoiNativeDemo /> : <JoiMapNativeDemo />}
@@ -76,6 +98,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
             </section>
           ))}
+
+          <section className="project-detail-gallery" aria-label={`${project.title} project figures`}>
+            {project.figures.map((figure) => (
+              <figure key={figure.src}>
+                <img src={sitePath(figure.src)} alt={figure.alt} loading="lazy" />
+                <figcaption>{figure.caption}</figcaption>
+              </figure>
+            ))}
+          </section>
 
           <a className="project-next" href={sitePath(`/${project.nextSlug}`)}>
             <span>NEXT PROJECT</span>
