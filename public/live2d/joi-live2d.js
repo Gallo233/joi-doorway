@@ -122,8 +122,8 @@
         suppressClickUntil: 0,
       };
       this.messages = [];
-      this.nextId = 1;
-      this.socket = null;
+      this.requestController = null;
+      this.requestPending = false;
       this.reconnectTimer = 0;
       this.blinkTimer = 0;
       this.live2dApp = null;
@@ -173,7 +173,7 @@
       window.clearTimeout(this.live2dArrivalTimer);
       window.cancelAnimationFrame(this.live2dArrivalFrame);
       this.bodyObserver?.disconnect();
-      this.socket?.close();
+      this.requestController?.abort();
       if (this.live2dModel?.internalModel && this.live2dBeforeUpdate) {
         this.live2dModel.internalModel.off?.("beforeModelUpdate", this.live2dBeforeUpdate);
       }
@@ -181,8 +181,8 @@
       this.live2dApp?.destroy?.(true);
     }
 
-    get coreUrl() {
-      return this.getAttribute("core-url") || "ws://127.0.0.1:8765";
+    get apiUrl() {
+      return this.getAttribute("api-url") || "/api/joi/";
     }
 
     render() {
@@ -191,10 +191,10 @@
         <aside class="joi-live2d is-hidden" aria-label="Joi Live2D assistant">
           <section class="joi-live2d-panel" aria-label="Joi chat panel">
             <header>
-              <div><strong>Joi</strong><span data-status>离线</span></div>
+              <div><strong>Joi</strong><span data-status role="status" aria-live="polite">连接中</span></div>
               <button data-close type="button" aria-label="收起">×</button>
             </header>
-            <div class="joi-live2d-stream" data-stream></div>
+            <div class="joi-live2d-stream" data-stream aria-live="polite"></div>
             <form data-form>
               <input data-input maxlength="500" autocomplete="off" placeholder="和 Joi 说点什么" />
               <button type="submit">发送</button>
@@ -573,6 +573,13 @@
           overflow: hidden;
         }
 
+        .joi-live2d.is-open .joi-live2d-bubble {
+          visibility: hidden;
+          opacity: 0;
+          pointer-events: none;
+          transform: translate(14px, 8px) scale(0.94);
+        }
+
         .joi-live2d-panel {
           position: absolute;
           right: 196px;
@@ -600,12 +607,16 @@
         }
 
         .joi-live2d-panel header {
+          position: relative;
+          z-index: 2;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          min-height: 54px;
+          min-height: 66px;
           padding: 12px 12px 10px 14px;
           border-bottom: 1px solid var(--line);
+          background: rgba(255, 250, 245, 0.88);
+          backdrop-filter: blur(18px);
         }
 
         .joi-live2d-panel strong {
@@ -622,13 +633,36 @@
         }
 
         .joi-live2d-panel header button {
-          width: 30px;
-          height: 30px;
+          position: relative;
+          z-index: 4;
+          display: grid;
+          width: 54px;
+          height: 54px;
+          flex: 0 0 54px;
+          padding: 0;
+          place-items: center;
           border: 1px solid var(--line);
-          border-radius: 8px;
-          background: rgba(255, 255, 255, 0.64);
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.82);
           color: rgba(36, 28, 26, 0.72);
+          font-size: 21px;
+          line-height: 1;
           cursor: pointer;
+          pointer-events: auto;
+          touch-action: manipulation;
+          transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+        }
+
+        .joi-live2d-panel header button:hover,
+        .joi-live2d-panel header button:focus-visible {
+          border-color: rgba(216, 111, 95, 0.55);
+          background: #fff;
+          transform: scale(1.04);
+        }
+
+        .joi-live2d-panel header button:focus-visible {
+          outline: 2px solid rgba(216, 111, 95, 0.3);
+          outline-offset: 2px;
         }
 
         .joi-live2d-stream {
@@ -693,6 +727,12 @@
           cursor: pointer;
         }
 
+        .joi-live2d-panel form button:disabled,
+        .joi-live2d-panel input:disabled {
+          cursor: wait;
+          opacity: 0.58;
+        }
+
         @keyframes live2d-mouth {
           0%, 100% { transform: scaleY(0.18); opacity: 0.45; }
           48% { transform: scaleY(1); opacity: 1; }
@@ -741,6 +781,12 @@
             bottom: calc(var(--model-h) + 14px);
             height: min(376px, calc(100vh - var(--model-h) - 46px));
           }
+
+          .joi-live2d-panel header button {
+            width: 58px;
+            height: 58px;
+            flex-basis: 58px;
+          }
         }
       `;
     }
@@ -757,6 +803,7 @@
       this.form = this.shadowRoot.querySelector("[data-form]");
       this.input = this.shadowRoot.querySelector("[data-input]");
       this.close = this.shadowRoot.querySelector("[data-close]");
+      this.submitButton = this.form.querySelector('button[type="submit"]');
     }
 
     bind() {
@@ -778,9 +825,6 @@
       this.bubble.addEventListener("click", () => this.togglePanel(true));
       this.close.addEventListener("click", () => this.togglePanel(false));
       this.form.addEventListener("submit", (event) => this.submit(event));
-      this.input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.isComposing) this.submit(event);
-      });
     }
 
     syncVisibility() {
@@ -1731,72 +1775,81 @@
       }
     }
 
-    connectCore() {
+    async connectCore() {
       window.clearTimeout(this.reconnectTimer);
+      this.requestController?.abort();
+      const controller = new AbortController();
+      this.requestController = controller;
+      this.setStatus("连接中");
       try {
-        this.socket?.close();
-        this.socket = new WebSocket(this.coreUrl);
-        this.setStatus("连接中");
-        this.socket.onopen = () => {
-          this.setStatus("在线");
-          this.say("连上 Joi Core 了。", 1400);
-        };
-        this.socket.onclose = () => {
-          this.setStatus("离线");
-          this.reconnectTimer = window.setTimeout(() => this.connectCore(), 2200);
-        };
-        this.socket.onerror = () => this.setStatus("离线");
-        this.socket.onmessage = (event) => this.handleCoreMessage(event.data);
+        const response = await fetch(this.apiUrl, {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error(`Joi API health check failed: ${response.status}`);
+        if (this.requestController !== controller) return;
+        this.setStatus("在线");
       } catch {
-        this.setStatus("离线");
+        if (controller.signal.aborted) return;
+        this.setStatus("重连中");
+        this.reconnectTimer = window.setTimeout(() => this.connectCore(), 5000);
       }
     }
 
-    handleCoreMessage(raw) {
-      let payload;
-      try {
-        payload = JSON.parse(raw);
-      } catch {
-        return;
-      }
-      if (payload.method !== "agent.event" || !payload.params) return;
-      const event = payload.params;
-      if (event.type === "user_message") return;
-      const text = event.display_card?.summary || event.voice_line?.text || event.display_card?.title || "";
-      if (!text) return;
-      this.addMessage("joi", text);
-      this.say(text);
-      this.talk(1200);
-      if (event.type === "task_completed" || event.type === "runtime_final") {
-        this.playExpression("bright", 1500);
-        this.root.classList.add("is-happy");
-        window.setTimeout(() => this.root.classList.remove("is-happy"), 1500);
-      } else {
-        this.playExpression("softSmile", 1050);
-      }
-    }
-
-    submit(event) {
+    async submit(event) {
       event.preventDefault();
+      if (this.requestPending) return;
       const text = this.input.value.trim();
       if (!text) return;
       this.input.value = "";
       this.addMessage("user", text);
       this.say("收到。");
       this.talk(520);
-      if (this.socket?.readyState === WebSocket.OPEN) {
-        this.socket.send(JSON.stringify({
-          jsonrpc: "2.0",
-          id: `live2d-${this.nextId++}`,
-          method: "user.message",
-          params: { text },
+      this.setRequestPending(true);
+      this.setStatus("思考中");
+
+      try {
+        const messages = this.messages.slice(-10).map((message) => ({
+          role: message.role === "joi" ? "assistant" : "user",
+          text: message.text,
         }));
-      } else {
-        window.setTimeout(() => {
-          this.addMessage("joi", "Joi Core 还没连上，我先保持待机。");
-          this.say("Core 还没连上。");
-        }, 240);
+        const response = await fetch(this.apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages }),
+        });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok || typeof payload?.message !== "string") {
+          throw new Error(`Joi API request failed: ${response.status}`);
+        }
+
+        const reply = payload.message.trim();
+        if (!reply) throw new Error("Joi API returned an empty response");
+        this.addMessage("joi", reply);
+        this.say(reply);
+        this.talk(Math.min(2400, Math.max(900, reply.length * 34)));
+        this.playExpression("softSmile", 1300);
+        this.setStatus("在线");
+      } catch {
+        const fallback = "刚才的连接有一点晃。再对我说一次，好吗？";
+        this.addMessage("joi", fallback);
+        this.say("连接晃了一下。", 1800);
+        this.playExpression("curious", 1100);
+        this.setStatus("重连中");
+        window.clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = window.setTimeout(() => this.connectCore(), 3200);
+      } finally {
+        this.setRequestPending(false);
       }
+    }
+
+    setRequestPending(pending) {
+      this.requestPending = pending;
+      this.form.toggleAttribute("aria-busy", pending);
+      this.input.disabled = pending;
+      this.submitButton.disabled = pending;
+      this.submitButton.textContent = pending ? "···" : "发送";
     }
 
     addMessage(role, text) {
@@ -1902,7 +1955,7 @@
   function mount() {
     if (document.querySelector("joi-live2d-assistant")) return;
     const assistant = document.createElement("joi-live2d-assistant");
-    assistant.setAttribute("core-url", "ws://127.0.0.1:8765");
+    assistant.setAttribute("api-url", "/api/joi/");
     document.body.append(assistant);
   }
 

@@ -4,7 +4,6 @@ const basePath = isGitHubPages ? "/joi-doorway" : "";
 
 const nextConfig = {
   reactStrictMode: true,
-  output: "export",
   trailingSlash: true,
   basePath,
   assetPrefix: basePath,
