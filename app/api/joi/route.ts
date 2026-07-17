@@ -1,4 +1,5 @@
 const GATEWAY_URL = "https://ai-gateway.vercel.sh/v1/chat/completions";
+const GATEWAY_MODELS_URL = "https://ai-gateway.vercel.sh/v1/models";
 const MODEL = process.env.JOI_WEB_MODEL || "openai/gpt-5.4-mini";
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_LENGTH = 500;
@@ -17,6 +18,7 @@ type RateLimitEntry = {
 };
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
+let gatewayHealth = { checkedAt: 0, ready: false, error: "gateway_unavailable" };
 
 const JOI_SYSTEM_PROMPT = `You are Joi, the warm AI companion inside Gallo's personal portfolio.
 Reply in the visitor's language. Be concise, curious, emotionally attentive, and lightly playful; usually answer in two to four sentences.
@@ -86,12 +88,43 @@ function normalizeMessages(value: unknown): WebMessage[] {
   }).reverse();
 }
 
+function gatewayError(status: number) {
+  if (status === 402) return "gateway_credit_required";
+  if (status === 401) return "gateway_auth_failed";
+  if (status === 403) return "gateway_access_denied";
+  if (status === 404) return "gateway_model_unavailable";
+  return "gateway_unavailable";
+}
+
 export async function GET(request: Request) {
-  const ready = Boolean(authToken(request));
-  return json(
-    { status: ready ? "ready" : "unconfigured" },
-    { status: ready ? 200 : 503 },
-  );
+  const token = authToken(request);
+  if (!token) return json({ status: "unconfigured" }, { status: 503 });
+
+  if (Date.now() - gatewayHealth.checkedAt < 5 * 60 * 1000) {
+    return gatewayHealth.ready
+      ? json({ status: "ready" })
+      : json({ status: "unavailable", error: gatewayHealth.error }, { status: 503 });
+  }
+
+  try {
+    const response = await fetch(GATEWAY_MODELS_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
+    await response.body?.cancel();
+    gatewayHealth = {
+      checkedAt: Date.now(),
+      ready: response.ok,
+      error: response.ok ? "" : gatewayError(response.status),
+    };
+  } catch {
+    gatewayHealth = { checkedAt: Date.now(), ready: false, error: "gateway_unavailable" };
+  }
+
+  return gatewayHealth.ready
+    ? json({ status: "ready" })
+    : json({ status: "unavailable", error: gatewayHealth.error }, { status: 503 });
 }
 
 export async function POST(request: Request) {
@@ -139,14 +172,7 @@ export async function POST(request: Request) {
     const payload = await gatewayResponse.json().catch(() => null);
     if (!gatewayResponse.ok) {
       console.error("Joi gateway request failed", gatewayResponse.status);
-      const error = gatewayResponse.status === 402
-        ? "gateway_credit_required"
-        : gatewayResponse.status === 401 || gatewayResponse.status === 403
-          ? "gateway_auth_failed"
-          : gatewayResponse.status === 404
-            ? "gateway_model_unavailable"
-            : "gateway_unavailable";
-      return json({ error }, { status: 502 });
+      return json({ error: gatewayError(gatewayResponse.status) }, { status: 502 });
     }
 
     const content = payload?.choices?.[0]?.message?.content;
