@@ -139,7 +139,14 @@ export async function POST(request: Request) {
     const payload = await gatewayResponse.json().catch(() => null);
     if (!gatewayResponse.ok) {
       console.error("Joi gateway request failed", gatewayResponse.status);
-      return json({ error: "gateway_unavailable" }, { status: 502 });
+      const error = gatewayResponse.status === 402
+        ? "gateway_credit_required"
+        : gatewayResponse.status === 401 || gatewayResponse.status === 403
+          ? "gateway_auth_failed"
+          : gatewayResponse.status === 404
+            ? "gateway_model_unavailable"
+            : "gateway_unavailable";
+      return json({ error }, { status: 502 });
     }
 
     const content = payload?.choices?.[0]?.message?.content;
