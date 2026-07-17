@@ -172,15 +172,23 @@ export async function POST(request: Request) {
     const payload = await gatewayResponse.json().catch(() => null);
     if (!gatewayResponse.ok) {
       console.error("Joi gateway request failed", gatewayResponse.status);
-      return json({ error: gatewayError(gatewayResponse.status) }, { status: 502 });
+      const error = gatewayError(gatewayResponse.status);
+      gatewayHealth = { checkedAt: Date.now(), ready: false, error };
+      return json({ error }, { status: 502 });
     }
 
     const content = payload?.choices?.[0]?.message?.content;
     const message = typeof content === "string" ? content.trim() : "";
     if (!message) return json({ error: "empty_response" }, { status: 502 });
+    gatewayHealth = { checkedAt: Date.now(), ready: true, error: "" };
     return json({ message });
   } catch (error) {
     console.error("Joi gateway request failed", error instanceof Error ? error.name : "unknown");
+    gatewayHealth = {
+      checkedAt: Date.now(),
+      ready: false,
+      error: "gateway_unavailable",
+    };
     return json({ error: "gateway_unavailable" }, { status: 502 });
   }
 }

@@ -1821,7 +1821,9 @@
         });
         const payload = await response.json().catch(() => null);
         if (!response.ok || typeof payload?.message !== "string") {
-          throw new Error(`Joi API request failed: ${response.status}`);
+          const error = new Error(`Joi API request failed: ${response.status}`);
+          error.code = payload?.error || "gateway_unavailable";
+          throw error;
         }
 
         const reply = payload.message.trim();
@@ -1831,14 +1833,24 @@
         this.talk(Math.min(2400, Math.max(900, reply.length * 34)));
         this.playExpression("softSmile", 1300);
         this.setStatus("在线");
-      } catch {
-        const fallback = "刚才的连接有一点晃。再对我说一次，好吗？";
+      } catch (error) {
+        const needsActivation = [
+          "backend_unconfigured",
+          "gateway_access_denied",
+          "gateway_auth_failed",
+          "gateway_credit_required",
+        ].includes(error?.code);
+        const fallback = needsActivation
+          ? "我的在线对话能力还在等待启用，很快就能真正回应你。"
+          : "刚才的连接有一点晃。再对我说一次，好吗？";
         this.addMessage("joi", fallback);
-        this.say("连接晃了一下。", 1800);
+        this.say(needsActivation ? "在线能力待启用。" : "连接晃了一下。", 1800);
         this.playExpression("curious", 1100);
-        this.setStatus("重连中");
+        this.setStatus(needsActivation ? "待启用" : "重连中");
         window.clearTimeout(this.reconnectTimer);
-        this.reconnectTimer = window.setTimeout(() => this.connectCore(), 3200);
+        if (!needsActivation) {
+          this.reconnectTimer = window.setTimeout(() => this.connectCore(), 3200);
+        }
       } finally {
         this.setRequestPending(false);
       }
