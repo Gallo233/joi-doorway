@@ -1,6 +1,6 @@
-const GATEWAY_URL = "https://ai-gateway.vercel.sh/v1/chat/completions";
-const GATEWAY_MODELS_URL = "https://ai-gateway.vercel.sh/v1/models";
-const MODEL = process.env.JOI_WEB_MODEL || "openai/gpt-5.4-mini";
+const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
+const DEEPSEEK_MODELS_URL = "https://api.deepseek.com/models";
+const MODEL = process.env.JOI_WEB_MODEL || "deepseek-v4-flash";
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_CONTEXT_LENGTH = 4000;
@@ -18,7 +18,7 @@ type RateLimitEntry = {
 };
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
-let gatewayHealth = { checkedAt: 0, ready: false, error: "gateway_unavailable" };
+let providerHealth = { checkedAt: 0, ready: false, error: "deepseek_unavailable" };
 
 const JOI_SYSTEM_PROMPT = `You are Joi, the warm AI companion inside Gallo's personal portfolio.
 Reply in the visitor's language. Be concise, curious, emotionally attentive, and lightly playful; usually answer in two to four sentences.
@@ -33,11 +33,8 @@ function json(data: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(data), { ...init, headers });
 }
 
-function authToken(request: Request) {
-  return request.headers.get("x-vercel-oidc-token")
-    || process.env.VERCEL_OIDC_TOKEN
-    || process.env.AI_GATEWAY_API_KEY
-    || "";
+function apiKey() {
+  return process.env.DEEPSEEK_API_KEY || "";
 }
 
 function requestKey(request: Request) {
@@ -88,43 +85,43 @@ function normalizeMessages(value: unknown): WebMessage[] {
   }).reverse();
 }
 
-function gatewayError(status: number) {
-  if (status === 402) return "gateway_credit_required";
-  if (status === 401) return "gateway_auth_failed";
-  if (status === 403) return "gateway_access_denied";
-  if (status === 404) return "gateway_model_unavailable";
-  return "gateway_unavailable";
+function providerError(status: number) {
+  if (status === 402) return "deepseek_credit_required";
+  if (status === 401 || status === 403) return "deepseek_auth_failed";
+  if (status === 429) return "deepseek_rate_limited";
+  if (status === 400 || status === 404 || status === 422) return "deepseek_invalid_request";
+  return "deepseek_unavailable";
 }
 
-export async function GET(request: Request) {
-  const token = authToken(request);
-  if (!token) return json({ status: "unconfigured" }, { status: 503 });
+export async function GET() {
+  const token = apiKey();
+  if (!token) return json({ status: "unconfigured", error: "backend_unconfigured" }, { status: 503 });
 
-  if (Date.now() - gatewayHealth.checkedAt < 5 * 60 * 1000) {
-    return gatewayHealth.ready
+  if (Date.now() - providerHealth.checkedAt < 5 * 60 * 1000) {
+    return providerHealth.ready
       ? json({ status: "ready" })
-      : json({ status: "unavailable", error: gatewayHealth.error }, { status: 503 });
+      : json({ status: "unavailable", error: providerHealth.error }, { status: 503 });
   }
 
   try {
-    const response = await fetch(GATEWAY_MODELS_URL, {
+    const response = await fetch(DEEPSEEK_MODELS_URL, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
       signal: AbortSignal.timeout(8000),
     });
     await response.body?.cancel();
-    gatewayHealth = {
+    providerHealth = {
       checkedAt: Date.now(),
       ready: response.ok,
-      error: response.ok ? "" : gatewayError(response.status),
+      error: response.ok ? "" : providerError(response.status),
     };
   } catch {
-    gatewayHealth = { checkedAt: Date.now(), ready: false, error: "gateway_unavailable" };
+    providerHealth = { checkedAt: Date.now(), ready: false, error: "deepseek_unavailable" };
   }
 
-  return gatewayHealth.ready
+  return providerHealth.ready
     ? json({ status: "ready" })
-    : json({ status: "unavailable", error: gatewayHealth.error }, { status: 503 });
+    : json({ status: "unavailable", error: providerHealth.error }, { status: 503 });
 }
 
 export async function POST(request: Request) {
@@ -134,7 +131,7 @@ export async function POST(request: Request) {
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > 16_000) return json({ error: "request_too_large" }, { status: 413 });
 
-  const token = authToken(request);
+  const token = apiKey();
   if (!token) return json({ error: "backend_unconfigured" }, { status: 503 });
 
   let body: unknown;
@@ -152,7 +149,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const gatewayResponse = await fetch(GATEWAY_URL, {
+    const providerResponse = await fetch(DEEPSEEK_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -164,31 +161,33 @@ export async function POST(request: Request) {
           { role: "system", content: JOI_SYSTEM_PROMPT },
           ...messages.map((message) => ({ role: message.role, content: message.text })),
         ],
-        max_completion_tokens: 320,
+        thinking: { type: "disabled" },
+        max_tokens: 320,
+        stream: false,
       }),
       signal: AbortSignal.timeout(25_000),
     });
 
-    const payload = await gatewayResponse.json().catch(() => null);
-    if (!gatewayResponse.ok) {
-      console.error("Joi gateway request failed", gatewayResponse.status);
-      const error = gatewayError(gatewayResponse.status);
-      gatewayHealth = { checkedAt: Date.now(), ready: false, error };
+    const payload = await providerResponse.json().catch(() => null);
+    if (!providerResponse.ok) {
+      console.error("Joi DeepSeek request failed", providerResponse.status);
+      const error = providerError(providerResponse.status);
+      providerHealth = { checkedAt: Date.now(), ready: false, error };
       return json({ error }, { status: 502 });
     }
 
     const content = payload?.choices?.[0]?.message?.content;
     const message = typeof content === "string" ? content.trim() : "";
     if (!message) return json({ error: "empty_response" }, { status: 502 });
-    gatewayHealth = { checkedAt: Date.now(), ready: true, error: "" };
+    providerHealth = { checkedAt: Date.now(), ready: true, error: "" };
     return json({ message });
   } catch (error) {
-    console.error("Joi gateway request failed", error instanceof Error ? error.name : "unknown");
-    gatewayHealth = {
+    console.error("Joi DeepSeek request failed", error instanceof Error ? error.name : "unknown");
+    providerHealth = {
       checkedAt: Date.now(),
       ready: false,
-      error: "gateway_unavailable",
+      error: "deepseek_unavailable",
     };
-    return json({ error: "gateway_unavailable" }, { status: 502 });
+    return json({ error: "deepseek_unavailable" }, { status: 502 });
   }
 }

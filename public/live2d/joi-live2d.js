@@ -1787,13 +1787,21 @@
           cache: "no-store",
           signal: controller.signal,
         });
-        if (!response.ok) throw new Error(`Joi API health check failed: ${response.status}`);
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) {
+          const error = new Error(`Joi API health check failed: ${response.status}`);
+          error.code = payload?.error || "deepseek_unavailable";
+          throw error;
+        }
         if (this.requestController !== controller) return;
         this.setStatus("在线");
-      } catch {
+      } catch (error) {
         if (controller.signal.aborted) return;
-        this.setStatus("重连中");
-        this.reconnectTimer = window.setTimeout(() => this.connectCore(), 5000);
+        const needsActivation = this.requiresBackendActivation(error?.code);
+        this.setStatus(needsActivation ? "待启用" : "重连中");
+        if (!needsActivation) {
+          this.reconnectTimer = window.setTimeout(() => this.connectCore(), 5000);
+        }
       }
     }
 
@@ -1822,7 +1830,7 @@
         const payload = await response.json().catch(() => null);
         if (!response.ok || typeof payload?.message !== "string") {
           const error = new Error(`Joi API request failed: ${response.status}`);
-          error.code = payload?.error || "gateway_unavailable";
+          error.code = payload?.error || "deepseek_unavailable";
           throw error;
         }
 
@@ -1834,12 +1842,7 @@
         this.playExpression("softSmile", 1300);
         this.setStatus("在线");
       } catch (error) {
-        const needsActivation = [
-          "backend_unconfigured",
-          "gateway_access_denied",
-          "gateway_auth_failed",
-          "gateway_credit_required",
-        ].includes(error?.code);
+        const needsActivation = this.requiresBackendActivation(error?.code);
         const fallback = needsActivation
           ? "我的在线对话能力还在等待启用，很快就能真正回应你。"
           : "刚才的连接有一点晃。再对我说一次，好吗？";
@@ -1896,6 +1899,14 @@
 
     setStatus(text) {
       this.statusText.textContent = text;
+    }
+
+    requiresBackendActivation(code) {
+      return [
+        "backend_unconfigured",
+        "deepseek_auth_failed",
+        "deepseek_credit_required",
+      ].includes(code);
     }
 
     togglePanel(open) {
